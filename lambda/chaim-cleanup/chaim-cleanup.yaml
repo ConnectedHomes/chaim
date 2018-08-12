@@ -1,0 +1,22 @@
+---
+codeenv:
+    - SECRETPATH: /sre/chaim/
+
+tags:
+    - Name: chaim-cleanup
+    - product: chaim
+    - role: cleanup
+
+vpc:
+    - vpcid: vpc-0fea1a5e03044263c
+    - subnets: [subnet-0a0c4e43f03f9e786, subnet-037f401cd76ae132e]
+    - securitygroup:
+
+files:
+    - chaim-cleanup.py
+    - chaim.py
+    - envparams.py
+    - paramstore.py
+    - permissions.py
+    - wflambda.py
+    - version
