@@ -5,9 +5,9 @@ The chaim api records issued keys to aid event tracing.
 
 
 import logging
-import chaim
-from permissions import Permissions
-from wflambda import wfwrapper
+import chaimlib.chaim as chaim
+from chaimlib.permissions import Permissions
+from chaimlib.wflambda import wfwrapper
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
