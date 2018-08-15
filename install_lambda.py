@@ -56,7 +56,6 @@ def findFunction(allfuncs, fnname):
 env = "dev"
 if len(sys.argv) > 1:
     env = sys.argv[1]
-# medir = os.path.dirname(os.path.abspath(__file__))
 medir = os.getcwd()
 me = os.path.basename(medir)
 yamlfn = medir + "/" + me + ".yaml"
