@@ -1,4 +1,4 @@
-import pymysql
+import chaimlib.vendor.pymysql as pymysql
 import logging
 
 log = logging.getLogger(__name__)

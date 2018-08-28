@@ -1,9 +1,9 @@
 import logging
-from chalicelib.cognitoclient import CognitoClient
-from chalicelib.paramstore import ParamStore
-from chalicelib.slackiamdb import SlackIamDB
-from chalicelib.slackiamdb import DBNotConnected
-from chalicelib.utils import Utils
+from chaimlib.cognitoclient import CognitoClient
+from chaimlib.paramstore import ParamStore
+from chaimlib.slackiamdb import SlackIamDB
+from chaimlib.slackiamdb import DBNotConnected
+from chaimlib.utils import Utils
 
 log = logging.getLogger(__name__)
 
@@ -189,7 +189,7 @@ class Permissions():
             log.error("error executing keymap insert query")
             raise DataNotFound(e)
 
-    def cleanKeyMap(self, days=30):
+    def cleanKeyMap(self, days=30, dryrun=False):
         afrows = 0
         tfr = 0
         try:
@@ -199,8 +199,16 @@ class Permissions():
                 tfr = row[0]
             ut = Utils()
             then = ut.getNow() - (days * 24 * 60 * 60)
-            sql = "delete from keymap where expires < {}".format(then)
-            afrows = self.rwsid.updateQuery(sql)
+            if dryrun:
+                sql = "select * from keymap "
+            else:
+                sql = "delete from keymap "
+            sql += "where expires < {}".format(then)
+            if dryrun:
+                rows = self.sid.query(sql)
+                afrows = len(rows)
+            else:
+                afrows = self.rwsid.updateQuery(sql)
         except Exception as e:
             log.error("error executing keymap cleaning query for {} days ago.".format(days))
             raise DataNotFound(e)

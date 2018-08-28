@@ -1,6 +1,6 @@
 """AWS Cognito-IDP client functions"""
 
-from chalicelib.botosession import BotoSession
+from chaimlib.botosession import BotoSession
 import logging
 import re
 

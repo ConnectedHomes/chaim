@@ -2,7 +2,7 @@
 AWS SSM Parameter Store client functions
 """
 
-from botosession import BotoSession
+from chaimlib.botosession import BotoSession
 import os
 import logging
 

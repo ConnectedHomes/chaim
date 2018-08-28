@@ -4,9 +4,9 @@ chaim functions for both CLI and Slack
 
 import os
 import logging
-from permissions import Permissions
-from envparams import EnvParam
-from wflambda import get_registry
+from chaimlib.permissions import Permissions
+from chaimlib.envparams import EnvParam
+from chaimlib.wflambda import get_registry
 
 log = logging.getLogger(__name__)
 
@@ -16,18 +16,21 @@ def ggMetric(mname, val):
     sets a gauge wavefront metric value
     """
     log.debug("gauge metric stage: dev")
+    ep = EnvParam()
+    chaimstage = ep.getParam("CHAIM_STAGE", decode=True)
     registry = get_registry()
-    fname = "chaim." + os.environ["CHAIM_STAGE"] + "." + mname
+    fname = "chaim." + chaimstage + "." + mname
     if registry is not None:
         gge = registry.gauge(fname)
         try:
             log.debug("gauge: {}: {}".format(fname, val))
             gge.set_value(int(val))
+            return True
         except Exception as e:
             log.warning("gauge failed for {}: {}: {}".format(mname, type(e).__name__, e))
     else:
         log.warning("Failed to initialise the wavefront registry for: " + fname)
-    return
+        return False
 
 
 def incMetric(mname):
@@ -35,18 +38,21 @@ def incMetric(mname):
     increments a wavefront metric counter
     """
     log.debug("inc metric stage: dev")
+    ep = EnvParam()
+    chaimstage = ep.getParam("CHAIM_STAGE", decode=True)
     registry = get_registry()
-    fname = "chaim." + os.environ["CHAIM_STAGE"] + "." + mname
+    fname = "chaim." + chaimstage + "." + mname
     if registry is not None:
         counter = registry.counter(fname)
         try:
             log.debug("counter inc: {}".format(fname))
             counter.inc()
+            return True
         except Exception as e:
             log.warning("inc failed for {}: {}: {}".format(mname, type(e).__name__, e))
     else:
         log.warning("Failed to initialise the wavefront registry for: " + fname)
-    return
+        return False
 
 
 def getWFKey(stage="prod"):
@@ -55,8 +61,9 @@ def getWFKey(stage="prod"):
     and populates the environment with it
     """
     try:
-        secretpath = EnvParam.getParam("SECRETPATH", decode=True)
-        pms = Permissions(secretpath, stagepath=stage + "/", missing=False)
+        ep = EnvParam()
+        secretpath = ep.getParam("SECRETPATH", decode=True)
+        pms = Permissions(secretpath, stagepath=stage + "/", missing=False, quick=True)
         wfk = pms.getEncKey("wavefronttoken")
         os.environ["WAVEFRONT_API_TOKEN"] = wfk
         os.environ["CHAIM_STAGE"] = stage
@@ -67,10 +74,10 @@ def getWFKey(stage="prod"):
         raise
 
 
-def getDefaultValue(dict, key, default=""):
+def getDefaultValue(xdict, key, default=""):
     ret = default
-    if key in dict:
-        ret = dict[key]
+    if key in xdict:
+        ret = xdict[key]
     return ret
 
 

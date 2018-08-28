@@ -1,6 +1,6 @@
 """AWS KMS client functions"""
 
-from botosession import BotoSession
+from chaimlib.botosession import BotoSession
 from base64 import b64decode
 import logging
 

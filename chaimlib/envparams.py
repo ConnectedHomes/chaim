@@ -2,7 +2,7 @@
 
 import os
 import chardet
-from kmsclient import KmsClient
+from chaimlib.kmsclient import KmsClient
 import logging
 
 log = logging.getLogger(__name__)
