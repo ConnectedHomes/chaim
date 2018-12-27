@@ -8,6 +8,7 @@ import logging
 import chaimlib.chaim as chaim
 from chaimlib.permissions import Permissions
 from chaimlib.wflambda import wfwrapper
+from chaimlib.envparams import EnvParam
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -17,14 +18,21 @@ log.setLevel(logging.DEBUG)
 @wfwrapper
 def doCleanup(event, context, version):
     try:
-        pms = Permissions("/sre/chaim/", missing=True)
-        tfr, afr = pms.cleanKeyMap()
-        kmsg = "key" if afr == 1 else "keys"
-        msg = "chaim cleanup v{}: {} {} cleaned.".format(version, afr, kmsg)
-        log.info(msg)
-        chaim.incMetric("cleanup")
-        chaim.ggMetric("cleanup.cleaned", afr)
-        chaim.ggMetric("cleanup.existing", tfr)
+        ep = EnvParam()
+        spath = ep.getParam("SECRETPATH", True)
+        if spath is not False:
+            pms = Permissions(spath, missing=True)
+            tfr, afr = pms.cleanKeyMap()
+            kmsg = "key" if afr == 1 else "keys"
+            msg = "chaim cleanup v{}: {} {} cleaned.".format(version, afr, kmsg)
+            log.info(msg)
+            chaim.incMetric("cleanup")
+            chaim.ggMetric("cleanup.cleaned", afr)
+            chaim.ggMetric("cleanup.existing", tfr)
+        else:
+            emsg = "chaim cleanup: secret path not in environment"
+            log.error(emsg)
+            chaim.incMetric("cleanup.error")
     except Exception as e:
         emsg = "chaim cleanup v{}: error: {}: {}".format(version, type(e).__name__, e)
         log.error(emsg)

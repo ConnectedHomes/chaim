@@ -3,6 +3,8 @@ import chaimlib.chaim as chaim
 from chaimlib.envparams import EnvParam
 
 os.environ["SECRETPATH"] = "/sre/chaim/"
+os.environ["WAVEFRONT_URL"] = "https://connectedhome.wavefront.com"
+os.environ["REPORT_STANDARD_METRICS"] = "False"
 
 
 def test_getDefaultValue_exists():
@@ -33,13 +35,3 @@ def test_getWFKey():
     ep = EnvParam()
     wft = ep.getParam("WAVEFRONT_API_TOKEN", True)
     assert wft is not False
-
-
-def test_incMetric():
-    didit = chaim.incMetric("testinc")
-    assert didit is True
-
-
-def test_ggMetric():
-    didit = chaim.ggMetric("testgg", 12)
-    assert didit is True

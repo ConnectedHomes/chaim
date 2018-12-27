@@ -7,6 +7,7 @@ import logging
 from chaimlib.permissions import Permissions
 from chaimlib.envparams import EnvParam
 from chaimlib.wflambda import get_registry
+from chaimlib.wflambda import inc_counter
 
 log = logging.getLogger(__name__)
 
@@ -34,25 +35,35 @@ def ggMetric(mname, val):
 
 
 def incMetric(mname):
-    """
-    increments a wavefront metric counter
-    """
-    log.debug("inc metric stage: dev")
-    ep = EnvParam()
-    chaimstage = ep.getParam("CHAIM_STAGE", decode=True)
-    registry = get_registry()
-    fname = "chaim." + chaimstage + "." + mname
-    if registry is not None:
-        counter = registry.counter(fname)
-        try:
-            log.debug("counter inc: {}".format(fname))
-            counter.inc()
-            return True
-        except Exception as e:
-            log.warning("inc failed for {}: {}: {}".format(mname, type(e).__name__, e))
-    else:
-        log.warning("Failed to initialise the wavefront registry for: " + fname)
-        return False
+    try:
+        log.debug("inc metric stage: {}".format(os.environ["CHAIM_STAGE"]))
+        fname = "chaim." + os.environ["CHAIM_STAGE"] + "." + mname + ".delta"
+        log.debug("incMetric: {}".format(fname))
+        inc_counter(fname)
+    except Exception as e:
+        msg = "incMetric error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        raise
+# def incMetric(mname):
+#     """
+#     increments a wavefront metric counter
+#     """
+#     log.debug("inc metric stage: dev")
+#     ep = EnvParam()
+#     chaimstage = ep.getParam("CHAIM_STAGE", decode=True)
+#     registry = get_registry()
+#     fname = "chaim." + chaimstage + "." + mname
+#     if registry is not None:
+#         counter = registry.counter(fname)
+#         try:
+#             log.debug("counter inc: {}".format(fname))
+#             counter.inc()
+#             return True
+#         except Exception as e:
+#             log.warning("inc failed for {}: {}: {}".format(mname, type(e).__name__, e))
+#     else:
+#         log.warning("Failed to initialise the wavefront registry for: " + fname)
+#         return False
 
 
 def getWFKey(stage="prod"):

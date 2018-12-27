@@ -6,6 +6,7 @@ tags:
     - Name: chaim-cleanup
     - product: chaim
     - role: cleanup
+    - owner: SRE
 
 vpc:
     - vpcid: vpc-0fea1a5e03044263c
@@ -13,10 +14,10 @@ vpc:
     - securitygroup:
 
 files:
-    - chaim-cleanup.py
-    - chaim.py
-    - envparams.py
-    - paramstore.py
-    - permissions.py
-    - wflambda.py
+    - chaimlib/chaim-cleanup.py
+    - chaimlib/chaim.py
+    - chaimlib/envparams.py
+    - chaimlib/paramstore.py
+    - chaimlib/permissions.py
+    - chaimlib/wflambda.py
     - version

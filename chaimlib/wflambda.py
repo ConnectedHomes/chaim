@@ -45,7 +45,7 @@ def wfwrapper(func):
         result = None
         try:
             result = func(*args, **kwargs)
-        except:
+        except Exception:
             # Set error counter
             aws_lambda_errors_counter.inc()
             aws_lambda_error_event_counter.inc()
@@ -61,7 +61,7 @@ def wfwrapper(func):
         try:
             result = func(*args, **kwargs)
             return result
-        except:
+        except Exception:
             raise
         finally:
             wf_reporter.report_now(registry=reg)
@@ -86,18 +86,17 @@ def wfwrapper(func):
         split_arn = invoked_function_arn.split(':')
         point_tags = {
             'LambdaArn': invoked_function_arn,
-            'FunctionName' : context.function_name,
+            'FunctionName': context.function_name,
             'ExecutedVersion': context.function_version,
             'Region': split_arn[3],
             'accountId': split_arn[4]
         }
         if split_arn[5] == 'function':
             point_tags['Resource'] = split_arn[6]
-            if len(split_arn) == 8 :
+            if len(split_arn) == 8:
                 point_tags['Resource'] = point_tags['Resource'] + ":" + split_arn[7]
         elif split_arn[5] == 'event-source-mappings':
             point_tags['EventSourceMappings'] = split_arn[6]
-
 
         # Initialize registry for each lambda invocation
         global reg
@@ -112,16 +111,20 @@ def wfwrapper(func):
                                                      prefix="")
 
         if is_report_standard_metrics:
-            return call_lambda_with_standard_metrics(wf_direct_reporter,
-                                              *args,
-                                              **kwargs)
+            return call_lambda_with_standard_metrics(wf_direct_reporter, *args, **kwargs)
         else:
-            return call_lambda_without_standard_metrics(wf_direct_reporter,
-                                                 *args,
-                                                 **kwargs)
+            return call_lambda_without_standard_metrics(wf_direct_reporter, *args, **kwargs)
 
     return wavefront_wrapper
 
 
 def get_registry():
     return reg
+
+
+def inc_counter(mname):
+    try:
+        delt = delta.delta_counter(reg, mname)
+        delt.inc()
+    except Exception:
+        raise

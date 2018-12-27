@@ -1,0 +1,4 @@
+pytest
+pymysql
+chardet
+wavefront_pyformance
