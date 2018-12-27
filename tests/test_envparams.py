@@ -1,4 +1,3 @@
-import pytest
 import os
 from chaimlib.envparams import EnvParam
 
@@ -6,9 +5,9 @@ os.environ["TESTPARAM"] = "ATESTPARAM"
 
 
 def test_param_not_exist():
-    with pytest.raises(Exception):
-        ep = EnvParam()
-        ep.getParam("NOTEXIST")
+    ep = EnvParam()
+    val = ep.getParam("NOTEXIST")
+    assert val is False
 
 
 def test_param_exist():
