@@ -1,7 +1,7 @@
-from wavefront_pyformance.wavefront_reporter import WavefrontDirectReporter
-from pyformance import MetricsRegistry
 import os
 from datetime import datetime
+from wavefront_pyformance.wavefront_reporter import WavefrontDirectReporter
+from pyformance import MetricsRegistry
 from wavefront_pyformance import delta
 
 is_cold_start = True
