@@ -44,26 +44,6 @@ def incMetric(mname):
         msg = "incMetric error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
         raise
-# def incMetric(mname):
-#     """
-#     increments a wavefront metric counter
-#     """
-#     log.debug("inc metric stage: dev")
-#     ep = EnvParam()
-#     chaimstage = ep.getParam("CHAIM_STAGE", decode=True)
-#     registry = get_registry()
-#     fname = "chaim." + chaimstage + "." + mname
-#     if registry is not None:
-#         counter = registry.counter(fname)
-#         try:
-#             log.debug("counter inc: {}".format(fname))
-#             counter.inc()
-#             return True
-#         except Exception as e:
-#             log.warning("inc failed for {}: {}: {}".format(mname, type(e).__name__, e))
-#     else:
-#         log.warning("Failed to initialise the wavefront registry for: " + fname)
-#         return False
 
 
 def getWFKey(stage="prod"):
