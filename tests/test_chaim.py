@@ -1,4 +1,5 @@
 import os
+import pytest
 import chaimlib.chaim as chaim
 from chaimlib.envparams import EnvParam
 
@@ -35,3 +36,14 @@ def test_getWFKey():
     ep = EnvParam()
     wft = ep.getParam("WAVEFRONT_API_TOKEN", True)
     assert wft is not False
+
+
+def test_loglevelwarn():
+    lvl = chaim.log.getEffectiveLevel()
+    assert lvl is 30
+
+
+def test_logleveldebug():
+    lvl = chaim.log.getEffectiveLevel()
+    chaim.setDebug()
+    assert (lvl is 30) and (10 is chaim.log.getEffectiveLevel())

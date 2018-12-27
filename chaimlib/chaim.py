@@ -40,6 +40,7 @@ def incMetric(mname):
         fname = "chaim." + os.environ["CHAIM_STAGE"] + "." + mname + ".delta"
         log.debug("incMetric: {}".format(fname))
         inc_counter(fname)
+        return True
     except Exception as e:
         msg = "incMetric error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
