@@ -18,6 +18,7 @@
 """filesystem routines"""
 
 import os
+import shutil
 from pathlib import Path
 
 
@@ -92,6 +93,10 @@ class FileSystem(object):
         """renames the source file"""
         p = Path(src)
         p.rename(dest)
+
+    def copyfile(self, src, dst):
+        """copies the file to the destination"""
+        return shutil.copyfile(src, dst)
 
     def askMe(self, q, default):
         """asks the user a question and returns the answer, or a default answer"""
