@@ -53,12 +53,25 @@ def findFunction(allfuncs, fnname):
     return found
 
 
+def prepareFunction():
+    pass
+
+
+def updateFunction():
+    pass
+
+
+def installFunction():
+    pass
+
+
 env = "dev"
 if len(sys.argv) > 1:
     env = sys.argv[1]
 medir = os.getcwd()
 me = os.path.basename(medir)
 yamlfn = medir + "/" + me + ".yaml"
+reqsfn = medir + "/requirements.txt"
 if os.path.exists(yamlfn):
     with open(yamlfn, "r") as yfs:
         config = yaml.load(yfs)
