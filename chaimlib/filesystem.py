@@ -96,6 +96,8 @@ class FileSystem(object):
 
     def copyfile(self, src, dst):
         """copies the file to the fully qualified destination"""
+        if self.dirExists(dst):
+            dst += "/" + self.basename(src)
         return shutil.copyfile(src, dst)
 
     def askMe(self, q, default):
