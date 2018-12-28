@@ -63,7 +63,7 @@ def findFunction(allfuncs, fnname):
 def installRequirements(reqfn, tmpdir):
     fs = FileSystem()
     if fs.fileExists(reqfn):
-        cmd = "pip install -r " + reqfn + " -t tmpdir"
+        cmd = "pip install -r " + reqfn + " -t " + tmpdir
         return subprocess.check_call(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
     else:
         print("{} does not exist.".format(reqfn))
