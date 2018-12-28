@@ -1,6 +1,8 @@
 ---
 codeenv:
     - SECRETPATH: /sre/chaim/
+    - WAVEFRONT_URL: https://connectedhome.wavefront.com
+    - REPORT_STANDARD_METRICS: True
 
 tags:
     - Name: chaim-cleanup
