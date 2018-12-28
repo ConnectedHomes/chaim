@@ -70,12 +70,11 @@ class FileSystem(object):
         return ret
 
     def makeFilePath(self, fn):
-        """this doesn't look right, I'll have to check it"""
+        """makes the full path for the file."""
         ret = False
         try:
-            pfn = os.path.basename(fn)
-            self.makePath(pfn)
-            ret = True
+            pfn = self.dirname(fn)
+            ret = self.makePath(pfn)
         except Exception as e:
             print("an error occurred making file path {}, exception was {}".format(fn, e))
         return ret
