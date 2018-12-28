@@ -95,7 +95,7 @@ class FileSystem(object):
         p.rename(dest)
 
     def copyfile(self, src, dst):
-        """copies the file to the destination"""
+        """copies the file to the fully qualified destination"""
         return shutil.copyfile(src, dst)
 
     def askMe(self, q, default):
