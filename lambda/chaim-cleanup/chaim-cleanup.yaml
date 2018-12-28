@@ -16,7 +16,8 @@ vpc:
     - securitygroup:
 
 files:
-    - chaimlib/chaim-cleanup.py
+    - chaim-cleanup.py
+    - README.md
     - chaimlib/chaim.py
     - chaimlib/envparams.py
     - chaimlib/paramstore.py
