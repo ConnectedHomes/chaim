@@ -1,5 +1,5 @@
 ---
-handler: chaim-cleanup:cleanup
+handler: chaim-cleanup.cleanup
 role: arn:aws:iam::499223386158:role/chaim-lambda-rds
 runtime: python3.6
 description: "Function to periodically clean the chaim db of expired access key records"
