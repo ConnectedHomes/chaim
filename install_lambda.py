@@ -107,8 +107,7 @@ def prepareLambda(fname, vstr, wd, files, reqfn):
         # ensure that the mode of all files in the zip is correct
         print("zipping up")
         cmd = "zip -r " + zipfn + " ."
-        remod = subprocess.check_call(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
-        print("{}".format(remod))
+        subprocess.check_call(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
         # pz = PyZip(PyFolder("./", interpret=False))
         # pz.save(zipfn)
         os.chdir(packd)
