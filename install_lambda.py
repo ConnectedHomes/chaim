@@ -207,13 +207,13 @@ def unpackList(carr):
     return v
 
 
+fs = FileSystem()
 env = "dev"
 if len(sys.argv) > 1:
     env = sys.argv[1]
 medir = os.getcwd()
 if env == "-c":
     packd = medir + "/package"
-    fs = FileSystem()
     if fs.dirExists(packd):
         shutil.rmtree(packd)
     sys.exit(0)
@@ -230,7 +230,11 @@ if os.path.exists(yamlfn):
     with open("version", "w") as vfn:
         vfn.write(verstr)
     lambdaname = config["tags"][0]["Name"] + "-" + env
-    zipfn = prepareLambda(me, verstr, medir, config["files"], "requirements.txt")
+    lzip = "package/" + lambdaname + ".zip"
+    if env in ["dev", "test"] and fs.fileExists(lzip):
+        zipfn = lzip
+    else:
+        zipfn = prepareLambda(me, verstr, medir, config["files"], "requirements.txt")
     if zipfn is None:
         print("failed to create zip file")
         sys.exit(1)
