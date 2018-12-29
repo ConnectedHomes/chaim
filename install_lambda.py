@@ -20,10 +20,17 @@ import version
 from chaimlib.filesystem import FileSystem
 
 
+def getVer():
+    return [version.majorv, version.minorv, version.buildv]
+
+
+def getVerstr():
+    xmajorv, xminorv, xbuildv = getVer()
+    return str(xmajorv) + '.' + str(xminorv) + '.' + str(xbuildv)
+
+
 def updateBuild():
-    xmajorv = version.majorv
-    xminorv = version.minorv
-    xbuildv = version.buildv + 1
+    xmajorv, xminorv, xbuildv = getVer()
     with open(os.path.dirname(__file__) + "/version.py", "w") as vfn:
         vfn.write("majorv = {}\n".format(xmajorv))
         vfn.write("minorv = {}\n".format(xminorv))
@@ -218,7 +225,7 @@ if os.path.exists(yamlfn):
         config = yaml.load(yfs)
     config["tags"][0]["environment"] = env
     config["codeenv"][0]["environment"] = env
-    verstr = updateBuild()
+    verstr = updateBuild() if env in ["dev", "test"] else getVerstr()
     config["tags"][0]["version"] = verstr
     with open("version", "w") as vfn:
         vfn.write(verstr)
