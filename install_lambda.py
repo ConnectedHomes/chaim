@@ -128,6 +128,24 @@ def updateLambda(lname, config, zipfn):
                 print("Updated function {} - arn: {}".format(lname, resp["FunctionArn"]))
             else:
                 print("an error occurred updating function, no arn returned")
+            tags = unpackList(config["tags"])
+            envar = unpackList(config["codeenv"])
+            resp = lc.update_function_configuration(
+                FunctionName=lname,
+                Runtime=config["runtime"],
+                Role=config["role"],
+                Handler=config["handler"],
+                Description=config["description"],
+                Timeout=config["timeout"],
+                MemorySize=config["memory"],
+                Environment={"Variables": envar}
+            )
+            if "FunctionArn" in resp:
+                print("Updated function config {} - arn: {}".format(lname, resp["FunctionArn"]))
+                lc.tag_resource(Resource=resp["FunctionArn"], Tags=tags)
+                print("Re-tagged function")
+            else:
+                print("an error occurred updating function config, no arn returned")
     except Exception as e:
         emsg = "update lambda: error: {}: {}".format(type(e).__name__, e)
         print(emsg)
