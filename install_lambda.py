@@ -230,7 +230,7 @@ if os.path.exists(yamlfn):
     with open("version", "w") as vfn:
         vfn.write(verstr)
     lambdaname = config["tags"][0]["Name"] + "-" + env
-    lzip = "package/" + lambdaname + ".zip"
+    lzip = medir + "/package/" + lambdaname + ".zip"
     if env in ["dev", "test"] and fs.fileExists(lzip):
         zipfn = lzip
     else:
