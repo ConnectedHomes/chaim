@@ -1,4 +1,11 @@
 ---
+handler: chaim-cleanup:cleanup
+role: arn:aws:iam::499223386158:role/chaim-lambda-rds
+runtime: python3.6
+description: "Function to periodically clean the chaim db of expired access key records"
+timeout: 10
+memory: 128
+
 codeenv:
     - SECRETPATH: /sre/chaim/
     - WAVEFRONT_URL: https://connectedhome.wavefront.com
