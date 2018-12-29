@@ -232,7 +232,7 @@ if os.path.exists(yamlfn):
     lambdaname = config["tags"][0]["Name"] + "-" + env
     packd = medir + "/package"
     lzip = packd + "/" + me + "-" + verstr + ".zip"
-    if env in ["dev", "test"] and fs.fileExists(lzip):
+    if env not in ["dev"] and fs.fileExists(lzip):
         zipfn = lzip
     else:
         zipfn = prepareLambda(me, verstr, medir, config["files"], "requirements.txt")
