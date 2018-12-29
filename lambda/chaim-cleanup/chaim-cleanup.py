@@ -58,6 +58,7 @@ def cleanup(event, context):
     environment = ep.getParam("environment", True)
     if "dev" == environment:
         log.setLevel(logging.DEBUG)
-    log.debug("chaim cleanup v{}: entered".format(version))
+    log.info("chaim cleanup v{}: entered".format(version))
+    log.info("environment: {}".format(environment))
     chaim.getWFKey(stage=environment)
     doCleanup(event, context, version)

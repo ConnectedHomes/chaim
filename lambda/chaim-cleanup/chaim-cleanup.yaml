@@ -9,7 +9,7 @@ memory: 128
 codeenv:
     - SECRETPATH: /sre/chaim/
     - WAVEFRONT_URL: https://connectedhome.wavefront.com
-    - REPORT_STANDARD_METRICS: True
+    - REPORT_STANDARD_METRICS: "True"
 
 tags:
     - Name: chaim-cleanup
@@ -19,15 +19,20 @@ tags:
 
 vpc:
     - vpcid: vpc-0fea1a5e03044263c
-    - subnets: [subnet-0a0c4e43f03f9e786, subnet-037f401cd76ae132e]
-    - securitygroup:
+    - subnets: [subnet-c74d4ca0, subnet-026b2959]
+    - securitygroup: sg-dfb2eda4
 
 files:
     - chaim-cleanup.py
     - README.md
+    - chaimlib/botosession.py
+    - chaimlib/cognitoclient.py
+    - chaimlib/slackiamdb.py
+    - chaimlib/kmsclient.py
     - chaimlib/chaim.py
     - chaimlib/envparams.py
     - chaimlib/paramstore.py
     - chaimlib/permissions.py
     - chaimlib/wflambda.py
+    - chaimlib/utils.py
     - version

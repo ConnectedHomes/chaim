@@ -3,13 +3,13 @@
 module to install/update lambda code
 """
 
-import os
-import sys
-import shutil
-import yaml
 import boto3
-import tempfile
+import os
+import shutil
 import subprocess
+import sys
+import tempfile
+import yaml
 from pyzip import PyZip
 from pyfolder import PyFolder
 # version module is at the top level of this repo (where
@@ -104,19 +104,83 @@ def prepareLambda(fname, vstr, wd, files, reqfn):
         installRequirements(wd + "/requirements.txt", td)
         fs.makePath(packd)
         os.chdir(td)
-        pz = PyZip(PyFolder("./", interpret=False))
-        pz.save(zipfn)
+        # ensure that the mode of all files in the zip is correct
+        print("zipping up")
+        cmd = "zip -r " + zipfn + " ."
+        remod = subprocess.check_call(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
+        print("{}".format(remod))
+        # pz = PyZip(PyFolder("./", interpret=False))
+        # pz.save(zipfn)
         os.chdir(packd)
         ret = True
-    return ret
+    return zipfn if ret else None
 
 
-def updateLambda():
-    pass
+def updateLambda(lname, config, zipfn):
+    try:
+        lc = boto3.client("lambda")
+        if lc is not None:
+            resp = lc.update_function_code(
+                FunctionName=lname,
+                ZipFile=getZip(zipfn)
+            )
+            if "FunctionArn" in resp:
+                print("Updated function {} - arn: {}".format(lname, resp["FunctionArn"]))
+            else:
+                print("an error occurred updating function, no arn returned")
+    except Exception as e:
+        emsg = "update lambda: error: {}: {}".format(type(e).__name__, e)
+        print(emsg)
 
 
-def installLambda():
-    pass
+def installLambda(lname, config, zipfn):
+    try:
+        lc = boto3.client("lambda")
+        if lc is not None:
+            vpc = unpackList(config["vpc"])
+            tags = unpackList(config["tags"])
+            envar = unpackList(config["codeenv"])
+            resp = lc.create_function(
+                FunctionName=lname,
+                Runtime=config["runtime"],
+                Role=config["role"],
+                Handler=config["handler"],
+                Code={'ZipFile': getZip(zipfn)},
+                Description=config["description"],
+                Timeout=config["timeout"],
+                MemorySize=config["memory"],
+                Publish=True,
+                VpcConfig={
+                    'SubnetIds': vpc["subnets"],
+                    'SecurityGroupIds': [vpc["securitygroup"]]
+                },
+                Environment={"Variables": envar},
+                Tags=tags
+            )
+            if "FunctionArn" in resp:
+                print("Created function {} - arn: {}".format(lname, resp["FunctionArn"]))
+            else:
+                print("an error occurred, no arn returned")
+        else:
+            print("couldn't get a client")
+            sys.exit(1)
+    except Exception as e:
+        emsg = "install lambda: error: {}: {}".format(type(e).__name__, e)
+        print(emsg)
+
+
+def getZip(zipfn):
+    with open(zipfn, 'rb') as zfn:
+        bts = zfn.read()
+    return bts
+
+
+def unpackList(carr):
+    v = {}
+    for ln in carr:
+        for k in ln.keys():
+            v[k] = ln[k]
+    return v
 
 
 env = "dev"
@@ -135,18 +199,24 @@ reqsfn = medir + "/requirements.txt"
 if os.path.exists(yamlfn):
     with open(yamlfn, "r") as yfs:
         config = yaml.load(yfs)
-    config["environment"] = env
+    config["tags"][0]["environment"] = env
+    config["codeenv"][0]["environment"] = env
     verstr = updateBuild()
-    config["version"] = verstr
+    config["tags"][0]["version"] = verstr
     with open("version", "w") as vfn:
         vfn.write(verstr)
     lambdaname = config["tags"][0]["Name"] + "-" + env
-    prepareLambda(me, verstr, medir, config["files"], "requirements.txt")
+    zipfn = prepareLambda(me, verstr, medir, config["files"], "requirements.txt")
+    if zipfn is None:
+        print("failed to create zip file")
+        sys.exit(1)
     allfuncs = getFunctions()
     if findFunction(allfuncs, lambdaname):
-        print("er, lambda {} exists".format(lambdaname))
+        print("er, lambda {} exists, updating".format(lambdaname))
+        updateLambda(lambdaname, config, zipfn)
     else:
         print("function {} doesn't exist, yet".format(lambdaname))
+        installLambda(lambdaname, config, zipfn)
 else:
     print("no config file found: {}".format(yamlfn))
     sys.exit(1)
