@@ -210,8 +210,9 @@ class Permissions():
             else:
                 afrows = self.rwsid.updateQuery(sql)
         except Exception as e:
-            log.error("error executing keymap cleaning query for {} days ago.".format(days))
-            raise DataNotFound(e)
+            msg = "A cleantKeyMap error occurred: {}: {}".format(type(e).__name__, e)
+            log.error(msg)
+            raise DataNotFound(msg)
         return [tfr, afrows]
 
     def updateUserToken(self, username, token, expires):
