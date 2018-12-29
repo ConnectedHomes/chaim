@@ -5,6 +5,7 @@ module to install/update lambda code
 
 import os
 import sys
+import shutil
 import yaml
 import boto3
 import tempfile
@@ -122,6 +123,12 @@ env = "dev"
 if len(sys.argv) > 1:
     env = sys.argv[1]
 medir = os.getcwd()
+if env == "-c":
+    packd = medir + "/package"
+    fs = FileSystem()
+    if fs.dirExists(packd):
+        shutil.rmtree(packd)
+    sys.exit(0)
 me = os.path.basename(medir)
 yamlfn = medir + "/" + me + ".yaml"
 reqsfn = medir + "/requirements.txt"
