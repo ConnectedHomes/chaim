@@ -20,11 +20,14 @@ def doCleanup(event, context, version):
     try:
         ep = EnvParam()
         spath = ep.getParam("SECRETPATH", True)
+        environment = ep.getParam("environment", True)
         if spath is not False:
             pms = Permissions(spath, missing=True)
-            tfr, afr = pms.cleanKeyMap()
+            dryrun = True if environment == "dev" else True
+            tfr, afr = pms.cleanKeyMap(dryrun=dryrun)
             kmsg = "key" if afr == 1 else "keys"
-            msg = "chaim cleanup v{}: {} {} cleaned.".format(version, afr, kmsg)
+            kmsg += " would be" if environment == "dev" else ""
+            msg = "chaim cleanup v{}: {}/{} {} cleaned.".format(version, afr, tfr, kmsg)
             log.info(msg)
             chaim.incMetric("cleanup")
             chaim.ggMetric("cleanup.cleaned", afr)
@@ -51,6 +54,10 @@ def cleanup(event, context):
     """
     with open("version", "r") as vfn:
         version = vfn.read()
+    ep = EnvParam()
+    environment = ep.getParam("environment", True)
+    if "dev" == environment:
+        log.setLevel(logging.DEBUG)
     log.debug("chaim cleanup v{}: entered".format(version))
-    chaim.getWFKey(stage="dev")
+    chaim.getWFKey(stage=environment)
     doCleanup(event, context, version)
