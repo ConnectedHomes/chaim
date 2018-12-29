@@ -19,12 +19,14 @@ class DataNotFound(Exception):
 class Permissions():
     def __init__(self, secretpath="", testdb=False, quick=False,
                  stagepath="", missing=False):
-        if "dev/" == stagepath:
+        if stagepath in ["dev/", "dev"]:
             log.setLevel(logging.DEBUG)
         log.debug("Permissions Entry")
         self.missing = missing
         self.spath = secretpath
-        self.ps = ParamStore(usedefault=True)
+        if len(stagepath) == 0:
+            stagepath = "prod"
+        self.ps = ParamStore(usedefault=True, env=stagepath)
         plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
                  "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
         self.params = self.ps.getParams(plist, environment=stagepath)

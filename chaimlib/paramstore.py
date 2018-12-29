@@ -12,10 +12,12 @@ log = logging.getLogger(__name__)
 
 class ParamStore(BotoSession):
     def __init__(self, awsaccessid=None, awssecretkey=None,
-                 awsprofile=None, stoken=None, usedefault=False):
+                 awsprofile=None, stoken=None, usedefault=False, env="prod"):
         super().__init__(accessid=awsaccessid, secretkey=awssecretkey,
                          theprofile=awsprofile, stoken=stoken,
                          usedefault=usedefault)
+        if env in ["dev/", "dev"]:
+            log.setLevel(logging.DEBUG)
         self.newClient('ssm')
 
     def putParam(self, pname, pvalue, ptype, pkeyid=None, pattern=None):
@@ -149,7 +151,7 @@ class ParamStore(BotoSession):
         if not environment.endswith("/"):
             environment += "/"
         xpath = path + environment
-        log.debug("path: {}".format(xpath))
+        log.debug("param path: {}".format(xpath))
         nl = []
         oparams = {}
         for name in names:
