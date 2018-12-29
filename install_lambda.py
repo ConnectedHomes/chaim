@@ -70,7 +70,7 @@ def installRequirements(reqfn, tmpdir):
         return False
 
 
-def prepareLambda(wd, files, reqfn):
+def prepareLambda(fname, vstr, wd, files, reqfn):
     """prepares the zip file for upload to lambda
 
     wd is the working directory.
@@ -85,7 +85,7 @@ def prepareLambda(wd, files, reqfn):
     ret = False
     fs = FileSystem()
     packd = wd + "/package"
-    zipfn = packd + "/package.zip"
+    zipfn = packd + "/" + fname + "-" + vstr + ".zip"
     with tempfile.TemporaryDirectory() as td:
         for fn in files:
             fnd = fs.dirname(fn)
@@ -134,7 +134,7 @@ if os.path.exists(yamlfn):
     with open("version", "w") as vfn:
         vfn.write(verstr)
     lambdaname = config["tags"][0]["Name"] + "-" + env
-    prepareLambda(medir, config["files"], "requirements.txt")
+    prepareLambda(me, verstr, medir, config["files"], "requirements.txt")
     allfuncs = getFunctions()
     if findFunction(allfuncs, lambdaname):
         print("er, lambda {} exists".format(lambdaname))
