@@ -4,7 +4,6 @@ The chaim api records issued keys to aid event tracing.
 """
 
 
-import logging
 import chaimlib.glue as glue
 from chaimlib.permissions import Permissions
 from chaimlib.wflambda import wfwrapper
