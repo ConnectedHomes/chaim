@@ -44,7 +44,7 @@ def updateBuild(lname):
     cmd = "git add version"
     runcmd(cmd)
     cmsg = "updating {} to {}".format(lname, vstr)
-    cmd = "git commit -m '{}'".format(cmsg)
+    cmd = 'git commit -m "' + cmsg + '"'
     runcmd(cmd)
     return vstr
 
