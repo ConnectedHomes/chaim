@@ -5,7 +5,7 @@ The chaim api records issued keys to aid event tracing.
 
 
 import logging
-import chaimlib.chaim as chaim
+import chaimlib.glue as glue
 from chaimlib.permissions import Permissions
 from chaimlib.wflambda import wfwrapper
 from chaimlib.envparams import EnvParam
@@ -29,17 +29,17 @@ def doCleanup(event, context, version):
             kmsg += " would be" if environment == "dev" else ""
             msg = "chaim cleanup v{}: {}/{} {} cleaned.".format(version, afr, tfr, kmsg)
             log.info(msg)
-            chaim.incMetric("cleanup")
-            chaim.ggMetric("cleanup.cleaned", afr)
-            chaim.ggMetric("cleanup.existing", tfr)
+            glue.incMetric("cleanup")
+            glue.ggMetric("cleanup.cleaned", afr)
+            glue.ggMetric("cleanup.existing", tfr)
         else:
             emsg = "chaim cleanup: secret path not in environment"
             log.error(emsg)
-            chaim.incMetric("cleanup.error")
+            glue.incMetric("cleanup.error")
     except Exception as e:
         emsg = "chaim cleanup v{}: error: {}: {}".format(version, type(e).__name__, e)
         log.error(emsg)
-        chaim.incMetric("cleanup.error")
+        glue.incMetric("cleanup.error")
 
 
 def cleanup(event, context):
@@ -60,5 +60,5 @@ def cleanup(event, context):
         log.setLevel(logging.DEBUG)
     log.info("chaim cleanup v{}: entered".format(version))
     log.info("environment: {}".format(environment))
-    chaim.getWFKey(stage=environment)
+    glue.getWFKey(stage=environment)
     doCleanup(event, context, version)

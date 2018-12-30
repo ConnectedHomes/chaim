@@ -29,7 +29,7 @@ files:
     - chaimlib/cognitoclient.py
     - chaimlib/slackiamdb.py
     - chaimlib/kmsclient.py
-    - chaimlib/chaim.py
+    - chaimlib/glue.py
     - chaimlib/envparams.py
     - chaimlib/paramstore.py
     - chaimlib/permissions.py
