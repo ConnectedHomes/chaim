@@ -2,10 +2,9 @@
 
 from chaimlib.botosession import BotoSession
 from base64 import b64decode
-import logging
+import chaimlib.glue as glue
 
-log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
+log = glue.log
 
 
 class KmsClient(BotoSession):

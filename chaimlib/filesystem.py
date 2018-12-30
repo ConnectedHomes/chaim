@@ -20,6 +20,9 @@
 import os
 import shutil
 from pathlib import Path
+import chaimlib.glue as glue
+
+log = glue.log
 
 
 class FileNotFound(Exception):
@@ -65,7 +68,7 @@ class FileSystem(object):
                 p.mkdir(mode=0o755, parents=True, exist_ok=True)
                 ret = True
             except Exception as e:
-                print("an error occurred making the path {}, exception was {}".format(pn, e))
+                log.error("an error occurred making the path {}, exception was {}".format(pn, e))
         else:
             ret = True
         return ret
@@ -77,7 +80,7 @@ class FileSystem(object):
             pfn = self.dirname(fn)
             ret = self.makePath(pfn)
         except Exception as e:
-            print("an error occurred making file path {}, exception was {}".format(fn, e))
+            log.error("an error occurred making file path {}, exception was {}".format(fn, e))
         return ret
 
     def absPath(self, fn):

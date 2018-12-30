@@ -4,10 +4,9 @@ AWS SSM Parameter Store client functions
 
 from chaimlib.botosession import BotoSession
 import os
-import logging
+import chaimlib.glue as glue
 
-log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
+log = glue.log
 
 
 class ParamStore(BotoSession):
@@ -16,8 +15,6 @@ class ParamStore(BotoSession):
         super().__init__(accessid=awsaccessid, secretkey=awssecretkey,
                          theprofile=awsprofile, stoken=stoken,
                          usedefault=usedefault)
-        if env in ["dev/", "dev"]:
-            log.setLevel(logging.DEBUG)
         self.newClient('ssm')
 
     def putParam(self, pname, pvalue, ptype, pkeyid=None, pattern=None):

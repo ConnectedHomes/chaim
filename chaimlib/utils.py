@@ -1,13 +1,10 @@
 """
 Utilities that don't fit elsewhere
 """
-# import logging
 import time
 import datetime
 import uuid
 
-# log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
 
 
 class Utils():

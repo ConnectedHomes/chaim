@@ -1,7 +1,7 @@
 import pymysql
-import logging
+import chaimlib.glue as glue
 
-log = logging.getLogger(__name__)
+log = glue.log
 
 
 class DBNotConnected(Exception):

@@ -1,10 +1,10 @@
 """AWS Cognito-IDP client functions"""
 
 from chaimlib.botosession import BotoSession
-import logging
 import re
+import chaimlib.glue as glue
 
-log = logging.getLogger(__name__)
+log = glue.log
 
 
 class CognitoClient(BotoSession):

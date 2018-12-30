@@ -1,11 +1,12 @@
-import logging
 from chaimlib.cognitoclient import CognitoClient
 from chaimlib.paramstore import ParamStore
 from chaimlib.slackiamdb import SlackIamDB
 from chaimlib.slackiamdb import DBNotConnected
 from chaimlib.utils import Utils
+import chaimlib.glue as glue
 
-log = logging.getLogger(__name__)
+log = glue.log
+
 
 
 class IncorrectCredentials(Exception):
@@ -19,8 +20,6 @@ class DataNotFound(Exception):
 class Permissions():
     def __init__(self, secretpath="", testdb=False, quick=False,
                  stagepath="", missing=False):
-        if stagepath in ["dev/", "dev"]:
-            log.setLevel(logging.DEBUG)
         log.debug("Permissions Entry")
         self.missing = missing
         self.spath = secretpath

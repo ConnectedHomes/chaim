@@ -1,9 +1,9 @@
 """Base Module for creating a default session with boto3 to AWS"""
 import boto3
 from botocore.exceptions import ClientError
-import logging
-from chaimlib.glue import log
+import chaimlib.glue as glue
 
+log = glue.log
 
 class NoCreds(Exception):
     pass
