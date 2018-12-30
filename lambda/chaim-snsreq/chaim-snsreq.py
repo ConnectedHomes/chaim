@@ -1,6 +1,8 @@
 import chaimlib.glue as glue
 import chaimlib.chaim as chaim
+from slackclient import SlackClient
 from chaimlib.envparams import EnvParam
+from chaimlib.commandparse import CommandParse
 
 log = glue.log
 
