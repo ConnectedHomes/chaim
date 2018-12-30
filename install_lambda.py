@@ -29,14 +29,28 @@ def getVerstr():
     return str(xmajorv) + '.' + str(xminorv) + '.' + str(xbuildv)
 
 
-def updateBuild():
+def updateBuild(lname):
     xmajorv, xminorv, xbuildv = getVer()
     with open(os.path.dirname(__file__) + "/version.py", "w") as vfn:
         vfn.write("majorv = {}\n".format(xmajorv))
         vfn.write("minorv = {}\n".format(xminorv))
         vfn.write("buildv = {}\n".format(xbuildv))
         vfn.write("verstr = str(majorv) + '.' + str(minorv) + '.' + str(buildv)")
-    return str(xmajorv) + '.' + str(xminorv) + '.' + str(xbuildv)
+    vstr = str(xmajorv) + '.' + str(xminorv) + '.' + str(xbuildv)
+    cmd = "git add " + os.path.dirname(__file__) + "/version.py"
+    runcmd(cmd)
+    with open("version", "w") as vfn:
+        vfn.write(vstr)
+    cmd = "git add version"
+    runcmd(cmd)
+    cmsg = "updating {} to {}".format(lname, vstr)
+    cmd = "git commit -m '{}'".format(cmsg)
+    runcmd(cmd)
+    return vstr
+
+
+def runcmd(cmd):
+    return subprocess.check_call(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
 
 
 def getFunctions():
@@ -225,11 +239,9 @@ if os.path.exists(yamlfn):
         config = yaml.load(yfs)
     config["tags"][0]["environment"] = env
     config["codeenv"][0]["environment"] = env
-    verstr = updateBuild() if env in ["dev", "test"] else getVerstr()
-    config["tags"][0]["version"] = verstr
-    with open("version", "w") as vfn:
-        vfn.write(verstr)
     lambdaname = config["tags"][0]["Name"] + "-" + env
+    verstr = updateBuild(lambdaname) if env in ["dev", "test"] else getVerstr()
+    config["tags"][0]["version"] = verstr
     packd = medir + "/package"
     lzip = packd + "/" + me + "-" + verstr + ".zip"
     if env not in ["dev"] and fs.fileExists(lzip):
