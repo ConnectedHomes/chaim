@@ -257,7 +257,7 @@ if os.path.exists(yamlfn):
         print("lambda {} exists, updating to {}".format(lambdaname, verstr))
         updateLambda(lambdaname, config, zipfn)
     else:
-        print("function {} doesn't exist, yet, installing".format(lambdaname))
+        print("function {} doesn't exist, yet, installing {}".format(lambdaname, verstr))
         installLambda(lambdaname, config, zipfn)
 else:
     print("no config file found: {}".format(yamlfn))
