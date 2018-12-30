@@ -45,7 +45,10 @@ def updateBuild(lname):
     cmd = "git add version"
     runcmd(cmd)
     cmsg = "updating {} to {}".format(lname, vstr)
+    print(cmsg)
     cmd = 'git commit -m "' + cmsg + '"'
+    runcmd(cmd)
+    cmd = 'git push'
     runcmd(cmd)
     return vstr
 
@@ -87,7 +90,7 @@ def installRequirements(reqfn, tmpdir):
     fs = FileSystem()
     if fs.fileExists(reqfn):
         cmd = "pip install -r " + reqfn + " -t " + tmpdir
-        return subprocess.check_call(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
+        return runcmd(cmd)
     else:
         print("{} does not exist.".format(reqfn))
         return False
@@ -129,7 +132,7 @@ def prepareLambda(fname, vstr, wd, files, reqfn):
         # ensure that the mode of all files in the zip is correct
         print("zipping up")
         cmd = "zip -r " + zipfn + " ."
-        subprocess.check_call(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
+        runcmd(cmd)
         # pz = PyZip(PyFolder("./", interpret=False))
         # pz.save(zipfn)
         os.chdir(packd)
