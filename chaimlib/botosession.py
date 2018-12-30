@@ -2,9 +2,8 @@
 import boto3
 from botocore.exceptions import ClientError
 import logging
+from chaimlib.glue import log
 
-log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
 
 class NoCreds(Exception):
     pass

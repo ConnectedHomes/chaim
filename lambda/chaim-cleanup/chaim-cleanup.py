@@ -10,9 +10,7 @@ from chaimlib.permissions import Permissions
 from chaimlib.wflambda import wfwrapper
 from chaimlib.envparams import EnvParam
 
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-# log.setLevel(logging.INFO)
+log = glue.log
 
 
 @wfwrapper
@@ -57,7 +55,7 @@ def cleanup(event, context):
     ep = EnvParam()
     environment = ep.getParam("environment", True)
     if "dev" == environment:
-        log.setLevel(logging.DEBUG)
+        glue.setDebug()
     log.info("chaim cleanup v{}: entered".format(version))
     log.info("environment: {}".format(environment))
     glue.getWFKey(stage=environment)
