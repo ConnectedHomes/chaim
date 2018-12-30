@@ -1,7 +1,7 @@
 import os
-import pytest
 import chaimlib.glue as glue
 from chaimlib.envparams import EnvParam
+from chaimlib.wflambda import getWFKey
 
 os.environ["SECRETPATH"] = "/sre/chaim/"
 os.environ["WAVEFRONT_URL"] = "https://connectedhome.wavefront.com"
@@ -32,7 +32,7 @@ def test_addToReqBody_notexists():
 
 
 def test_getWFKey():
-    glue.getWFKey("dev")
+    getWFKey("dev")
     ep = EnvParam()
     wft = ep.getParam("WAVEFRONT_API_TOKEN", True)
     assert wft is not False
