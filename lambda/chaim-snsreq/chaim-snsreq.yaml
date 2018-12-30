@@ -1,0 +1,38 @@
+---
+handler: chaim-snsreq.snsreq
+role: arn:aws:iam::499223386158:role/chaim-lambda-rds
+runtime: python3.6
+description: "Function to periodically clean the chaim db of expired access key records"
+timeout: 60
+memory: 128
+
+codeenv:
+    - SECRETPATH: /sre/chaim/
+    - WAVEFRONT_URL: https://connectedhome.wavefront.com
+    - REPORT_STANDARD_METRICS: "True"
+
+tags:
+    - Name: chaim-snsreq
+    - product: chaim
+    - role: snsreq
+    - owner: SRE
+
+vpc:
+    - vpcid: vpc-0fea1a5e03044263c
+    - subnets: [subnet-c74d4ca0, subnet-026b2959]
+    - securitygroup: sg-dfb2eda4
+
+files:
+    - chaim-snsreq.py
+    - README.md
+    - chaimlib/botosession.py
+    - chaimlib/cognitoclient.py
+    - chaimlib/slackiamdb.py
+    - chaimlib/kmsclient.py
+    - chaimlib/glue.py
+    - chaimlib/envparams.py
+    - chaimlib/paramstore.py
+    - chaimlib/permissions.py
+    - chaimlib/wflambda.py
+    - chaimlib/utils.py
+    - version

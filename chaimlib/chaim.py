@@ -1,14 +1,17 @@
+import chaimlib.glue as glue
 from chaimlib.wflambda import getWFKey
+
+log = glue.log
 
 
 def begin(rbody, context, isSlack=False):
-    stage = getDefaultValue(context, "stage", "dev")
+    stage = glue.getDefaultValue(context, "stage", "dev")
     if stage == "dev":
-        setDebug()
-    rbody = addToReqBody(rbody, "stage", stage)
-    apiid = getDefaultValue(context, "apiId")
-    rbody = addToReqBody(rbody, "apiid", apiid)
-    useragent = "slack" if isSlack else getDefaultValue(context, "useragent", "unknown")
-    rbody = addToReqBody(rbody, "useragent", useragent)
+        glue.setDebug()
+    rbody = glue.addToReqBody(rbody, "stage", stage)
+    apiid = glue.getDefaultValue(context, "apiId")
+    rbody = glue.addToReqBody(rbody, "apiid", apiid)
+    useragent = "slack" if isSlack else glue.getDefaultValue(context, "useragent", "unknown")
+    rbody = glue.addToReqBody(rbody, "useragent", useragent)
     getWFKey(stage)
     return rbody
