@@ -8,6 +8,7 @@ import logging
 import chaimlib.glue as glue
 from chaimlib.permissions import Permissions
 from chaimlib.wflambda import wfwrapper
+from chaimlib.wflambda import getWFKey
 from chaimlib.envparams import EnvParam
 
 log = glue.log
@@ -58,5 +59,5 @@ def cleanup(event, context):
         glue.setDebug()
     log.info("chaim cleanup v{}: entered".format(version))
     log.info("environment: {}".format(environment))
-    glue.getWFKey(stage=environment)
+    getWFKey(stage=environment)
     doCleanup(event, context, version)
