@@ -3,6 +3,8 @@ from datetime import datetime
 from wavefront_pyformance.wavefront_reporter import WavefrontDirectReporter
 from pyformance import MetricsRegistry
 from wavefront_pyformance import delta
+from chaimlib.permissions import Permissions
+from chaimlib.envparams import EnvParam
 
 is_cold_start = True
 reg = None
@@ -127,4 +129,23 @@ def inc_counter(mname):
         delt = delta.delta_counter(reg, mname)
         delt.inc()
     except Exception:
+        raise
+
+
+def getWFKey(stage="prod"):
+    """
+    retrieves the wavefront access key from the param store
+    and populates the environment with it
+    """
+    try:
+        ep = EnvParam()
+        secretpath = ep.getParam("SECRETPATH", decode=True)
+        pms = Permissions(secretpath, stagepath=stage + "/", missing=False, quick=True)
+        wfk = pms.getEncKey("wavefronttoken")
+        os.environ["WAVEFRONT_API_TOKEN"] = wfk
+        os.environ["CHAIM_STAGE"] = stage
+        log.debug("getWFKey: stage: {}".format(os.environ["CHAIM_STAGE"]))
+    except Exception as e:
+        msg = "getWFKey error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
         raise

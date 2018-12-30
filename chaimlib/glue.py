@@ -4,10 +4,9 @@ chaim functions for both CLI and Slack
 
 import os
 import logging
-from chaimlib.permissions import Permissions
-from chaimlib.envparams import EnvParam
 from chaimlib.wflambda import get_registry
 from chaimlib.wflambda import inc_counter
+from chaimlib.wflambda import getWFKey
 
 log = logging.getLogger(__name__)
 
@@ -17,8 +16,7 @@ def ggMetric(mname, val):
     sets a gauge wavefront metric value
     """
     log.debug("gauge metric stage: dev")
-    ep = EnvParam()
-    chaimstage = ep.getParam("CHAIM_STAGE", decode=True)
+    chaimstage = os.environ["CHAIM_STAGE"]
     registry = get_registry()
     fname = "chaim." + chaimstage + "." + mname
     if registry is not None:
@@ -43,25 +41,6 @@ def incMetric(mname):
         return True
     except Exception as e:
         msg = "incMetric error occurred: {}: {}".format(type(e).__name__, e)
-        log.error(msg)
-        raise
-
-
-def getWFKey(stage="prod"):
-    """
-    retrieves the wavefront access key from the param store
-    and populates the environment with it
-    """
-    try:
-        ep = EnvParam()
-        secretpath = ep.getParam("SECRETPATH", decode=True)
-        pms = Permissions(secretpath, stagepath=stage + "/", missing=False, quick=True)
-        wfk = pms.getEncKey("wavefronttoken")
-        os.environ["WAVEFRONT_API_TOKEN"] = wfk
-        os.environ["CHAIM_STAGE"] = stage
-        log.debug("getWFKey: stage: {}".format(os.environ["CHAIM_STAGE"]))
-    except Exception as e:
-        msg = "getWFKey error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
         raise
 
