@@ -149,3 +149,37 @@ def getWFKey(stage="prod"):
         msg = "getWFKey error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
         raise
+
+
+def ggMetric(mname, val):
+    """
+    sets a gauge wavefront metric value
+    """
+    log.debug("gauge metric stage: dev")
+    chaimstage = os.environ["CHAIM_STAGE"]
+    registry = get_registry()
+    fname = "chaim." + chaimstage + "." + mname
+    if registry is not None:
+        gge = registry.gauge(fname)
+        try:
+            log.debug("gauge: {}: {}".format(fname, val))
+            gge.set_value(int(val))
+            return True
+        except Exception as e:
+            log.warning("gauge failed for {}: {}: {}".format(mname, type(e).__name__, e))
+    else:
+        log.warning("Failed to initialise the wavefront registry for: " + fname)
+        return False
+
+
+def incMetric(mname):
+    try:
+        log.debug("inc metric stage: {}".format(os.environ["CHAIM_STAGE"]))
+        fname = "chaim." + os.environ["CHAIM_STAGE"] + "." + mname + ".delta"
+        log.debug("incMetric: {}".format(fname))
+        inc_counter(fname)
+        return True
+    except Exception as e:
+        msg = "incMetric error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        raise

@@ -9,6 +9,8 @@ import chaimlib.glue as glue
 from chaimlib.permissions import Permissions
 from chaimlib.wflambda import wfwrapper
 from chaimlib.wflambda import getWFKey
+from chaimlib.wflambda import incMetric
+from chaimlib.wflambda import ggMetric
 from chaimlib.envparams import EnvParam
 
 log = glue.log
@@ -28,17 +30,17 @@ def doCleanup(event, context, version):
             kmsg += " would be" if environment == "dev" else ""
             msg = "chaim cleanup v{}: {}/{} {} cleaned.".format(version, afr, tfr, kmsg)
             log.info(msg)
-            glue.incMetric("cleanup")
-            glue.ggMetric("cleanup.cleaned", afr)
-            glue.ggMetric("cleanup.existing", tfr)
+            incMetric("cleanup")
+            ggMetric("cleanup.cleaned", afr)
+            ggMetric("cleanup.existing", tfr)
         else:
             emsg = "chaim cleanup: secret path not in environment"
             log.error(emsg)
-            glue.incMetric("cleanup.error")
+            incMetric("cleanup.error")
     except Exception as e:
         emsg = "chaim cleanup v{}: error: {}: {}".format(version, type(e).__name__, e)
         log.error(emsg)
-        glue.incMetric("cleanup.error")
+        incMetric("cleanup.error")
 
 
 def cleanup(event, context):
