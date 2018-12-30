@@ -2,7 +2,7 @@
 handler: chaim-snsreq.snsreq
 role: arn:aws:iam::499223386158:role/chaim-lambda-rds
 runtime: python3.6
-description: "Function to periodically clean the chaim db of expired access key records"
+description: "Slack helper function to generate chaim credentials for a slack user."
 timeout: 120
 memory: 256
 
