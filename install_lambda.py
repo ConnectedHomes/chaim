@@ -254,7 +254,7 @@ if os.path.exists(yamlfn):
         sys.exit(1)
     allfuncs = getFunctions()
     if findFunction(allfuncs, lambdaname):
-        print("lambda {} exists, updating".format(lambdaname))
+        print("lambda {} exists, updating to {}".format(lambdaname, verstr))
         updateLambda(lambdaname, config, zipfn)
     else:
         print("function {} doesn't exist, yet, installing".format(lambdaname))
