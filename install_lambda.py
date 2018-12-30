@@ -31,6 +31,7 @@ def getVerstr():
 
 def updateBuild(lname):
     xmajorv, xminorv, xbuildv = getVer()
+    xbuildv += 1
     with open(os.path.dirname(__file__) + "/version.py", "w") as vfn:
         vfn.write("majorv = {}\n".format(xmajorv))
         vfn.write("minorv = {}\n".format(xminorv))
