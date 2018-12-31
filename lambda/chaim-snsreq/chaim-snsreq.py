@@ -7,13 +7,13 @@ from chaimlib.commandparse import CommandParse
 log = glue.log
 
 
-def doSnsReq(rbody, context, version, ep, env):
+def doSnsReq(rbody, context, verstr, ep, env):
     secretpath = ep.getParam("SECRETPATH", True)
     pms = Permissions(secretpath=secretpath, stagepath=env)
     roled = pms.roleAliasDict()
     cp = CommandParse(rbody, roledict=roled)
     if cp.docommand:
-        pass
+        chaim.doCommand(cp, pms, verstr)
     else:
         pass
 
@@ -30,7 +30,7 @@ def snsreq(event, context):
     rbody = chaim.begin(msg, context, True)
     ep = EnvParam()
     environment = ep.getParam("environment", True)
-    log.info("chaim snsreq v{}: entered".format(version))
-    log.info("environment: {}".format(environment))
+    verstr = "chaim-snsreq-" + environment + " " + version
+    log.info(verstr + " entered.")
     log.debug("sns req: {}".format(rbody))
-    doSnsReq(rbody, context, version, ep, environment)
+    doSnsReq(rbody, context, verstr, ep, environment)
