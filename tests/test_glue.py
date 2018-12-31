@@ -47,3 +47,19 @@ def test_logleveldebug():
     lvl = glue.log.getEffectiveLevel()
     glue.setDebug()
     assert (lvl is 30) and (10 is glue.log.getEffectiveLevel())
+
+
+def test_addToOutStr_empty():
+    xstr = glue.addToOutStr("", "", "")
+    assert xstr == "\n = \n"
+
+
+def test_addToOutStr_empty_init():
+    xstr = glue.addToOutStr("", "new", "new")
+    assert xstr == "\nnew = new\n"
+
+
+def test_addToOutStr():
+    xstr = "eric = two"
+    xstr = glue.addToOutStr(xstr, "new", "unnew")
+    assert xstr == "eric = two\nnew = unnew\n"
