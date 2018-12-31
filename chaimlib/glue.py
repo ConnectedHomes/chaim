@@ -24,6 +24,11 @@ def addToReqBody(rbody, key, val):
     return ret
 
 
+def addToOutStr(ostr, key, val, newline=True):
+    nl = "\n" if newline else ""
+    return "{}{}{} = {}{}".format(ostr, nl, key, value, nl)
+
+
 def setDebug():
     log.setLevel(logging.DEBUG)
 
