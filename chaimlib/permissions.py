@@ -58,11 +58,12 @@ class Permissions():
 
     def getEncKey(self, keyname, extrapath=None):
         param = None
+        spath = self.spath if self.spath.endswith("/") else self.spath + "/"
         try:
             if extrapath is None:
-                param = self.ps.getEString(self.spath + keyname)
+                param = self.ps.getEString(spath + keyname)
             else:
-                param = self.ps.getEString(self.spath + extrapath + keyname)
+                param = self.ps.getEString(spath + extrapath + keyname)
         except Exception as e:
             log.debug("parameter not found: {}".format(keyname))
             if not self.missing:
