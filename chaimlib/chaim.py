@@ -1,8 +1,10 @@
+import base64
 import json
 import requests
 import chaimlib.glue as glue
 from chaimlib.wflambda import getWFKey
 from chaimlib.wflambda import incMetric
+from chaimlib.utils import Utils
 from slackclient import SlackClient
 
 log = glue.log
@@ -199,3 +201,107 @@ def doCommand(cp, pms, verstr):
         msg = pms.countLastSince(2)
         sendToSlack(rdict["responseurl"], "```{}```".format(msg))
         incMetric("countusers")
+
+
+def whosKey(pms, key):
+    """
+    map a chaim issued key to a slack (or CLI) user
+
+    :param pms: Permissions object
+    :param key: the key to map
+    """
+    ut = Utils()
+    row = pms.whosKey(key)
+    if len(row) > 0:
+        log.debug("extracting key")
+        key = row[0][0]
+        log.debug("key got {}".format(key))
+        log.debug("extracting expires")
+        expires = row[0][1]
+        whenat = ut.expiresAt(expires)
+        log.debug("expires got {}".format(expires))
+        log.debug("extracting name")
+        username = row[0][2]
+        log.debug("name got {}".format(username))
+        log.debug("extracting account")
+        account = row[0][3]
+        log.debug("account got {}".format(account))
+        msg = "\n\nKey {}".format(key)
+        msg += "\nIssued to: {}".format(username)
+        msg += "\nfor account: {}".format(account)
+        msg += "\nExpires at: {}\n\n".format(whenat)
+    else:
+        msg = "Key not found"
+    return msg
+
+
+def doKeyInit(rdict, pms):
+    """
+    generate and set user token
+
+    :param rdict: a dictionary of user details built from the incomming request
+    """
+    try:
+        log.debug("keyinit incoming request: {}".format(rdict))
+        if not pms.userActive(rdict["username"]):
+            raise InactiveUser("{} is not an active user.".format(rdict["username"]))
+        log.debug("doKeyInit User {} is ACTIVE".format(rdict["username"]))
+        log.debug("doKeyInit checking token")
+        if not pms.checkToken(rdict["incomingtoken"], rdict["username"]):
+            raise InvalidToken("slack access token is invalid")
+        log.debug("doKeyInit slack token check passed ok")
+        expiredays = 30 if rdict["stage"] != "dev" else 1
+        ut = Utils()
+        uuid, expires = ut.newUserToken(expiredays)
+        if pms.updateUserToken(rdict["username"], uuid, expires):
+            expat, xstr, bstr = buildInitOutputStr(uuid, expires, rdict)
+            msg = "New Chaim Credentials Expire {}\n{}\n```{}```".format(expat, xstr, bstr)
+        else:
+            msg = "Failed to write a new user token, sorry."
+            raise InvalidToken(msg)
+    except Exception as e:
+        msg = "A doKeyInit error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        return msg
+    return msg
+
+
+def readKeyInit(rdict, pms):
+    try:
+        log.debug("keyinit incoming request: {}".format(rdict))
+        if not pms.userActive(rdict["username"]):
+            raise InactiveUser("{} is not an active user.".format(rdict["username"]))
+        if not pms.checkToken(rdict["incomingtoken"], rdict["username"]):
+            raise InvalidToken("slack access token is invalid")
+        log.debug("asking for previous token")
+        token, expires = pms.readUserToken(rdict["username"])
+        expat, xstr, bstr = buildInitOutputStr(token, expires, rdict)
+        msg = "Chaim Credentials Expire {}\n{}\n```{}```".format(expat, xstr, bstr)
+    except Exception as e:
+        msg = "A readKeyInit error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        return msg
+    return msg
+
+
+def buildInitOutputStr(token, expires, rdict):
+    ut = Utils()
+    expa = ut.expiresAt(expires)
+    bstr = ""
+    xstr = "```"
+    xstr = glue.addToOutStr(xstr, "api", rdict["apiid"])
+    bstr = glue.addToReqBody(bstr, "api", rdict["apiid"])
+    xstr = glue.addToOutStr(xstr, "username", rdict["username"])
+    bstr = glue.addToReqBody(bstr, "username", rdict["username"])
+    xstr = glue.addToOutStr(xstr, "usertoken", token)
+    bstr = glue.addToReqBody(bstr, "usertoken", token)
+    xstr = glue.addToOutStr(xstr, "expires", expires)
+    bstr = glue.addToReqBody(bstr, "expires", expires)
+    xstr = glue.addToOutStr(xstr, "stage", rdict["stage"])
+    bstr = glue.addToReqBody(bstr, "stage", rdict["stage"])
+    xstr = glue.addToOutStr(xstr, "region", "eu-west-1")
+    bstr = glue.addToReqBody(bstr, "region", "eu-west-1")
+    xstr += "```\n"
+    benc = base64.urlsafe_b64encode(bstr.encode('utf8'))
+    bstr = "```chaim -j " + benc + "```"
+    return expa, xstr, bstr
