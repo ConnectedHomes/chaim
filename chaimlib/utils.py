@@ -65,7 +65,7 @@ class Utils():
         return [then, xstr]
 
     def expiresAt(self, timestamp):
-        return datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        return datetime.datetime.fromtimestamp(timestamp).strftime("%c")
 
     def genUUID(self):
         u = uuid.uuid4()
