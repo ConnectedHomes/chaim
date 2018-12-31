@@ -307,3 +307,56 @@ class Permissions():
         else:
             log.debug("key {} not found.".format(key))
         return row
+
+    def roleAliasDict(self):
+        radict = {}
+        sql = "select alias, name from awsroles"
+        rows = self.sid.query(sql)
+        for row in rows:
+            alias = row[0]
+            name = row[1]
+            radict[alias] = name
+        log.debug("role aliases: {}".format(radict))
+        return radict
+
+    def lastupdated(self, userid, stamp, cli=False):
+        if self.rwsid is not None:
+            field = "lastslack" if cli is False else "lastcli"
+            sql = "update awsusers set {}={} where id={}".format(field, stamp, userid)
+            log.debug("update: {}".format(sql))
+            self.rwsid.updateQuery(sql)
+
+    def countLastSince(self, months=1):
+        if self.sid is not None:
+            ut = Utils()
+            mnth = ut.displayWord(months, "Month")
+            now = ut.getNow()
+            then = now - (int(months) * 86400 * 30)
+            sql = "select count(id) as cn from awsusers"
+            rows = self.sid.query(sql)
+            log.debug("sql returns {}".format(rows))
+            allusers = rows[0][0]
+            log.debug("allusers {}".format(allusers))
+            sql = "select count(lastcli) as cn from awsusers where lastcli > " + str(then)
+            rows = self.sid.query(sql)
+            log.debug("sql returns {}".format(rows))
+            lastcli = rows[0][0]
+            sql = "select count(lastslack) as cn from awsusers where lastslack > " + str(then)
+            rows = self.sid.query(sql)
+            lastslack = rows[0][0]
+            sql = "select count(lastcli) as cn from awsusers"
+            sql += " where lastcli > " + str(then) + " and lastslack > " + str(then)
+            rows = self.sid.query(sql)
+            lastboth = rows[0][0]
+            active = (int(lastslack) + int(lastcli)) - int(lastboth)
+            inactive = int(allusers) - active
+            msg = "Previous {}".format(mnth)
+            msg += "\n{:<12}{:>5}".format("All:", allusers)
+            msg += "\n{:<12}{:>5}".format("Active:", active)
+            msg += "\n{:<12}{:>5}".format("Inactive:", inactive)
+            msg += "\n{:<12}{:>5}".format("CLI:", lastcli)
+            msg += "\n{:<12}{:>5}".format("Slack:", lastslack)
+            msg += "\n{:<12}{:>5}".format("Both:", lastboth)
+            return msg
+        else:
+            return "DB not connected"
