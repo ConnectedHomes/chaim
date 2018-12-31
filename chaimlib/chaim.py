@@ -269,8 +269,10 @@ def doKeyInit(rdict, pms):
 def readKeyInit(rdict, pms):
     try:
         log.debug("keyinit incoming request: {}".format(rdict))
+        log.debug("checking inactive user")
         if not pms.userActive(rdict["username"]):
             raise InactiveUser("{} is not an active user.".format(rdict["username"]))
+        log.debug("checking user token {}, {}".format(rdict["incomingtoken"], rdict["username"]))
         if not pms.checkToken(rdict["incomingtoken"], rdict["username"]):
             raise InvalidToken("slack access token is invalid")
         log.debug("asking for previous token")
@@ -302,6 +304,7 @@ def buildInitOutputStr(token, expires, rdict):
     xstr = glue.addToOutStr(xstr, "region", "eu-west-1")
     bstr = glue.addToReqBody(bstr, "region", "eu-west-1")
     xstr += "```\n"
-    benc = base64.urlsafe_b64encode(bstr.encode('utf8'))
-    bstr = "```chaim -j " + benc + "```"
+    butf8 = bstr.encode('utf8')
+    benc = base64.urlsafe_b64encode(butf8)
+    bstr = "```chaim -j " + str(benc) + "```"
     return expa, xstr, bstr

@@ -18,3 +18,10 @@ Run the tests for each individual library file by
 pytest tests/test_glue.py
 ```
 (changing to the required file, obviously).
+
+## chaim lib tests
+the environment variable 'UTOK' must be set to the value of your current chaim
+user token for these tests to pass.
+```
+UTOK=436TTTTT-ZZZZ-YYYY-XXXX-UUUUUUb08d1e pytest tests/test_libchaim.py
+```
