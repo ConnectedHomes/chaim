@@ -6,7 +6,6 @@ import datetime
 import uuid
 
 
-
 class Utils():
     def isNumeric(self, xstring):
         try:
@@ -64,6 +63,9 @@ class Utils():
         whenat = datetime.datetime.fromtimestamp(then).strftime("%H:%M:%S")
         xstr += " at {}.".format(whenat)
         return [then, xstr]
+
+    def expiresAt(self, timestamp):
+        return datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%M-%D %H:%M:%S")
 
     def genUUID(self):
         u = uuid.uuid4()
