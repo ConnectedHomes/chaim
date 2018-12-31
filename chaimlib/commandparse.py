@@ -52,7 +52,11 @@ class CommandParse():
         elif field in self.parsed:
             xf = field
         if xf is not None:
-            ret = self.parsed.get(xf)[0].strip()
+            tmp = self.parsed.get(xf)
+            if isinstance(tmp, list):
+                ret = tmp[0].strip()
+            else:
+                ret = self.parsed.get(xf).strip()
         return ret
 
     def parseCommandText(self, cmdtext):
@@ -142,6 +146,8 @@ class CommandParse():
         rdict["responseurl"] = self.responseurl
         rdict["stage"] = self.stage
         rdict["useragent"] = self.useragent
+        if self.apiid is not None:
+            rdict["apiid"] = self.apiid
         if not self.blankbody:
             rdict["duration"] = self.duration
             rdict["rolealias"] = self.rolealias
