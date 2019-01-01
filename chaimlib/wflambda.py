@@ -5,8 +5,9 @@ from pyformance import MetricsRegistry
 from wavefront_pyformance import delta
 from chaimlib.permissions import Permissions
 from chaimlib.envparams import EnvParam
-from chaimlib.glue import log
+import chaimlib.glue as glue
 
+log = glue.log
 is_cold_start = True
 reg = None
 
