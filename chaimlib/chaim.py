@@ -458,7 +458,9 @@ def checkUserAndToken(pms, rdict):
 
 
 def slackTimeStamp(msg, start, rdict, ut):
-    if log.getEffectiveLevel() == 10:
+    lel = log.getEffectiveLevel()
+    log.debug("log effective level: {}".format(lel))
+    if lel == 10:
         # debug mode so send timestamp to slack
         znow = ut.getNow()
         zlen = znow - start
