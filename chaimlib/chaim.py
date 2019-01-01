@@ -14,6 +14,16 @@ from chaimlib.wflambda import incMetric
 log = glue.log
 
 
+class CredentialsGenerationFail(Exception):
+    """Failed to generate full credentials"""
+    pass
+
+
+class UrlGenerationFail(Exception):
+    """Failed to generate a url"""
+    pass
+
+
 class SlackSendFail(Exception):
     """
     Exception: failed to send back to Slack
@@ -334,7 +344,8 @@ def buildCredentials(pms, rdict, noUrl=False):
     except Exception as e:
         emsg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
-    return [emsg, kdict]
+        raise(CredentialsGenerationFail(emsg))
+    return kdict
 
 
 def getUrl(ar, aro, pms, rdict, noUrl, accountid):
@@ -357,7 +368,7 @@ def getUrl(ar, aro, pms, rdict, noUrl, accountid):
     else:
         emsg = "Failed to generate a login url"
         log.error(emsg)
-        raise DataNotFound(emsg)
+        raise UrlGenerationFail(emsg)
     return kdict
 
 

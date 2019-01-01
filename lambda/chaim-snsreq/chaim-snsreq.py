@@ -26,7 +26,7 @@ def doSnsReq(rbody, context, verstr, ep, env):
         rdict = cp.requestDict()
         try:
             log.debug("incoming sns request")
-            emsg, kdict = chaim.buildCredentials(pms, rdict)
+            kdict = chaim.buildCredentials(pms, rdict)
         except Exception as e:
             emsg = "doSnsReq error: {}: {}".format(type(e).__name__, e)
             log.error(emsg)
