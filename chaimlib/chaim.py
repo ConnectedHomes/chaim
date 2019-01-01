@@ -1,11 +1,12 @@
 import base64
 import json
 import requests
+from slackclient import SlackClient
 import chaimlib.glue as glue
+from chaimlib.permissions import IncorrectCredentials
+from chaimlib.utils import Utils
 from chaimlib.wflambda import getWFKey
 from chaimlib.wflambda import incMetric
-from chaimlib.utils import Utils
-from slackclient import SlackClient
 
 log = glue.log
 
@@ -313,8 +314,42 @@ def buildInitOutputStr(token, expires, rdict):
 def buildCredentials(pms, rdict, noUrl=False):
     emsg = kdict = None
     try:
-        pass
+        ut = Utils()
+        zstart = ut.getNow()
+        userid = checkUserAndToken(pms, rdict)
+        pms.lastupdated(userid, stamp=zstart, cli=noUrl)
+        slackTimeStamp("token check", zstart, rdict, ut)
     except Exception as e:
-        msg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
-        log.error(msg)
+        emsg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
+        log.error(emsg)
     return [emsg, kdict]
+
+
+def checkUserAndToken(pms, rdict):
+    if not pms.userActive(rdict["username"]):
+        emsg = "{} is not an active user.".format(rdict["username"])
+        log.error(emsg)
+        raise(IncorrectCredentials(emsg))
+    log.debug("User {} is ACTIVE".format(rdict["username"]))
+    log.debug("Ensuring user exists for permissions check.")
+    userid = pms.checkIDs("awsusers", "name", "User", rdict["username"], True)
+    if userid is None:
+        emsg = "user {} does not exist in chaim.".format(rdict["username"])
+        log.error(emsg)
+        raise(IncorrectCredentials(emsg))
+    log.debug("user {}/{} exists".format(rdict["username"], userid))
+    if not pms.checkToken(rdict["incomingtoken"], rdict["username"]):
+        emsg = "user {} supplied an invalid token".format(rdict["username"])
+        log.error(emsg)
+        raise(IncorrectCredentials(emsg))
+    log.debug("token check passed")
+    return userid
+
+
+def slackTimeStamp(msg, start, rdict, ut):
+    if log.getEffectiveLevel() == 10:
+        # debug mode so send timestamp to slack
+        znow = ut.getNow()
+        zlen = znow - start
+        smsg = "{0:.2f} . {}".format(zlen, msg)
+        sendToSlack(rdict["responseurl"], smsg)

@@ -23,8 +23,12 @@ def doSnsReq(rbody, context, verstr, ep, env):
         log.debug("incoming command request")
         chaim.doCommand(cp, pms, verstr)
     else:
-        log.debug("incoming sns request")
-        emsg, kdict = chaim.buildCredentials()
+        try:
+            log.debug("incoming sns request")
+            emsg, kdict = chaim.buildCredentials()
+        except Exception as e:
+            emsg = "doSnsReq error: {}: {}".format(type(e).__name__, e)
+            log.error(emsg)
 
 
 def snsreq(event, context):
