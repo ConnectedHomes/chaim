@@ -341,7 +341,7 @@ def buildCredentials(pms, rdict, noUrl=False):
             # if the original accountname was just the number
             # obtain the correct name
             rdict["accountname"] = pms.derivedaccountname
-        ar, aro, rdict = startSTS(pms, rdict, accountid, ut)
+        ar, aro, rdict = startSTS(pms, rdict, accountid, ut, zstart)
         slackTimeStamp("role assumed", zstart, rdict, ut)
         kdict = getUrl(ar, aro, pms, rdict, noUrl, accountid)
     except Exception as e:
