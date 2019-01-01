@@ -23,12 +23,14 @@ def doSnsReq(rbody, context, verstr, ep, env):
         log.debug("incoming command request")
         chaim.doCommand(cp, pms, verstr)
     else:
+        rdict = cp.requestDict()
         try:
             log.debug("incoming sns request")
-            emsg, kdict = chaim.buildCredentials()
+            emsg, kdict = chaim.buildCredentials(pms, rdict)
         except Exception as e:
             emsg = "doSnsReq error: {}: {}".format(type(e).__name__, e)
             log.error(emsg)
+            chaim.sendToSlack(rdict["responseurl"], emsg)
 
 
 def snsreq(event, context):

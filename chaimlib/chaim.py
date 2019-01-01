@@ -3,6 +3,7 @@ import json
 import requests
 from slackclient import SlackClient
 import chaimlib.glue as glue
+from chaimlib.assumedrole import AssumedRole
 from chaimlib.permissions import DataNotFound
 from chaimlib.permissions import IncorrectCredentials
 from chaimlib.stsclient import StsClient
@@ -327,15 +328,15 @@ def buildCredentials(pms, rdict, noUrl=False):
             # if the original accountname was just the number
             # obtain the correct name
             rdict["accountname"] = pms.derivedaccountname
-        rdict["aro"], rdict["expires"], rdict["expiresstr"] = startSTS(pms, rdict, accountid, ut)
-        slackTimeStamp("role created", zstart, rdict, ut)
+        ar, aro, rdict = startSTS(pms, rdict, accountid, ut)
+        slackTimeStamp("role assumed", zstart, rdict, ut)
     except Exception as e:
         emsg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
     return [emsg, kdict]
 
 
-def startSTS(pms, rdict, accountid, ut):
+def startSTS(pms, rdict, accountid, ut, zstart):
     aro = None
     try:
         log.debug("attempting sts")
@@ -348,6 +349,7 @@ def startSTS(pms, rdict, accountid, ut):
         rolearn = "arn:aws:iam::{}:role/{}".format(accountid, role)
         aro, xstr = stsc.assumeRoleStr(rolearn)
         log.debug("sts completed")
+        slackTimeStamp("keys obtained", zstart, rdict, ut)
     except Exception as e:
         emsg = "startSTS error: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
@@ -358,16 +360,23 @@ def startSTS(pms, rdict, accountid, ut):
         emsg += " at role {}".format(role)
         log.error(emsg)
         raise(DataNotFound(emsg))
-    expires, expiresstr = ut.expiresInAt(rdict["duration"])
-    rdict["expires"] = expires
+    rdict["expires"], rdict["expiresstr"] = ut.expiresInAt(rdict["duration"])
     msg = "Key: {}".format(aro["Credentials"]["AccessKeyId"])
     msg += " issued to {}".format(sname)
     msg += " for account {}".format(rdict["accountname"])
     msg += " and role {}".format(role)
     log.info(msg)
     log.debug("Recording accesskeyid in db")
-    pms.updateKeyMap(sname, accountid, aro["Credentials"]["AccessKeyId"], expires)
-    return [aro, expires, expiresstr]
+    pms.updateKeyMap(sname, accountid, aro["Credentials"]["AccessKeyId"], rdict["expires"])
+    log.debug("starting assumed role object")
+    try:
+        ar = None
+        ar = AssumedRole(aro)
+    except Exception as e:
+        emsg = "startSTS AssumedRole error: {}: {}".format(type(e).__name__, e)
+        log.error(emsg)
+        raise(DataNotFound(emsg))
+    return [ar, aro, rdict]
 
 
 def checkUserAllowed(pms, rdict):
