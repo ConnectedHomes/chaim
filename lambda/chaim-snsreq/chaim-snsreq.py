@@ -62,12 +62,14 @@ def snsreq(event, context):
     :param event: the AWS lambda event that triggered this
     :param context: the AWS lambda context for this
     """
-    with open("version", "r") as vfn:
-        version = vfn.read()
-    msg = event['Records'][0]['Sns']['Message']
-    rbody = chaim.begin(msg, context, True)
+    log.info("context: {}".format(context))
     ep = EnvParam()
     environment = ep.getParam("environment", True)
+    apiid = ep.getParam("APIID", True)
+    with open("version", "r") as vfn:
+        version = vfn.read()
+    body = event['Records'][0]['Sns']['Message']
+    rbody = chaim.begin(body, environment, "slack", apiid)
     verstr = "chaim-snsreq-" + environment + " " + version
     log.info(verstr + " entered.")
     log.debug("sns req: {}".format(rbody))
