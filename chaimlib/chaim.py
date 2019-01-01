@@ -328,9 +328,13 @@ def buildCredentials(pms, rdict, noUrl=False):
     try:
         ut = Utils()
         zstart = ut.getNow()
+        log.debug("buildCredentials: checking user and token")
         userid = checkUserAndToken(pms, rdict)
+        log.debug("buildCredentials: updating last access stamp")
         pms.lastupdated(userid, stamp=zstart, cli=noUrl)
+        log.debug("buildCredentials: updating slack")
         slackTimeStamp("token check", zstart, rdict, ut)
+        log.debug("buildCredentials: checking user allowed")
         accountid = checkUserAllowed(pms, rdict)
         slackTimeStamp("user authorised", zstart, rdict, ut)
         if accountid == rdict["accountname"]:
