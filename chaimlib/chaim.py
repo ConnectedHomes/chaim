@@ -260,7 +260,7 @@ def doKeyInit(rdict, pms):
             msg = "Failed to write a new user token, sorry."
             raise InvalidToken(msg)
     except Exception as e:
-        msg = "A doKeyInit error occurred: {}: {}".format(type(e).__name__, e)
+        msg = "doKeyInit error: {}: {}".format(type(e).__name__, e)
         log.error(msg)
         return msg
     return msg
@@ -280,7 +280,7 @@ def readKeyInit(rdict, pms):
         expat, xstr, bstr = buildInitOutputStr(token, expires, rdict)
         msg = "Chaim Credentials Expire {}\n{}\n```{}```".format(expat, xstr, bstr)
     except Exception as e:
-        msg = "A readKeyInit error occurred: {}: {}".format(type(e).__name__, e)
+        msg = "readKeyInit error: {}: {}".format(type(e).__name__, e)
         log.error(msg)
         return msg
     return msg
@@ -312,4 +312,9 @@ def buildInitOutputStr(token, expires, rdict):
 
 def buildCredentials(pms, rdict, noUrl=False):
     emsg = kdict = None
+    try:
+        pass
+    except Exception as e:
+        msg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
     return [emsg, kdict]
