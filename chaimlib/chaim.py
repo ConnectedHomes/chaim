@@ -345,7 +345,7 @@ def buildCredentials(pms, rdict, noUrl=False):
         emsg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
         raise(CredentialsGenerationFail(emsg))
-    return kdict
+    return [kdict, rdict]
 
 
 def getUrl(ar, aro, pms, rdict, noUrl, accountid):
