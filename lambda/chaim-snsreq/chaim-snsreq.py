@@ -31,25 +31,25 @@ def doSnsReq(rbody, context, verstr, ep, env):
                 raise(Exception("Failed to build credentials."))
             cmsg = "\nCredentials OK. "
             cmsg += "The ChatBot will send a url for account "
-            cmsg +- "{}".format(rdict["accountname"])
-            cmsg += "{} - {} with a role of {}\n".format(rdict["accountname"], kdict["accountid"], rdict["role"])
-
-            sendToSlack(rdict["responseurl"], cmsg)
+            cmsg += "{} ".format(rdict["accountname"])
+            cmsg += "- {} ".format(kdict["accountid"])
+            cmsg += "with a role of {}\n".format(rdict["role"])
+            chaim.sendToSlack(rdict["responseurl"], cmsg)
             umsg = "Account ID: {}".format(kdict["accountid"])
             if rdict["stage"] == "dev":
                 umsg += "\nAccessKeyID: {}\n".format(kdict["accesskeyid"])
                 umsg += "SecretKeyID: {}\n".format(kdict["secretkey"])
                 umsg += "Session Token: {}\n".format(kdict["sessiontoken"])
             umsg += "\nLink {}\n".format(rdict["expiresstr"].lower())
-            incMetric("key.sns")
-            res = sendSlackBot(pms.slackapitoken, rdict["username"], umsg, kdict["url"],
-                               "{} {}".format(rdict["accountname"].upper(), rdict["role"]))
+            chaim.incMetric("key.sns")
+            res = chaim.sendSlackBot(pms.slackapitoken, rdict["username"], umsg, kdict["url"],
+                                     "{} {}".format(rdict["accountname"].upper(), rdict["role"]))
             if res['ok'] is False:
                 emsg = "Sending login url to users private Slack Channel failed"
                 emsg += ": {}".format(res)
                 log.error(emsg)
-                sendToSlack(rdict["responseurl"], emsg)
-                raise(SlackSendFail(emsg))
+                chaim.sendToSlack(rdict["responseurl"], emsg)
+                raise(chaim.SlackSendFail(emsg))
         except Exception as e:
             emsg = "doSnsReq error: {}: {}".format(type(e).__name__, e)
             log.error(emsg)
