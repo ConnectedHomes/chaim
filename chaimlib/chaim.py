@@ -291,7 +291,7 @@ def readKeyInit(rdict, pms):
         log.debug("asking for previous token")
         token, expires = pms.readUserToken(rdict["username"])
         expat, xstr, bstr = buildInitOutputStr(token, expires, rdict)
-        msg = "Chaim Credentials Expire {}\n{}\n```{}```".format(expat, xstr, bstr)
+        msg = "Chaim Credentials Expire {}\n{}\n{}".format(expat, xstr, bstr)
     except Exception as e:
         msg = "readKeyInit error: {}: {}".format(type(e).__name__, e)
         log.error(msg)
