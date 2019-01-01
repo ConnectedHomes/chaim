@@ -8,14 +8,23 @@ log = glue.log
 
 
 def doSnsReq(rbody, context, verstr, ep, env):
+    """The chaim sns handler hands off to this after obtaining the wavefront key
+
+    :param rbody: the request body
+    :param context: the AWS lambda context
+    :param verstr: the full version string
+    :param ep: an EnvParam object
+    :param evn: the enviroment this is operating in
+    """
     secretpath = ep.getParam("SECRETPATH", True)
     pms = Permissions(secretpath=secretpath, stagepath=env)
-    roled = pms.roleAliasDict()
-    cp = CommandParse(rbody, roledict=roled)
+    cp = CommandParse(rbody, roledict=pms.roleAliasDict())
     if cp.docommand:
+        log.debug("incoming command request")
         chaim.doCommand(cp, pms, verstr)
     else:
-        pass
+        log.debug("incoming sns request")
+        chaim.buildCredentials()
 
 
 def snsreq(event, context):

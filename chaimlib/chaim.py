@@ -308,3 +308,7 @@ def buildInitOutputStr(token, expires, rdict):
     benc = base64.urlsafe_b64encode(butf8)
     bstr = "```chaim -j " + str(benc) + "```"
     return expa, xstr, bstr
+
+
+def buildCredentials():
+    pass
