@@ -193,13 +193,13 @@ def doCommand(cp, pms, verstr):
     elif cp.keyinit:
         log.debug("keyinit requested")
         rdict["apiid"] = cp.apiid
-        msg = doKeyInit(rdict)
+        msg = doKeyInit(rdict, pms)
         sendToSlack(rdict["responseurl"], msg)
         incMetric("keyinit")
     elif cp.doinitshow:
         log.debug("initshow requested")
         rdict["apiid"] = cp.apiid
-        msg = readKeyInit(rdict)
+        msg = readKeyInit(rdict, pms)
         sendToSlack(rdict["responseurl"], msg)
         incMetric("initshow")
     elif cp.doshowroles:
