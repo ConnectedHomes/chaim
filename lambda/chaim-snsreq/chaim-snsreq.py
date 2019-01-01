@@ -27,6 +27,8 @@ def doSnsReq(rbody, context, verstr, ep, env):
         try:
             log.debug("incoming sns request")
             kdict = chaim.buildCredentials(pms, rdict)
+            if kdict is None:
+                raise(Exception("Failed to build credentials."))
         except Exception as e:
             emsg = "doSnsReq error: {}: {}".format(type(e).__name__, e)
             log.error(emsg)
