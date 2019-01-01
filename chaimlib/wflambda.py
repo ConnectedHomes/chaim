@@ -70,6 +70,7 @@ def wfwrapper(func):
             wf_reporter.report_now(registry=reg)
 
     def wavefront_wrapper(*args, **kwargs):
+        log.debug("WaveFrontWrapper: starting")
         server = os.environ.get('WAVEFRONT_URL')
         if not server:
             raise ValueError("Environment variable WAVEFRONT_URL is not set.")
@@ -101,9 +102,12 @@ def wfwrapper(func):
         elif split_arn[5] == 'event-source-mappings':
             point_tags['EventSourceMappings'] = split_arn[6]
 
+        log.debug("WaveFrontWrapper: starting registry")
         # Initialize registry for each lambda invocation
         global reg
         reg = MetricsRegistry()
+        if reg is None:
+            log.error("WaveFrontWrapper: failed to start registry")
 
         # Initialize the wavefront direct reporter
         wf_direct_reporter = WavefrontDirectReporter(server=server,
