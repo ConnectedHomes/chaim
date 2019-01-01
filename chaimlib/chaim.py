@@ -330,10 +330,35 @@ def buildCredentials(pms, rdict, noUrl=False):
             rdict["accountname"] = pms.derivedaccountname
         ar, aro, rdict = startSTS(pms, rdict, accountid, ut)
         slackTimeStamp("role assumed", zstart, rdict, ut)
+        kdict = getUrl(ar, aro, pms, rdict, noUrl, accountid)
     except Exception as e:
         emsg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
     return [emsg, kdict]
+
+
+def getUrl(ar, aro, pms, rdict, noUrl, accountid):
+    kdict = None
+    log.debug("asking for url for {} seconds (if requested)".format(rdict["duration"]))
+    loginurl = "notset" if noUrl else ar.getLoginUrl(rdict["duration"])
+    if loginurl is not False:
+        creds = aro["Credentials"]
+        kdict = {
+            "accountid": accountid,
+            "sectionname": rdict["accountname"],
+            "accesskeyid": creds["AccessKeyId"],
+            "secretkey": creds["SecretAccessKey"],
+            "sessiontoken": creds["SessionToken"],
+            "expiresstr": rdict["expiresstr"],
+            "expires": rdict["expires"],
+            "url": loginurl,
+            "slackapitoken": pms.slackapitoken
+        }
+    else:
+        emsg = "Failed to generate a login url"
+        log.error(emsg)
+        raise DataNotFound(emsg)
+    return kdict
 
 
 def startSTS(pms, rdict, accountid, ut, zstart):
