@@ -25,11 +25,14 @@ def addToReqBody(rbody, key, val):
 
 
 def addToOutStr(ostr, key, val, newline=True):
+    log.debug("in addToOutString")
+    log.debug("{} {} {} {}".format(ostr, key, val, newline))
     nl = "\n" if newline else ""
     if len(ostr) == 0:
         msg = "{} = {}".format(key, val)
     else:
         msg = "{}{}{} = {}".format(ostr, nl, key, val)
+    return msg
 
 
 def setDebug():
