@@ -464,5 +464,9 @@ def slackTimeStamp(msg, start, rdict, ut):
         # debug mode so send timestamp to slack
         znow = ut.getNow()
         zlen = znow - start
-        smsg = "{0:.2f} . {}".format(zlen, msg)
+        log.debug("creating message")
+        smsg = "{0:.2f} . {1}".format(zlen, msg)
+        log.debug("message created")
+        log.debug("rdict is {}".format(rdict))
+        log.debug("sending to slack")
         sendToSlack(rdict["responseurl"], smsg)
