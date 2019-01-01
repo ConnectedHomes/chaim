@@ -22,6 +22,7 @@ class CommandParse():
         self.docountusers = False
         self.docommand = False
         self.roledict = roledict
+        self.apiid = None
         log.debug("Command parse entry")
         log.debug("rawbody: {}".format(rawbody))
         self.parsed = parse_qs(rawbody)
