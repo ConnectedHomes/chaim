@@ -3,10 +3,12 @@ import chaimlib.chaim as chaim
 from chaimlib.envparams import EnvParam
 from chaimlib.permissions import Permissions
 from chaimlib.commandparse import CommandParse
+from chaimlib.wflambda import wfwrapper
 
 log = glue.log
 
 
+@wfwrapper
 def doSnsReq(rbody, context, verstr, ep, env):
     """The chaim sns handler hands off to this after obtaining the wavefront key
 
