@@ -24,7 +24,7 @@ def doSnsReq(rbody, context, verstr, ep, env):
         chaim.doCommand(cp, pms, verstr)
     else:
         log.debug("incoming sns request")
-        chaim.buildCredentials()
+        emsg, kdict = chaim.buildCredentials()
 
 
 def snsreq(event, context):

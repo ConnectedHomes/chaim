@@ -310,5 +310,6 @@ def buildInitOutputStr(token, expires, rdict):
     return expa, xstr, bstr
 
 
-def buildCredentials():
-    pass
+def buildCredentials(pms, rdict, noUrl=False):
+    emsg = kdict = None
+    return [emsg, kdict]
