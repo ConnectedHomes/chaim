@@ -8,7 +8,6 @@ import chaimlib.glue as glue
 log = glue.log
 
 
-
 class IncorrectCredentials(Exception):
     pass
 
@@ -98,7 +97,7 @@ class Permissions():
             raise DataNotFound(msg)
         return ret
 
-    def checkToken(self, token, username, extrapath=None):
+    def checkToken(self, token, username):
         log.debug("token: {}, username: {}".format(token, username))
         ut = Utils()
         slacktoken = self.params["slacktoken"]
