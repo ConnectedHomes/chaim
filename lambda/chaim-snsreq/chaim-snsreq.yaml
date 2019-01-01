@@ -27,6 +27,7 @@ files:
     - chaim-snsreq.py
     - chaimlib/assumedrole.py
     - chaimlib/botosession.py
+    - chaimlib/chaim.py
     - chaimlib/cognitoclient.py
     - chaimlib/commandparse.py
     - chaimlib/envparams.py
