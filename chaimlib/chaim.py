@@ -3,7 +3,9 @@ import json
 import requests
 from slackclient import SlackClient
 import chaimlib.glue as glue
+from chaimlib.permissions import DataNotFound
 from chaimlib.permissions import IncorrectCredentials
+from chaimlib.stsclient import StsClient
 from chaimlib.utils import Utils
 from chaimlib.wflambda import getWFKey
 from chaimlib.wflambda import incMetric
@@ -322,11 +324,41 @@ def buildCredentials(pms, rdict, noUrl=False):
         accountid = checkUserAllowed(pms, rdict)
         slackTimeStamp("user authorised", zstart, rdict, ut)
         if accountid == rdict["accountname"]:
+            # if the original accountname was just the number
+            # obtain the correct name
             rdict["accountname"] = pms.derivedaccountname
+        aro = startSTS(pms, rdict, accountid)
+        slackTimeStamp("role assumed", zstart, rdict, ut)
     except Exception as e:
         emsg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
     return [emsg, kdict]
+
+
+def startSTS(pms, rdict, accountid):
+    aro = None
+    try:
+        log.debug("attempting sts")
+        akey = pms.getEncKey("accesskeyid")
+        skey = pms.getEncKey("secretkeyid")
+        sname = rdict["username"]
+        dur = rdict["duration"]
+        role = rdict["role"]
+        stsc = StsClient(awsaccessid=akey, awssecretkey=skey, sessionname=sname, duration=dur)
+        rolearn = "arn:aws:iam::{}:role/{}".format(accountid, role)
+        aro, xstr = stsc.assumeRoleStr(rolearn)
+        log.debug("sts completed")
+    except Exception as e:
+        emsg = "startSTS error: {}: {}".format(type(e).__name__, e)
+        log.error(emsg)
+        raise(DataNotFound(emsg))
+    if aro is None:
+        emsg = "failed to generate access keys for user {}".format(sname)
+        emsg += " for account {}".format(rdict["accountname"])
+        emsg += " at role {}".format(role)
+        log.error(emsg)
+        raise(DataNotFound(emsg))
+    return aro
 
 
 def checkUserAllowed(pms, rdict):
