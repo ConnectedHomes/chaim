@@ -319,10 +319,32 @@ def buildCredentials(pms, rdict, noUrl=False):
         userid = checkUserAndToken(pms, rdict)
         pms.lastupdated(userid, stamp=zstart, cli=noUrl)
         slackTimeStamp("token check", zstart, rdict, ut)
+        accountid = checkUserAllowed(pms, rdict)
+        slackTimeStamp("user authorised", zstart, rdict, ut)
+        if accountid == rdict["accountname"]:
+            rdict["accountname"] = pms.derivedaccountname
     except Exception as e:
         emsg = "buildCredentials error: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
     return [emsg, kdict]
+
+
+def checkUserAllowed(pms, rdict):
+    user = rdict["username"]
+    account = rdict["accountname"]
+    role = rdict["role"]
+    # everyone is allowed to use the ChaimDownloader role in the connectedhome-dev account
+    if "ChaimDownloader" == role and "connectedhome-dev" == account:
+        allowed = True
+        accountid = "572871073281"
+    else:
+        allowed, accountid = pms.userAllowed(user, account, role)
+    if not allowed:
+        emsg = "user {} is not allowed to access {} at role {}".format(user, account, role)
+        log.error(emsg)
+        raise(IncorrectCredentials(emsg))
+    log.info("user {} is allowed to access {} at role {}".format(user, account, role))
+    return accountid
 
 
 def checkUserAndToken(pms, rdict):
