@@ -201,7 +201,7 @@ class Permissions():
             ut = Utils()
             then = ut.getNow() - (days * 24 * 60 * 60)
             if dryrun:
-                sql = "select * from keymap "
+                sql = "select count(*) from keymap "
             else:
                 sql = "delete from keymap "
             sql += "where expires < {}".format(then)
