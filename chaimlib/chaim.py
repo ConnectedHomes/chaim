@@ -300,10 +300,12 @@ def readKeyInit(rdict, pms):
 
 
 def buildInitOutputStr(token, expires, rdict):
+    log.debug("in buildInitOutputStr")
     ut = Utils()
     expa = ut.expiresAt(expires)
     bstr = ""
     xstr = "```"
+    log.debug("calling first addToOutStr: {}, {}, {}".format(xstr, "api", rdict["apiid"]))
     xstr = glue.addToOutStr(xstr, "api", rdict["apiid"])
     bstr = glue.addToReqBody(bstr, "api", rdict["apiid"])
     xstr = glue.addToOutStr(xstr, "username", rdict["username"])
@@ -319,7 +321,7 @@ def buildInitOutputStr(token, expires, rdict):
     xstr += "```\n"
     butf8 = bstr.encode('utf8')
     benc = base64.urlsafe_b64encode(butf8)
-    bstr = "```chaim -j " + str(benc) + "```"
+    bstr = "```chaim -j " + benc.decode('utf8') + "```"
     return expa, xstr, bstr
 
 
