@@ -207,7 +207,8 @@ class Permissions():
             sql += "where expires < {}".format(then)
             if dryrun:
                 rows = self.sid.query(sql)
-                afrows = len(rows)
+                for row in rows:
+                    afrows = row[0]
             else:
                 afrows = self.rwsid.updateQuery(sql)
         except Exception as e:
