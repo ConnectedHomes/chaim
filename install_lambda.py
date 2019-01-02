@@ -3,6 +3,7 @@
 module to install/update lambda code
 """
 
+import argparse
 import boto3
 import os
 import shutil
@@ -241,27 +242,37 @@ def unpackList(carr):
 # ------------------
 # Script starts here
 # ------------------
+parser = argparse.ArgumentParser(description="""Installs or updates the lambda functions for chaim.
+                                 Designed to be called from make files.""")
+parser.add_argument("-c", "--clean", action="store_true",
+                    help="remove the package/ directories (and their contents) and exit.")
+parser.add_argument("-n", "--novpc", action="store_true",
+                    help="Do not try and install into a VPC.")
+parser.add_argument("-N", "--noinc", action="store_true",
+                    help="Do not increment the build number.")
+parser.add_argument("environment", default="dev", choices=["dev", "prod", "test"],
+                    help="environment to install/update (dev/prod etc).")
+args = parser.parse_args()
+
+env = args.environment
+
 medir = os.getcwd()
 fs = FileSystem()
 
-VPC = True
-env = "dev"
+VPC = INC = True
 
-if len(sys.argv) > 1:
-    env = sys.argv[1]
-
-if env == "-c":
+if args.clean:
     packd = medir + "/package"
     if fs.dirExists(packd):
+        print("Removing zip files and package dir: {}".format(packd))
         shutil.rmtree(packd)
     sys.exit(0)
 
-if env == "-n":
+if args.novpc:
     VPC = False
-    if len(sys.argv) > 2:
-        env = sys.argv[2]
-    else:
-        env = "dev"
+
+if args.noinc:
+    INC = False
 
 me = os.path.basename(medir)
 yamlfn = medir + "/" + me + ".yaml"
@@ -272,7 +283,10 @@ if os.path.exists(yamlfn):
     config["tags"][0]["environment"] = env
     config["codeenv"][0]["environment"] = env
     lambdaname = config["tags"][0]["Name"] + "-" + env
-    verstr = updateBuild(lambdaname) if env in ["dev", "test"] else getVerstr()
+    if INC:
+        verstr = updateBuild(lambdaname) if env in ["dev", "test"] else getVerstr()
+    else:
+        verstr = getVerstr()
     config["tags"][0]["version"] = verstr
     packd = medir + "/package"
     lzip = packd + "/" + me + "-" + verstr + ".zip"
@@ -285,10 +299,10 @@ if os.path.exists(yamlfn):
         sys.exit(1)
     allfuncs = getFunctions()
     if findFunction(allfuncs, lambdaname):
-        print("lambda {} exists, updating to {}".format(lambdaname, verstr))
+        print("\nupdating {} to {}\n".format(lambdaname, verstr))
         updateLambda(lambdaname, config, zipfn)
     else:
-        print("function {} doesn't exist, yet, installing {}".format(lambdaname, verstr))
+        print("\nfunction {} doesn't exist, yet, installing {}\n".format(lambdaname, verstr))
         installLambda(lambdaname, config, zipfn)
 else:
     print("no config file found: {}".format(yamlfn))

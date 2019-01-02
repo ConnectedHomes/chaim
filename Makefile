@@ -1,4 +1,5 @@
-SUBDIRS := lambda/chaim-cleanup lambda/chaim-snsreq lambda/chaim-rotate-access-keys
+FIRSTSUB := lambda/chaim-cleanup
+SUBDIRS := lambda/chaim-snsreq lambda/chaim-rotate-access-keys
 
 .PHONY: $(SUBDIRS)
 
@@ -11,5 +12,9 @@ dev: $(SUBDIRS)
 
 prod: $(SUBDIRS)
 
-$(SUBDIRS):
+$(FIRSTSUB):
+	$(MAKE) -C $@ $(MAKECMDGOALS)
+
+$(SUBDIRS): $(FIRSTSUB)
+	export NOINC="-N"
 	$(MAKE) -C $@ $(MAKECMDGOALS)
