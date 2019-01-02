@@ -3,6 +3,7 @@ SUBDIRS := lambda/chaim-cleanup lambda/chaim-snsreq
 .PHONY: $(SUBDIRS)
 
 tags: $(SUBDIRS)
+	ctags -R
 
 clean: $(SUBDIRS)
 
