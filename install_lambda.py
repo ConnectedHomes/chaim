@@ -10,8 +10,6 @@ import subprocess
 import sys
 import tempfile
 import yaml
-from pyzip import PyZip
-from pyfolder import PyFolder
 # version module is at the top level of this repo (where
 # this script lives)
 import version
@@ -140,75 +138,90 @@ def prepareLambda(fname, vstr, wd, files, reqfn):
     return zipfn if ret else None
 
 
-def updateLambda(lname, config, zipfn):
+def updateLambda(lname, config, zipfn, role=None):
     try:
         lc = boto3.client("lambda")
         if lc is not None:
-            resp = lc.update_function_code(
-                FunctionName=lname,
-                ZipFile=getZip(zipfn)
-            )
+            args = {
+                "FunctionName": lname,
+                "ZipFile": getZip(zipfn)
+            }
+            resp = lc.update_function_code(**args)
             if "FunctionArn" in resp:
                 print("Updated function {} - arn: {}".format(lname, resp["FunctionArn"]))
             else:
                 print("an error occurred updating function, no arn returned")
+                sys.exit(1)
+            xrole = config["role"] if role is None else role
             tags = unpackList(config["tags"])
             envar = unpackList(config["codeenv"])
-            resp = lc.update_function_configuration(
-                FunctionName=lname,
-                Runtime=config["runtime"],
-                Role=config["role"],
-                Handler=config["handler"],
-                Description=config["description"],
-                Timeout=config["timeout"],
-                MemorySize=config["memory"],
-                Environment={"Variables": envar}
-            )
+            args = {
+                "FunctionName": lname,
+                "Runtime": config["runtime"],
+                "Role": xrole,
+                "Handler": config["handler"],
+                "Description": config["description"],
+                "Timeout": config["timeout"],
+                "MemorySize": config["memory"],
+                "Environment": {"Variables": envar}
+            }
+            resp = lc.update_function_configuration(**args)
             if "FunctionArn" in resp:
                 print("Updated function config {} - arn: {}".format(lname, resp["FunctionArn"]))
-                lc.tag_resource(Resource=resp["FunctionArn"], Tags=tags)
+                args = {
+                    "Resource": resp["FunctionArn"],
+                    "Tags": tags
+                }
+                lc.tag_resource(**args)
                 print("Re-tagged function")
             else:
                 print("an error occurred updating function config, no arn returned")
+                sys.exit(1)
     except Exception as e:
         emsg = "update lambda: error: {}: {}".format(type(e).__name__, e)
         print(emsg)
+        sys.exit(1)
 
 
 def installLambda(lname, config, zipfn):
+    global VPC
     try:
         lc = boto3.client("lambda")
         if lc is not None:
-            vpc = unpackList(config["vpc"])
             tags = unpackList(config["tags"])
             envar = unpackList(config["codeenv"])
-            resp = lc.create_function(
-                FunctionName=lname,
-                Runtime=config["runtime"],
-                Role=config["role"],
-                Handler=config["handler"],
-                Code={'ZipFile': getZip(zipfn)},
-                Description=config["description"],
-                Timeout=config["timeout"],
-                MemorySize=config["memory"],
-                Publish=True,
-                VpcConfig={
+            args = {
+                "FunctionName": lname,
+                "Runtime": config["runtime"],
+                "Role": config["role"],
+                "Handler": config["handler"],
+                "Code": {'ZipFile': getZip(zipfn)},
+                "Description": config["description"],
+                "Timeout": config["timeout"],
+                "MemorySize": config["memory"],
+                "Publish": True,
+                "Environment": {"Variables": envar},
+                "Tags": tags
+            }
+            if VPC:
+                vpc = unpackList(config["vpc"])
+                args["VpcConfig"] = {
                     'SubnetIds': vpc["subnets"],
                     'SecurityGroupIds': [vpc["securitygroup"]]
-                },
-                Environment={"Variables": envar},
-                Tags=tags
-            )
+                }
+            resp = lc.create_function(**args)
             if "FunctionArn" in resp:
                 print("Created function {} - arn: {}".format(lname, resp["FunctionArn"]))
             else:
                 print("an error occurred, no arn returned")
+                sys.exit(1)
         else:
             print("couldn't get a client")
             sys.exit(1)
     except Exception as e:
         emsg = "install lambda: error: {}: {}".format(type(e).__name__, e)
         print(emsg)
+        sys.exit(1)
 
 
 def getZip(zipfn):
@@ -225,16 +238,31 @@ def unpackList(carr):
     return v
 
 
+# ------------------
+# Script starts here
+# ------------------
+medir = os.getcwd()
 fs = FileSystem()
+
+VPC = True
 env = "dev"
+
 if len(sys.argv) > 1:
     env = sys.argv[1]
-medir = os.getcwd()
+
 if env == "-c":
     packd = medir + "/package"
     if fs.dirExists(packd):
         shutil.rmtree(packd)
     sys.exit(0)
+
+if env == "-n":
+    VPC = False
+    if len(sys.argv) > 2:
+        env = sys.argv[2]
+    else:
+        env = "dev"
+
 me = os.path.basename(medir)
 yamlfn = medir + "/" + me + ".yaml"
 reqsfn = medir + "/requirements.txt"
