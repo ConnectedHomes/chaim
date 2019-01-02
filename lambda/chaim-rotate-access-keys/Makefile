@@ -10,12 +10,12 @@ dev:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	../../install_lambda.py dev
+	../../install_lambda.py -novpc dev
 endif
 
 prod:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	../../install_lambda.py prod
+	../../install_lambda.py --novpc prod
 endif
