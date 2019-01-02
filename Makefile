@@ -1,5 +1,4 @@
-FIRSTSUB := lambda/chaim-cleanup
-SUBDIRS := lambda/chaim-snsreq lambda/chaim-rotate-access-keys
+SUBDIRS := lambda/chaim-cleanup lambda/chaim-snsreq lambda/chaim-rotate-access-keys
 
 .PHONY: $(SUBDIRS)
 
@@ -8,13 +7,12 @@ tags: $(SUBDIRS)
 
 clean: $(SUBDIRS)
 
+build:
+	./install_lambda.py -b dev
+
 dev: $(SUBDIRS)
 
 prod: $(SUBDIRS)
 
-$(FIRSTSUB):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
-
-$(SUBDIRS): $(FIRSTSUB)
-	export NOINC="-N"
+$(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)

@@ -28,7 +28,7 @@ def getVerstr():
     return str(xmajorv) + '.' + str(xminorv) + '.' + str(xbuildv)
 
 
-def updateBuild(lname):
+def updateBuild():
     xmajorv, xminorv, xbuildv = getVer()
     xbuildv += 1
     with open(os.path.dirname(__file__) + "/version.py", "w") as vfn:
@@ -43,7 +43,7 @@ def updateBuild(lname):
         vfn.write(vstr)
     cmd = "git add version"
     runcmd(cmd)
-    cmsg = "updating {} to {}".format(lname, vstr)
+    cmsg = "updating chaim to {}".format(vstr)
     print(cmsg)
     cmd = 'git commit -m "' + cmsg + '"'
     runcmd(cmd)
@@ -244,12 +244,12 @@ def unpackList(carr):
 # ------------------
 parser = argparse.ArgumentParser(description="""Installs or updates the lambda functions for chaim.
                                  Designed to be called from make files.""")
+parser.add_argument("-b", "--build", action="store_true",
+                    help="increment the build number and push to github.")
 parser.add_argument("-c", "--clean", action="store_true",
                     help="remove the package/ directories (and their contents) and exit.")
 parser.add_argument("-n", "--novpc", action="store_true",
                     help="Do not try and install into a VPC.")
-parser.add_argument("-N", "--noinc", action="store_true",
-                    help="Do not increment the build number.")
 parser.add_argument("environment", default="dev", choices=["dev", "prod", "test"],
                     help="environment to install/update (dev/prod etc).")
 args = parser.parse_args()
@@ -271,8 +271,9 @@ if args.clean:
 if args.novpc:
     VPC = False
 
-if args.noinc:
-    INC = False
+if args.build:
+    updateBuild()
+    sys.exit(0)
 
 me = os.path.basename(medir)
 yamlfn = medir + "/" + me + ".yaml"
@@ -283,10 +284,7 @@ if os.path.exists(yamlfn):
     config["tags"][0]["environment"] = env
     config["codeenv"][0]["environment"] = env
     lambdaname = config["tags"][0]["Name"] + "-" + env
-    if INC:
-        verstr = updateBuild(lambdaname) if env in ["dev", "test"] else getVerstr()
-    else:
-        verstr = getVerstr()
+    verstr = getVerstr()
     config["tags"][0]["version"] = verstr
     packd = medir + "/package"
     lzip = packd + "/" + me + "-" + verstr + ".zip"
