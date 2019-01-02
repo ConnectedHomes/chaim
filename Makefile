@@ -10,7 +10,7 @@ clean: $(SUBDIRS)
 build:
 	./install_lambda.py -b dev
 
-dev: $(SUBDIRS)
+dev: build $(SUBDIRS)
 
 prod: $(SUBDIRS)
 

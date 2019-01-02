@@ -4,7 +4,7 @@ tags:
 	ctags -R
 
 clean:
-	../../install_lambda.py -c
+	../../install_lambda.py -c dev
 
 dev:
 ifeq ($(strip $(VIRTUAL_ENV)),)
