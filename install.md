@@ -39,7 +39,7 @@ tags="${tags},TagKey=Name,TagValue=sre-chaim"
 
 desc="Encrypt secrets for the chaim application"
 
-aws kms --create-key --policy fileb://policies/chaim-kms.json \
+aws kms --create-key --policy file://policies/chaim-kms.json \
 --description "${desc}" \
 --tags "${tags}"
 ```
@@ -51,3 +51,4 @@ aws kms --create-alias --alias-name sre-chaim --target-key-id ${keyid}
 ```
 
 ### SNS Topic
+### roles

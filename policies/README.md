@@ -10,9 +10,19 @@ main chaim account is `111111111111` and any secondary account will be noted as
 
 The policy files will require editing of the account numbers (see above).
 
+The generic create policy form to use is (there isn't any method to tag policies):
+
+```
+aws iam create-policy --policy-name ${policyname} \
+--policy-document file://policies/${policyfile}
+```
+
 ### chaim-kms
 
 [chaim-kms.json](chaim-kms.json) is used for the encryption key in KMS
+
+Don't create this policy seperately, it needs to be created with the key (see
+the [Install](../install.md) doc.
 
 
 ### chaim-manage-access-key
@@ -20,10 +30,6 @@ The policy files will require editing of the account numbers (see above).
 [chaim-manage-access-key.json](chaim-manage-access-key.json) is used to allow
 chaim to manage it's long term credentials, so they get rotated regularly.
 
-```
-aws iam create-policy --policy-name chaim-manage-access-key \
---policy-document file://policies/manage-access-key-policy.json
-```
 
 ### chaim-cognito-manage-user.json
 
