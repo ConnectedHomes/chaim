@@ -105,4 +105,40 @@ for polarn in ${polarns[@]}; do
 done
 ```
 
+### Role: chaim-lambda-keyman
+
+This role is used by the rotate-access-keys lambda to rotate Chaims long term
+access keys on a cron schedule.
+
+```
+tags="${deftags},TagKey=role,TagValue=chaim-keyman"
+tags="${tags},TagKey=Name,TagValue=chaim-lambda-keyman"
+
+desc="Allows the chaim key manager lambda to access the parameter store \
+read-write only certain keys and rotate access keys."
+
+polnames=(chaim-manage-access-key chaim-paramstore-write)
+
+for poln in ${polnames[@]}; do
+    polarn=arn:aws:iam::111111111111:policy/${poln}
+    polarns=(${polarns[@]} ${polarn})
+done
+
+lambdaexe=arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+aws iam create-role --role-name chaim-lambda-keyman \
+--description "${desc}" \
+--assume-role-policy-document file://policies/lambda-role-policy.json \
+--tags "${tags}"
+
+# give AWS time to update with the new Role
+sleep 5
+
+aws iam attach-role-policy --role-name chaim-lambda-keyman --policy-arn ${lambdaexe}
+
+for polarn in ${polarns[@]}; do
+    aws iam attach-role-policy --role-name chaim-lambda-keyman --policy-arn ${polarn}
+done
+```
+
 ### SNS Topic
