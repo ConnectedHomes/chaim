@@ -1,6 +1,19 @@
-SRC = chaim-rotate-access-keys.py chaimlib/botosession.py chaimlib/glue.py chaimlib/iamclient.py chaimlib/paramstore.py
+# chaim-rotate-access-keys lambda
+# the dev target creates an empty file called dev
+# these are to ensure the dev lambda only get updated when 'something' has changed
+# the prod lambda will always update when `make prod` is called
 
-.PHONY: tags
+LAMBDANAME = chaim-rotate-access-keys
+SRC = $(LAMBDANAME).yaml
+
+.PHONY: tags clean prod
+
+%.d: %.yaml
+	../../depends.py
+
+$(SRC):
+	:
+
 
 tags: $(SRC)
 	ctags -R
@@ -21,3 +34,5 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 else
 	../../install_lambda.py --novpc prod
 endif
+
+include $(SRC:.yaml=.d)
