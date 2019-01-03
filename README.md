@@ -22,8 +22,16 @@ pytest tests/test_glue.py
 ```
 (changing to the required file, obviously).
 
-## Installing
-Installation is via Makefiles. They have the following targets
+## Installation
+
+see [install.md](install.md)
+
+## Update
+
+Update is via Makefiles. Additional Install instructions can be found
+in the individual READMEs for each lambda (if any).
+
+The Makefiles have the following targets:
 1. `tags` - this will rebuild the tags files for each lambda
 1. `clean` - this will remove all but the latest zip file for each lambda
 1. `dev` - this will increment the build number and rebuild the dev enviroment
