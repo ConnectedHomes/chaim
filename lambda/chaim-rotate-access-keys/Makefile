@@ -6,7 +6,7 @@
 LAMBDANAME = chaim-rotate-access-keys
 SRC = $(LAMBDANAME).yaml
 
-.PHONY: tags clean prod
+.PHONY: tags clean prod force
 
 %.d: %.yaml
 	../../depends.py
@@ -26,7 +26,16 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py -novpc dev
+	touch $@
 endif
+
+force:
+ifeq ($(strip $(VIRTUAL_ENV)),)
+	@echo "You need to be in a virtual environment"
+else
+	../../install_lambda.py -novpc dev
+endif
+
 
 prod: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
