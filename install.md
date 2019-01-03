@@ -3,7 +3,7 @@
 ## AWS Configuration
 
 The 'chaim account' is the central account that you wish to use for chaim to
-run it.  It is this account that where the roles for all accounts are assumed
+run in.  It is this account that assumable roles in all accounts are assumed
 from.
 
 ### Tagging
@@ -44,7 +44,7 @@ aws iam --create-user --user-name sre.chaim --tags "${tags}"
 
 ### Encryption Key
 
-All of Chaims parameters and secrets are held, encrypted, in the parameter
+All of Chaim's parameters and secrets are held, encrypted, in the parameter
 store. Create a KMS key to encrypt/decrypt them:
 
 ```
