@@ -262,10 +262,12 @@ fs = FileSystem()
 VPC = INC = True
 
 if args.clean:
-    packd = medir + "/package"
+    packd = medir + "/package/"
     if fs.dirExists(packd):
-        print("Removing zip files and package dir: {}".format(packd))
-        shutil.rmtree(packd)
+        os.chdir(packd)
+        print("cleaning package directory")
+        cmd = "ls -1tr | head -n -1 |xargs rm"
+        runcmd(cmd)
     sys.exit(0)
 
 if args.novpc:
