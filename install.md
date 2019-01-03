@@ -50,3 +50,4 @@ Record the KeyId of the created key and use it to create a key alias:
 aws kms --create-alias --alias-name sre-chaim --target-key-id ${keyid}
 ```
 
+### SNS Topic
