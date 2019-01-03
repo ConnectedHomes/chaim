@@ -137,12 +137,12 @@ class IamClient(BotoSession):
         key = None
         try:
             if self.__delete_inactive_keys() is False:
-                raise AccessKeyError("AccessKeyError: Failure to delete inactive key")
+                raise AccessKeyError("Failure to delete inactive key")
             key = self.__generate_new_key()
             if key is False:
-                raise AccessKeyError("AccessKeyError: Failure to generate a new key")
+                raise AccessKeyError("Failure to generate a new key")
             if self.__deactivate_current_key() is False:
-                raise AccessKeyError("AccessKeyError: Failure to de-activate the users current key")
+                raise AccessKeyError("Failure to de-activate the users current key")
         except Exception as e:
             log.error("An error occurred while attempting key rotation, see logs.")
             log.error("Exception was {}".format(e))

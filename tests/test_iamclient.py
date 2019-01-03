@@ -10,10 +10,14 @@ def test_obtain_access_key_info():
     res = False
     try:
         client = IamClient(defaultsession=True)
-        user = client.getUser()
+        user = client.getKeys("sre.chaim")
         if type(user) is dict:
             if "keys" in user:
                 res = True
+            else:
+                print(user)
+        else:
+            print(user)
     except Exception as e:
-        pass
+        print("error: {}: {}".format(type(e).__name__, e))
     assert res == True
