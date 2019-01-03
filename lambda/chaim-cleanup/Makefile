@@ -1,9 +1,21 @@
-# chaim lambda in vpc makefile
-SRC = chaim-cleanup.py chaimlib/botosession.py chaimlib/cognitoclient.py chaimlib/slackiamdb.py chaimlib/kmsclient.py chaimlib/glue.py chaimlib/envparams.py chaimlib/paramstore.py chaimlib/permissions.py chaimlib/wflambda.py chaimlib/utils.py
+# chaim-cleanup lambda
+# the dev target creates an empty file called dev
+# these are to ensure the dev lambda only get updated when 'something' has changed
+# the prod lambda will always update when `make prod` is called
 
-.PHONY: tags
+LAMBDANAME = chaim-cleanup
+SRC = $(LAMBDANAME).yaml
 
-tags: $(SRC)
+.PHONY: tags clean prod
+
+%.d: %.yaml
+	../../depends.py
+
+$(SRC):
+	:
+
+
+tags:
 	ctags -R
 
 clean:
@@ -14,6 +26,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py dev
+	touch $@
 endif
 
 prod: $(SRC)
@@ -22,3 +35,5 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 else
 	../../install_lambda.py prod
 endif
+
+include $(SRC:.yaml=.d)
