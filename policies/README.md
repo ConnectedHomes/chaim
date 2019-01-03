@@ -6,31 +6,37 @@ and grant the minimum permissions that chaim requires.  In all the files the
 main chaim account is `111111111111` and any secondary account will be noted as
 `222222222222`, `333333333333` ... etc if used.
 
-## Create Policies
-
-The policy files will require editing of the account numbers (see above).
-
-The generic create policy form to use is (there isn't any method to tag policies):
-
-```
-aws iam create-policy --policy-name ${policyname} \
---policy-document file://policies/${policyfile}
-```
+## Special Policies
 
 ### lambda-role-policy
 
 [lambda-role-policy.json](lambda-role-policy.json) is used to allow a lambda to
 assume a role.
 
-Don't create this policy as it is used with the create Role command.
+Don't create this policy as it is added to the Create Role command.
 
 ### chaim-kms
 
 [chaim-kms.json](chaim-kms.json) is used for the encryption key in KMS
 
-Don't create this policy seperately, it needs to be created with the key (see
-the [Install](../install.md) doc.
+Don't create this policy as it is added to the Create Key command.
 
+
+## Create Policies
+
+These policies will need creating before attempting to create the Roles in the
+[install](../install.md) document.
+
+The policy files will require editing of the account numbers (see above).
+
+There isn't any method to tag policies (yet).
+
+The generic create policy form to use is:
+
+```
+aws iam create-policy --policy-name ${policyname} \
+--policy-document file://policies/${policyfile}
+```
 
 ### chaim-manage-access-key
 
