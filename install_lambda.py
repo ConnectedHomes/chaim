@@ -266,8 +266,12 @@ if args.clean:
     if fs.dirExists(packd):
         os.chdir(packd)
         print("cleaning package directory")
-        cmd = "ls -1tr | head -n -1 |xargs rm"
-        runcmd(cmd)
+        try:
+            cmd = "ls -1tr | head -n -1 |xargs rm"
+            runcmd(cmd)
+        except subprocess.CalledProcessError as e:
+            # ignore errors (if there are no files to clean)
+            pass
     sys.exit(0)
 
 if args.novpc:
