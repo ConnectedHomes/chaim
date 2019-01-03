@@ -25,6 +25,7 @@ tfn, ext = os.path.splitext(byamlfn)
 dyamlfn = tfn + ".d"
 if len(fl) > 0:
     xstr = byamlfn + ": " + " ".join(fl)
+    xstr += " requirements.txt"
     with open(medir + "/" + dyamlfn, "w") as dfn:
         dfn.write(xstr + "\n\n")
     sys.exit(0)
