@@ -1,6 +1,6 @@
 ---
 handler: chaim-rotate-access-keys.rotate
-role: arn
+role: arn:aws:iam::499223386158:role/chaim-lambda-key-man
 runtime: python3.6
 description: "Funtion to periodically rotate the long term access keys that chaim uses."
 timeout: 30
