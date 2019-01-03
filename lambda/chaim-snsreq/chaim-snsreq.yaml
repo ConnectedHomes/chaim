@@ -1,20 +1,21 @@
 ---
-handler: chaim-cleanup.cleanup
+handler: chaim-snsreq.snsreq
 role: arn:aws:iam::499223386158:role/chaim-lambda-rds
 runtime: python3.6
-description: "Function to periodically clean the chaim db of expired access key records"
-timeout: 60
+description: "Slack helper function to generate chaim credentials for a slack user."
+timeout: 30
 memory: 128
 
 codeenv:
     - SECRETPATH: /sre/chaim/
     - WAVEFRONT_URL: https://connectedhome.wavefront.com
     - REPORT_STANDARD_METRICS: "True"
+    - APIID: "3wwwh0f4ml"
 
 tags:
-    - Name: chaim-cleanup
+    - Name: chaim-snsreq
     - product: chaim
-    - role: cleanup
+    - role: snsreq
     - owner: SRE
 
 vpc:
@@ -23,16 +24,20 @@ vpc:
     - securitygroup: sg-dfb2eda4
 
 files:
-    - chaim-cleanup.py
     - README.md
+    - chaim-snsreq.py
+    - chaimlib/assumedrole.py
     - chaimlib/botosession.py
+    - chaimlib/chaim.py
     - chaimlib/cognitoclient.py
-    - chaimlib/slackiamdb.py
-    - chaimlib/kmsclient.py
-    - chaimlib/glue.py
+    - chaimlib/commandparse.py
     - chaimlib/envparams.py
+    - chaimlib/glue.py
+    - chaimlib/kmsclient.py
     - chaimlib/paramstore.py
     - chaimlib/permissions.py
-    - chaimlib/wflambda.py
+    - chaimlib/slackiamdb.py
+    - chaimlib/stsclient.py
     - chaimlib/utils.py
+    - chaimlib/wflambda.py
     - version

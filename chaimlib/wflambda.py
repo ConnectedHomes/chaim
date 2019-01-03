@@ -1,9 +1,13 @@
-from wavefront_pyformance.wavefront_reporter import WavefrontDirectReporter
-from pyformance import MetricsRegistry
 import os
 from datetime import datetime
+from wavefront_pyformance.wavefront_reporter import WavefrontDirectReporter
+from pyformance import MetricsRegistry
 from wavefront_pyformance import delta
+from chaimlib.permissions import Permissions
+from chaimlib.envparams import EnvParam
+import chaimlib.glue as glue
 
+log = glue.log
 is_cold_start = True
 reg = None
 
@@ -45,7 +49,7 @@ def wfwrapper(func):
         result = None
         try:
             result = func(*args, **kwargs)
-        except:
+        except Exception:
             # Set error counter
             aws_lambda_errors_counter.inc()
             aws_lambda_error_event_counter.inc()
@@ -61,12 +65,13 @@ def wfwrapper(func):
         try:
             result = func(*args, **kwargs)
             return result
-        except:
+        except Exception:
             raise
         finally:
             wf_reporter.report_now(registry=reg)
 
     def wavefront_wrapper(*args, **kwargs):
+        log.debug("WaveFrontWrapper: starting")
         server = os.environ.get('WAVEFRONT_URL')
         if not server:
             raise ValueError("Environment variable WAVEFRONT_URL is not set.")
@@ -86,22 +91,24 @@ def wfwrapper(func):
         split_arn = invoked_function_arn.split(':')
         point_tags = {
             'LambdaArn': invoked_function_arn,
-            'FunctionName' : context.function_name,
+            'FunctionName': context.function_name,
             'ExecutedVersion': context.function_version,
             'Region': split_arn[3],
             'accountId': split_arn[4]
         }
         if split_arn[5] == 'function':
             point_tags['Resource'] = split_arn[6]
-            if len(split_arn) == 8 :
+            if len(split_arn) == 8:
                 point_tags['Resource'] = point_tags['Resource'] + ":" + split_arn[7]
         elif split_arn[5] == 'event-source-mappings':
             point_tags['EventSourceMappings'] = split_arn[6]
 
-
+        log.debug("WaveFrontWrapper: starting registry")
         # Initialize registry for each lambda invocation
         global reg
         reg = MetricsRegistry()
+        if reg is None:
+            log.error("WaveFrontWrapper: failed to start registry")
 
         # Initialize the wavefront direct reporter
         wf_direct_reporter = WavefrontDirectReporter(server=server,
@@ -112,16 +119,73 @@ def wfwrapper(func):
                                                      prefix="")
 
         if is_report_standard_metrics:
-            return call_lambda_with_standard_metrics(wf_direct_reporter,
-                                              *args,
-                                              **kwargs)
+            return call_lambda_with_standard_metrics(wf_direct_reporter, *args, **kwargs)
         else:
-            return call_lambda_without_standard_metrics(wf_direct_reporter,
-                                                 *args,
-                                                 **kwargs)
+            return call_lambda_without_standard_metrics(wf_direct_reporter, *args, **kwargs)
 
     return wavefront_wrapper
 
 
 def get_registry():
     return reg
+
+
+def inc_counter(mname):
+    try:
+        delt = delta.delta_counter(reg, mname)
+        delt.inc()
+    except Exception:
+        raise
+
+
+def getWFKey(stage="prod"):
+    """
+    retrieves the wavefront access key from the param store
+    and populates the environment with it
+    """
+    try:
+        ep = EnvParam()
+        secretpath = ep.getParam("SECRETPATH", decode=True)
+        pms = Permissions(secretpath, stagepath=stage + "/", missing=False, quick=True)
+        wfk = pms.getEncKey("wavefronttoken")
+        os.environ["WAVEFRONT_API_TOKEN"] = wfk
+        os.environ["CHAIM_STAGE"] = stage
+        log.debug("getWFKey: stage: {}".format(os.environ["CHAIM_STAGE"]))
+    except Exception as e:
+        msg = "getWFKey error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        raise
+
+
+def ggMetric(mname, val):
+    """
+    sets a gauge wavefront metric value
+    """
+    log.debug("gauge metric stage: dev")
+    chaimstage = os.environ["CHAIM_STAGE"]
+    registry = get_registry()
+    fname = "chaim." + chaimstage + "." + mname
+    if registry is not None:
+        gge = registry.gauge(fname)
+        try:
+            log.debug("gauge: {}: {}".format(fname, val))
+            gge.set_value(int(val))
+            return True
+        except Exception as e:
+            log.warning("gauge failed for {}: {}: {}".format(mname, type(e).__name__, e))
+    else:
+        log.warning("Failed to initialise the wavefront registry for: " + fname)
+        return False
+
+
+def incMetric(mname):
+    try:
+        log.debug("inc metric stage: {}".format(os.environ["CHAIM_STAGE"]))
+        fname = "chaim." + os.environ["CHAIM_STAGE"] + "." + mname + ".delta"
+        log.debug("incMetric: {}".format(fname))
+        inc_counter(fname)
+        return True
+    except Exception as e:
+        msg = "incMetric error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        raise

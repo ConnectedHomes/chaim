@@ -4,31 +4,42 @@ The chaim api records issued keys to aid event tracing.
 """
 
 
-import logging
-import chaim
-from permissions import Permissions
-from wflambda import wfwrapper
+import chaimlib.glue as glue
+from chaimlib.permissions import Permissions
+from chaimlib.wflambda import wfwrapper
+from chaimlib.wflambda import getWFKey
+from chaimlib.wflambda import incMetric
+from chaimlib.wflambda import ggMetric
+from chaimlib.envparams import EnvParam
 
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-# log.setLevel(logging.INFO)
+log = glue.log
 
 
 @wfwrapper
 def doCleanup(event, context, version):
     try:
-        pms = Permissions("/sre/chaim/", missing=True)
-        tfr, afr = pms.cleanKeyMap()
-        kmsg = "key" if afr == 1 else "keys"
-        msg = "chaim cleanup v{}: {} {} cleaned.".format(version, afr, kmsg)
-        log.info(msg)
-        chaim.incMetric("cleanup")
-        chaim.ggMetric("cleanup.cleaned", afr)
-        chaim.ggMetric("cleanup.existing", tfr)
+        ep = EnvParam()
+        spath = ep.getParam("SECRETPATH", True)
+        environment = ep.getParam("environment", True)
+        if spath is not False:
+            pms = Permissions(spath, missing=True)
+            dryrun = True if environment == "dev" else True
+            tfr, afr = pms.cleanKeyMap(dryrun=dryrun)
+            kmsg = "key" if afr == 1 else "keys"
+            kmsg += " would be" if environment == "dev" else ""
+            msg = "chaim cleanup v{}: {}/{} {} cleaned.".format(version, afr, tfr, kmsg)
+            log.info(msg)
+            incMetric("cleanup")
+            ggMetric("cleanup.cleaned", afr)
+            ggMetric("cleanup.existing", tfr)
+        else:
+            emsg = "chaim cleanup: secret path not in environment"
+            log.error(emsg)
+            incMetric("cleanup.error")
     except Exception as e:
         emsg = "chaim cleanup v{}: error: {}: {}".format(version, type(e).__name__, e)
         log.error(emsg)
-        chaim.incMetric("cleanup.error")
+        incMetric("cleanup.error")
 
 
 def cleanup(event, context):
@@ -43,6 +54,11 @@ def cleanup(event, context):
     """
     with open("version", "r") as vfn:
         version = vfn.read()
-    log.debug("chaim cleanup v{}: entered".format(version))
-    chaim.getWFKey(stage="dev")
+    ep = EnvParam()
+    environment = ep.getParam("environment", True)
+    if "dev" == environment:
+        glue.setDebug()
+    log.info("chaim cleanup v{}: entered".format(version))
+    log.info("environment: {}".format(environment))
+    getWFKey(stage=environment)
     doCleanup(event, context, version)

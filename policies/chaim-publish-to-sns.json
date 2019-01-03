@@ -1,0 +1,18 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "sns:Publish",
+            "Resource": [
+                "arn:aws:sns:eu-west-1:111111111111:chaim-slack-helper",
+                "arn:aws:sns:eu-west-1:111111111111:ChaimSlackBeta",
+                "arn:aws:sns:eu-west-1:111111111111:ChaimSlackProd",
+                "arn:aws:sns:eu-west-1:222222222222:sre-honeypass",
+                "arn:aws:sns:eu-west-1:111111111111:sre-honeyhub",
+                "arn:aws:sns:eu-west-1:333333333333:sre-hc-pw-reset"
+            ]
+        }
+    ]
+}

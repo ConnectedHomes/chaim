@@ -2,11 +2,10 @@
 
 import os
 import chardet
-from chalicelib.kmsclient import KmsClient
-import logging
+from chaimlib.kmsclient import KmsClient
+import chaimlib.glue as glue
 
-log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
+log = glue.log
 
 
 class EnvParam():

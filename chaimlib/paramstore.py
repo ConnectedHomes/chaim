@@ -2,17 +2,16 @@
 AWS SSM Parameter Store client functions
 """
 
-from chalicelib.botosession import BotoSession
+from chaimlib.botosession import BotoSession
 import os
-import logging
+import chaimlib.glue as glue
 
-log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
+log = glue.log
 
 
 class ParamStore(BotoSession):
     def __init__(self, awsaccessid=None, awssecretkey=None,
-                 awsprofile=None, stoken=None, usedefault=False):
+                 awsprofile=None, stoken=None, usedefault=False, env="prod"):
         super().__init__(accessid=awsaccessid, secretkey=awssecretkey,
                          theprofile=awsprofile, stoken=stoken,
                          usedefault=usedefault)
@@ -149,7 +148,7 @@ class ParamStore(BotoSession):
         if not environment.endswith("/"):
             environment += "/"
         xpath = path + environment
-        log.debug("path: {}".format(xpath))
+        log.debug("param path: {}".format(xpath))
         nl = []
         oparams = {}
         for name in names:

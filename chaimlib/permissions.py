@@ -1,11 +1,11 @@
-import logging
-from chalicelib.cognitoclient import CognitoClient
-from chalicelib.paramstore import ParamStore
-from chalicelib.slackiamdb import SlackIamDB
-from chalicelib.slackiamdb import DBNotConnected
-from chalicelib.utils import Utils
+from chaimlib.cognitoclient import CognitoClient
+from chaimlib.paramstore import ParamStore
+from chaimlib.slackiamdb import SlackIamDB
+from chaimlib.slackiamdb import DBNotConnected
+from chaimlib.utils import Utils
+import chaimlib.glue as glue
 
-log = logging.getLogger(__name__)
+log = glue.log
 
 
 class IncorrectCredentials(Exception):
@@ -19,12 +19,12 @@ class DataNotFound(Exception):
 class Permissions():
     def __init__(self, secretpath="", testdb=False, quick=False,
                  stagepath="", missing=False):
-        if "dev/" == stagepath:
-            log.setLevel(logging.DEBUG)
         log.debug("Permissions Entry")
         self.missing = missing
         self.spath = secretpath
-        self.ps = ParamStore(usedefault=True)
+        if len(stagepath) == 0:
+            stagepath = "prod"
+        self.ps = ParamStore(usedefault=True, env=stagepath)
         plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
                  "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
         self.params = self.ps.getParams(plist, environment=stagepath)
@@ -57,11 +57,12 @@ class Permissions():
 
     def getEncKey(self, keyname, extrapath=None):
         param = None
+        spath = self.spath if self.spath.endswith("/") else self.spath + "/"
         try:
             if extrapath is None:
-                param = self.ps.getEString(self.spath + keyname)
+                param = self.ps.getEString(spath + keyname)
             else:
-                param = self.ps.getEString(self.spath + extrapath + keyname)
+                param = self.ps.getEString(spath + extrapath + keyname)
         except Exception as e:
             log.debug("parameter not found: {}".format(keyname))
             if not self.missing:
@@ -96,7 +97,7 @@ class Permissions():
             raise DataNotFound(msg)
         return ret
 
-    def checkToken(self, token, username, extrapath=None):
+    def checkToken(self, token, username):
         log.debug("token: {}, username: {}".format(token, username))
         ut = Utils()
         slacktoken = self.params["slacktoken"]
@@ -189,7 +190,7 @@ class Permissions():
             log.error("error executing keymap insert query")
             raise DataNotFound(e)
 
-    def cleanKeyMap(self, days=30):
+    def cleanKeyMap(self, days=30, dryrun=False):
         afrows = 0
         tfr = 0
         try:
@@ -199,11 +200,21 @@ class Permissions():
                 tfr = row[0]
             ut = Utils()
             then = ut.getNow() - (days * 24 * 60 * 60)
-            sql = "delete from keymap where expires < {}".format(then)
-            afrows = self.rwsid.updateQuery(sql)
+            if dryrun:
+                sql = "select count(*) from keymap "
+            else:
+                sql = "delete from keymap "
+            sql += "where expires < {}".format(then)
+            if dryrun:
+                rows = self.sid.query(sql)
+                for row in rows:
+                    afrows = row[0]
+            else:
+                afrows = self.rwsid.updateQuery(sql)
         except Exception as e:
-            log.error("error executing keymap cleaning query for {} days ago.".format(days))
-            raise DataNotFound(e)
+            msg = "A cleantKeyMap error occurred: {}: {}".format(type(e).__name__, e)
+            log.error(msg)
+            raise DataNotFound(msg)
         return [tfr, afrows]
 
     def updateUserToken(self, username, token, expires):
@@ -297,3 +308,56 @@ class Permissions():
         else:
             log.debug("key {} not found.".format(key))
         return row
+
+    def roleAliasDict(self):
+        radict = {}
+        sql = "select alias, name from awsroles"
+        rows = self.sid.query(sql)
+        for row in rows:
+            alias = row[0]
+            name = row[1]
+            radict[alias] = name
+        log.debug("role aliases: {}".format(radict))
+        return radict
+
+    def lastupdated(self, userid, stamp, cli=False):
+        if self.rwsid is not None:
+            field = "lastslack" if cli is False else "lastcli"
+            sql = "update awsusers set {}={} where id={}".format(field, stamp, userid)
+            log.debug("update: {}".format(sql))
+            self.rwsid.updateQuery(sql)
+
+    def countLastSince(self, months=1):
+        if self.sid is not None:
+            ut = Utils()
+            mnth = ut.displayWord(months, "Month")
+            now = ut.getNow()
+            then = now - (int(months) * 86400 * 30)
+            sql = "select count(id) as cn from awsusers"
+            rows = self.sid.query(sql)
+            log.debug("sql returns {}".format(rows))
+            allusers = rows[0][0]
+            log.debug("allusers {}".format(allusers))
+            sql = "select count(lastcli) as cn from awsusers where lastcli > " + str(then)
+            rows = self.sid.query(sql)
+            log.debug("sql returns {}".format(rows))
+            lastcli = rows[0][0]
+            sql = "select count(lastslack) as cn from awsusers where lastslack > " + str(then)
+            rows = self.sid.query(sql)
+            lastslack = rows[0][0]
+            sql = "select count(lastcli) as cn from awsusers"
+            sql += " where lastcli > " + str(then) + " and lastslack > " + str(then)
+            rows = self.sid.query(sql)
+            lastboth = rows[0][0]
+            active = (int(lastslack) + int(lastcli)) - int(lastboth)
+            inactive = int(allusers) - active
+            msg = "Previous {}".format(mnth)
+            msg += "\n{:<12}{:>5}".format("All:", allusers)
+            msg += "\n{:<12}{:>5}".format("Active:", active)
+            msg += "\n{:<12}{:>5}".format("Inactive:", inactive)
+            msg += "\n{:<12}{:>5}".format("CLI:", lastcli)
+            msg += "\n{:<12}{:>5}".format("Slack:", lastslack)
+            msg += "\n{:<12}{:>5}".format("Both:", lastboth)
+            return msg
+        else:
+            return "DB not connected"

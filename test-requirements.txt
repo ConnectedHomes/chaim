@@ -1,3 +1,6 @@
+pytest
 pymysql
+boto3
 chardet
 wavefront_pyformance
+slackclient

@@ -1,0 +1,18 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "cognito-idp:AdminDeleteUser",
+                "cognito-idp:AdminEnableUser",
+                "cognito-idp:AdminCreateUser",
+                "cognito-idp:AdminDisableUser",
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:ListUsers"
+            ],
+            "Resource": "arn:aws:cognito-idp:eu-west-1:111111111111:userpool/eu-west-1_ABCDEFGH"
+        }
+    ]
+}

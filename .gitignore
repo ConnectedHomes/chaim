@@ -3,3 +3,9 @@
 __pycache__/
 *swp
 build/
+.pytest_cache/
+chaimlib/vendor/
+package/
+tags
+dev
+*.d
