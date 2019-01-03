@@ -31,8 +31,8 @@ Installation is via Makefiles. They have the following targets
 1. `force` - this will increment the build number and rebuild the dev enviroment
    lambdas.
 1. `prod` - this will build the prod environment lambda using the latest dev
-   environment zip file (i.e. use `make force` first to ensure all lambdas are
-   showing the same version number).
+   environment zip file. To ensure all lambdas are at the same version number
+   issue a `make force` first to forcebly rebuild and update each one.
 
 The Makefiles can be run individually or all together as a package.  To make
 everything, issue `make <target>` from the root of the repository.  To make an
