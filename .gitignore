@@ -8,3 +8,4 @@ chaimlib/vendor/
 package/
 tags
 dev
+*.d
