@@ -17,6 +17,13 @@ aws iam create-policy --policy-name ${policyname} \
 --policy-document file://policies/${policyfile}
 ```
 
+### lambda-role-policy
+
+[lambda-role-policy.json](lambda-role-policy.json) is used to allow a lambda to
+assume a role.
+
+Don't create this policy as it is used with the create Role command.
+
 ### chaim-kms
 
 [chaim-kms.json](chaim-kms.json) is used for the encryption key in KMS
