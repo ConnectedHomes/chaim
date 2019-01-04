@@ -21,13 +21,13 @@ from chaimlib.assumedrole import AssumedRole
 
 
 def test_stsclient():
-    sts = StsClient(usedefault=True)
+    sts = StsClient()
     assert sts.client is not None
 
 
 def test_sts_assumeRole():
     ret = False
-    sts = StsClient(usedefault=True)
+    sts = StsClient()
     arn = "arn:aws:iam::499223386158:role/CrossAccountReadOnly"
     aro = sts.assumeRole(arn)
     if "Credentials" in aro:
@@ -37,16 +37,16 @@ def test_sts_assumeRole():
 
 
 def test_sts_assumeRoleStr():
-    sts = StsClient(usedefault=True)
+    sts = StsClient()
     arn = "arn:aws:iam::499223386158:role/CrossAccountReadOnly"
     aro, x = sts.assumeRoleStr(arn)
     y = x[0:33]
     lx = len(x)
-    assert (lx == 513) and (y == "```\nexport AWS_ACCESS_KEY_ID=ASIA")
+    assert (lx >= 500) and (y == "```\nexport AWS_ACCESS_KEY_ID=ASIA")
 
 
 def test_assumedRole_self():
-    sts = StsClient(usedefault=True)
+    sts = StsClient()
     arn = "arn:aws:iam::499223386158:role/CrossAccountReadOnly"
     aro = sts.assumeRole(arn)
     ar = AssumedRole(aro)
@@ -54,7 +54,7 @@ def test_assumedRole_self():
 
 
 def test_assumedRole_getCreds():
-    sts = StsClient(usedefault=True)
+    sts = StsClient()
     arn = "arn:aws:iam::499223386158:role/CrossAccountReadOnly"
     aro = sts.assumeRole(arn)
     ar = AssumedRole(aro)

@@ -27,11 +27,8 @@ log = glue.log
 
 
 class ParamStore(BotoSession):
-    def __init__(self, awsaccessid=None, awssecretkey=None,
-                 awsprofile=None, stoken=None, usedefault=False, env="prod"):
-        super().__init__(accessid=awsaccessid, secretkey=awssecretkey,
-                         theprofile=awsprofile, stoken=stoken,
-                         usedefault=usedefault)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.newClient('ssm')
 
     def putParam(self, pname, pvalue, ptype, pkeyid=None, pattern=None):

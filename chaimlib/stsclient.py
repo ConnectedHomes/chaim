@@ -25,14 +25,10 @@ log = glue.log
 
 
 class StsClient(BotoSession):
-    def __init__(self, awsaccessid=None, awssecretkey=None,
-                 awsprofile=None, usedefault=False, stoken=None,
-                 sessionname="ARSession", duration=3600):
-        super().__init__(accessid=awsaccessid, secretkey=awssecretkey,
-                         theprofile=awsprofile, usedefault=usedefault,
-                         stoken=stoken)
-        self.sessionname = sessionname
-        self.duration = duration
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.sessionname = kwargs["sessionname"] if "sessionname" in kwargs else "ARSession"
+        self.duration = kwargs["duration"] if "duration" in kwargs else 3600
         self.newClient('sts')
 
     def assumeRole(self, rolearn):

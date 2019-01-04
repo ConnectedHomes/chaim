@@ -27,9 +27,8 @@ class AccessKeyError(Exception):
 
 
 class IamClient(BotoSession):
-    def __init__(self, username, usedefault=True, awsprofile=None, awsaccessid=None, awssecretkey=None, stoken=None):
-        super().__init__(accessid=awsaccessid, secretkey=awssecretkey, theprofile=awsprofile,
-                         usedefault=usedefault, stoken=stoken)
+    def __init__(self, username, **kwargs):
+        super().__init__(**kwargs)
         self.newClient('iam')
         self.username = username
         self.currentkey = None
