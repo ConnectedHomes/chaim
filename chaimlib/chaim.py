@@ -28,6 +28,7 @@ from chaimlib.stsclient import StsClient
 from chaimlib.utils import Utils
 from chaimlib.wflambda import getWFKey
 from chaimlib.wflambda import incMetric
+from chaimlib.snsclient import SnsClient
 
 log = glue.log
 
@@ -487,3 +488,8 @@ def slackTimeStamp(msg, start, rdict, ut):
         smsg = "{0:.2f} . {1}".format(zlen, msg)
         log.debug("sending to slack {}".format(smsg))
         sendToSlack(rdict["responseurl"], smsg)
+
+
+def snsPublish(topic, msg):
+    sns = SnsClient()
+    sns.publishToSns(topic, msg)
