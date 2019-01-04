@@ -1,0 +1,29 @@
+{
+    "version": "2.0",
+    "app_name": "chaim-entry",
+    "manage_iam_role": false,
+    "iam_role_arn":"arn:aws:iam::499223386158:role/chaim-lambda-rds",
+    "subnet_ids": ["subnet-c74d4ca0", "subnet-026b2959"],
+    "security_group_ids": ["sg-dfb2eda4"],
+    "tags": {
+        "product": "chaim",
+        "role": "chaim-entry"
+    },
+    "environment_variables": {
+        "WAVEFRONT_URL": "https://connectedhome.wavefront.com",
+        "REPORT_STANDARD_METRICS": "True"
+    },
+    "stages": {
+        "dev": {
+            "api_gateway_stage": "dev",
+            "environment_variables": {
+                "SNSTOPIC": "arn:aws:sns:eu-west-1:499223386158:chaim-slack-helper",
+                "environment": "dev"
+            },
+            "tags": {
+                "environment": "dev",
+                "Name": "chaim-entry"
+            }
+        }
+    }
+}
