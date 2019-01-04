@@ -26,6 +26,11 @@ log = glue.log
 
 class StsClient(BotoSession):
     def __init__(self, **kwargs):
+        """
+        keyword arguments (additional to BotoSession):
+            duration - session duration in seconds (default: 3600)
+            sessionname - default 'ARSession'
+        """
         super().__init__(**kwargs)
         self.sessionname = kwargs["sessionname"] if "sessionname" in kwargs else "ARSession"
         self.duration = kwargs["duration"] if "duration" in kwargs else 3600
