@@ -28,12 +28,11 @@ class NoCreds(Exception):
 
 class BotoSession():
     """Base class to create a default boto3 session"""
-    def __init__(self, profile=None, accesskey=None, secretkey=None, stoken=None):
+    def __init__(self, **kwargs):
         """sets up a default connection to AWS.
 
-        Either the profile or accessid/secretkey are required
-        unless usedefault is set True, whereupon the default, context
-        session is created and used, using environment variables if set.
+        will use the default setting from your credentials file unless
+        either the profile or accessid/secretkey are supplied.
 
         Keyword Arguments:
             profile - the ~/.aws/credentials profile to use.
@@ -41,7 +40,7 @@ class BotoSession():
             secretkey - the aws secret access key to use (along with the access key id).
             stoken - the aws session token to use
 
-        Environment Variables:
+        Environment Variables (if set override the default credentials):
             AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY
             AWS_SESSION_TOKEN
@@ -51,14 +50,17 @@ class BotoSession():
         self.usekeys = False
         self.kwargs = None
         self.usedefault = True
-        if profile is None and (accesskey is not None and secretkey is not None):
-            self.kwargs = {"aws_access_key_id": accesskey, "aws_secret_access_key": secretkey,
-                           "aws_session_token": stoken}
-            self.usekeys = True
-            self.usedefault = False
-        elif profile is not None:
-            self.profile = profile
-            self.usedefault = False
+        if kwargs is not None:
+            if "profile" in kwargs:
+                self.profile = kwargs["profile"]
+            elif "accesskey" in kwargs and "secretkey" in kwargs:
+                self.kwargs = {}
+                self.kwargs["aws_access_key_id"] = kwargs["accesskey"]
+                self.kwargs["aws_secret_key_id"] = kwargs["secretkey"]
+                if "stoken" in kwargs:
+                    self.kwargs["aws_session_token"] = kwargs["stoken"]
+                self.usekeys = True
+                self.usedefault = False
 
     def newSession(self):
         if self.profile is None:
