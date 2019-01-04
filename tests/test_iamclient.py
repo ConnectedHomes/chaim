@@ -23,7 +23,7 @@ from chaimlib.botosession import NoCreds
 
 def test_nocreds():
     with pytest.raises(NoCreds):
-        IamClient("sre.chaim")
+        IamClient("sre.chaim", usedefault=False)
 
 
 def test_obtain_access_key_info():
