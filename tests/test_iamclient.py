@@ -20,15 +20,17 @@ import pytest
 from chaimlib.iamclient import IamClient
 from chaimlib.botosession import NoCreds
 
+
 def test_nocreds():
     with pytest.raises(NoCreds):
-        client = IamClient()
+        IamClient("sre.chaim")
+
 
 def test_obtain_access_key_info():
     res = False
     try:
-        client = IamClient(defaultsession=True)
-        user = client.getKeys("sre.chaim")
+        client = IamClient("sre.chaim", defaultsession=True)
+        user = client.getKeys()
         if type(user) is dict:
             if "keys" in user:
                 res = True
@@ -38,4 +40,4 @@ def test_obtain_access_key_info():
             print(user)
     except Exception as e:
         print("error: {}: {}".format(type(e).__name__, e))
-    assert res == True
+    assert res is True

@@ -27,22 +27,23 @@ class AccessKeyError(Exception):
 
 
 class IamClient(BotoSession):
-    def __init__(self, awsaccessid=None, awssecretkey=None, awsprofile=None, defaultsession=False, stoken=None):
+    def __init__(self, username, awsaccessid=None, awssecretkey=None, awsprofile=None, usedefault=False, stoken=None):
         super().__init__(accessid=awsaccessid, secretkey=awssecretkey, theprofile=awsprofile,
-                         usedefault=defaultsession, stoken=stoken)
+                         usedefault=usedefault, stoken=stoken)
         self.newClient('iam')
+        self.username = username
         self.currentkey = None
         self.user = None
 
     def testProfile(self):
-        user = self.getKeys(username="sre.chaim")
+        user = self.getKeys()
         if type(user) is dict:
             if "keys" in user:
                 log.debug("User: {}".format(user["Arn"]))
                 return True
         return False
 
-    def getUser(self, username):
+    def _getUser(self):
         """returns a user dict
 
         This is intended to not be called standalone, but to be called by the
@@ -50,16 +51,15 @@ class IamClient(BotoSession):
         possible
         """
         try:
-            user = self.client.get_user(UserName=username)
+            user = self.client.get_user(UserName=self.username)
         except Exception as e:
             log.error("IamClient: Failed to retrieve username, are you actually connected?\n{}".format(e))
             return False
         return user["User"]
 
-    def getKeys(self, username):
+    def getKeys(self):
         """returns a user dict complete with registered access keys"""
-        ret = False
-        user = self.getUser(username)
+        user = self._getUser()
         log.debug("user: {}".format(user))
         if user is not False:
             self.user = user
@@ -67,11 +67,11 @@ class IamClient(BotoSession):
                 keys = self.client.list_access_keys(UserName=self.user["UserName"])
                 log.debug("keys: {}".format(keys))
                 self.user["keys"] = keys["AccessKeyMetadata"]
-                ret = self.user
             except Exception as e:
                 log.error("Failed to obtain access key infomation for user: {}".format(self.user["UserName"]))
-                log.error("Exception was {}".format(e))
-        return ret
+                log.error("Exception was {}: {}".format(type(e).__name__, e))
+                raise
+        return self.user
 
     # I'm not writing tests for the methods below as they
     # all fiddle with credentials. They all fail safe, so

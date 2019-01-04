@@ -22,8 +22,9 @@ see: https://jira.bgchtest.info/browse/SRE-589
 """
 
 import chaimlib.glue as glue
-from chaimlib.botosession import BotoSession
-from chaimlib.botosession import NoCreds
+from chaimlib.envparams import EnvParam
+from chaimlib.iamclient import AccessKeyError
+from chaimlib.iamclient import IamClient
 from chaimlib.paramstore import ParamStore
 
 
@@ -32,28 +33,33 @@ log = glue.log
 
 def rotate(event, context):
     try:
-        ps = ParamStore(usedefault=True)
-        enckeyname = ps.getEString("/sre/chaim/encryptionkey")
-        log.debug("enckeyname: {}".format(enckeyname))
-        iamusername = ps.getEString("/sre/chaim/iamusername")
+        ep = EnvParam()
+        enckeyname = ep.getParam("KEYNAME")
+        iamusername = ep.getParam("CHAIMUSER")
         log.info("Rotating access key for {}".format(iamusername))
+        log.debug("enckeyname: {}".format(enckeyname))
         log.debug("iamusername: {}".format(iamusername))
         iam = IamClient(defaultsession=True)
         user = iam.getKeys(username=iamusername)
         if user is False:
             log.debug("getkeys is false, yet: {}".format(iam.user["keys"]))
         key = iam.rotateKeys()
-        log.debug("new key: {}".format(key))
-        accesskeyid = key["AccessKey"]["AccessKeyId"]
-        secretkeyid = key["AccessKey"]["SecretAccessKey"]
-        ret = ps.putEStringParam("/sre/chaim/accesskeyid", accesskeyid, "alias/" + enckeyname)
-        if ret is None:
-            raise AccessKeyError("Failed to store encrypted parameter 'accesskeyid'")
-        log.debug("storing key ret: {}".format(ret))
-        ret = ps.putEStringParam("/sre/chaim/secretkeyid", secretkeyid, "alias/" + enckeyname)
-        if ret is None:
-            raise AccessKeyError("Failed to store encrypted parameter 'secretkeyid'")
-        log.debug("storing secret ret: {}".format(ret))
-        log.info("access key rotated for {}".format(iamusername))
+        if isinstance(key, dict) and "AccessKey" in key:
+            log.debug("new key: {}".format(key))
+            accesskeyid = key["AccessKey"]["AccessKeyId"]
+            secretkeyid = key["AccessKey"]["SecretAccessKey"]
+            ps = ParamStore(usedefault=True)
+            ret = ps.putEStringParam("/sre/chaim/accesskeyid", accesskeyid, "alias/" + enckeyname)
+            if ret is None:
+                raise AccessKeyError("Failed to store encrypted parameter 'accesskeyid'")
+            log.debug("storing key ret: {}".format(ret))
+            ret = ps.putEStringParam("/sre/chaim/secretkeyid", secretkeyid, "alias/" + enckeyname)
+            if ret is None:
+                raise AccessKeyError("Failed to store encrypted parameter 'secretkeyid'")
+            log.debug("storing secret ret: {}".format(ret))
+            log.info("access key rotated for {}".format(iamusername))
+        else:
+            emsg = "Rotate failed to generate a new key: {}".format(key)
+            raise(AccessKeyError(emsg))
     except Exception as e:
-        log.error("exception {}".format(e))
+        log.error("rotate: {}: {}".format(type(e).__name__, e))
