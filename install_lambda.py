@@ -24,7 +24,6 @@ module to install/update lambda code
 import argparse
 import boto3
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -287,7 +286,7 @@ if args.clean:
         try:
             cmd = "ls -1tr | head -n -1 |xargs rm"
             runcmd(cmd)
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             # ignore errors (if there are no files to clean)
             pass
     sys.exit(0)
@@ -309,6 +308,7 @@ if os.path.exists(yamlfn):
     config["codeenv"][0]["environment"] = env
     lambdaname = config["tags"][0]["Name"] + "-" + env
     verstr = getVerstr()
+    fs.copyfile(os.path.dirname(__file__) + "/version", medir + "/version")
     config["tags"][0]["version"] = verstr
     packd = medir + "/package"
     lzip = packd + "/" + me + "-" + verstr + ".zip"
