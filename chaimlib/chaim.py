@@ -111,6 +111,9 @@ def sendToSlack(respondurl, msg):
     :param msg: the text to send
     """
     try:
+        if respondurl is None:
+            emsg = "SendToSlack: Error no respond url: {}".format(msg)
+            raise SlackRcvFail(emsg)
         if respondurl != "ignoreme":
             if len(msg) > 0:
                 params = json.dumps(output(None, msg))
