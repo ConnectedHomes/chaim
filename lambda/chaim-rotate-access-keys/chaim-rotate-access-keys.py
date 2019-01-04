@@ -39,8 +39,8 @@ def rotate(event, context):
         log.info("Rotating access key for {}".format(iamusername))
         log.debug("enckeyname: {}".format(enckeyname))
         log.debug("iamusername: {}".format(iamusername))
-        iam = IamClient(defaultsession=True)
-        user = iam.getKeys(username=iamusername)
+        iam = IamClient(iamusername)
+        user = iam.getKeys()
         if user is False:
             log.debug("getkeys is false, yet: {}".format(iam.user["keys"]))
         key = iam.rotateKeys()
