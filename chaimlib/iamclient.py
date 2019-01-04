@@ -88,7 +88,7 @@ class IamClient(BotoSession):
         a user to have 2 keys at any one time (whether active or not).
         """
         res = True
-        self.user = self.getKeys(username="sre.chaim")
+        self.user = self.getKeys()
         for key in self.user["keys"]:
             if key["Status"] == "Active":
                 self.currentkey = key["AccessKeyId"]
@@ -129,7 +129,7 @@ class IamClient(BotoSession):
             # I know, but it saves dicking around deleting keys from
             # the user dictionary and deactivating the current one later on
             # this does it all in one line, te he he.
-            self.getKeys(username="sre.chaim")
+            self.getKeys()
         except Exception as e:
             log.error("Exception generating a new key for user {}, {}".format(self.user["UserName"], e))
         return key
