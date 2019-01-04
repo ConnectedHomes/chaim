@@ -50,7 +50,7 @@ class BotoSession():
         self.usekeys = False
         self.kwargs = None
         self.usedefault = True
-        if kwargs is not None:
+        if len(kwargs) > 0:
             if "profile" in kwargs:
                 self.profile = kwargs["profile"]
             elif "accesskey" in kwargs and "secretkey" in kwargs:
@@ -61,6 +61,9 @@ class BotoSession():
                     self.kwargs["aws_session_token"] = kwargs["stoken"]
                 self.usekeys = True
                 self.usedefault = False
+            else:
+                emsg = "Incomplete credentials supplied"
+                raise NoCreds(emsg)
 
     def newSession(self):
         if self.profile is None:
@@ -79,3 +82,4 @@ class BotoSession():
             msg = "Failed to create a {} client. {}: {}".format(service, type(e).__name__, e)
             log.error(msg)
             raise NoCreds(msg)
+        return self.client

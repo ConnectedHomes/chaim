@@ -25,11 +25,8 @@ log = glue.log
 
 
 class CognitoClient(BotoSession):
-    def __init__(self, awsaccessid=None, awssecretkey=None, awsprofile=None,
-                 defaultsession=True, stoken=None):
-        super().__init__(accessid=awsaccessid, secretkey=awssecretkey,
-                         theprofile=awsprofile, usedefault=defaultsession,
-                         stoken=stoken)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.newClient('cognito-idp')
 
     def listPools(self):

@@ -38,6 +38,13 @@ def test_has_pools():
     assert cn > 0
 
 
+def test_has_pools_with_profile():
+    cc = CognitoClient(profile="sadmin")
+    pools = cc.listPools()
+    cn = len(pools)
+    assert cn > 0
+
+
 def test_pool_list():
     cc = CognitoClient()
     pools = cc.listPools()
@@ -46,10 +53,13 @@ def test_pool_list():
 
 
 def test_correct_pool_list():
+    ret = False
     cc = CognitoClient()
     pools = cc.listPools()
-    pool = pools[0]
-    assert pool["Id"] == chaimpoolid
+    for pool in pools:
+        if pool["Id"] == chaimpoolid:
+            ret = True
+    assert ret is True
 
 
 def test_has_min_num_users():

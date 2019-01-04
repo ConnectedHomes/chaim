@@ -23,9 +23,23 @@ from chaimlib.botosession import NoCreds
 
 def test_nocreds():
     with pytest.raises(NoCreds):
-        BotoSession()
+        kwargs = {"accesskey": 7}
+        BotoSession(**kwargs)
 
 
 def test_default_creds():
-    sess = BotoSession(usedefault=True)
-    assert sess.usedefault
+    sess = BotoSession()
+    assert sess.profile is None
+
+
+def test_profile():
+    ret = False
+    kwargs = {"profile": "extbackup"}
+    sess = BotoSession(**kwargs)
+    cli = sess.newClient("iam")
+    usr = cli.get_user(UserName="aws.events.ro")
+    if "User" in usr:
+        if "Arn" in usr["User"]:
+            if usr["User"]["Arn"] == "arn:aws:iam::571376643458:user/aws.events.ro":
+                ret = True
+    assert ret is True
