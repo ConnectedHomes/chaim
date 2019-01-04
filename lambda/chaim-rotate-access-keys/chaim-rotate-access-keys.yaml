@@ -10,6 +10,8 @@ codeenv:
     - SECRETPATH: /sre/chaim/
     - WAVEFRONT_URL: https://connectedhome.wavefront.com
     - REPORT_STANDARD_METRICS: "True"
+    - KEYNAME: sre-chaim
+    - CHAIMUSER: sre.chaim
 
 tags:
     - Name: chaim-rotate-access-keys
@@ -21,6 +23,7 @@ files:
     - README.md
     - chaim-rotate-access-keys.py
     - chaimlib/botosession.py
+    - chaimlib/envparams.py
     - chaimlib/glue.py
     - chaimlib/iamclient.py
     - chaimlib/paramstore.py
