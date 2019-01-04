@@ -1,0 +1,4 @@
+pymysql
+chardet
+wavefront_pyformance
+slackclient
