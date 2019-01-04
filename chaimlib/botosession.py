@@ -40,7 +40,6 @@ class BotoSession():
             accesskey - the aws access key id to use (along with the secret key).
             secretkey - the aws secret access key to use (along with the access key id).
             stoken - the aws session token to use
-            usedefault - use the default context to create a session.
 
         Environment Variables:
             AWS_ACCESS_KEY_ID
