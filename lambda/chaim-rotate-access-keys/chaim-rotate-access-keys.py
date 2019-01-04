@@ -34,6 +34,9 @@ log = glue.log
 def rotate(event, context):
     try:
         ep = EnvParam()
+        env = ep.getParam("environment")
+        if env in ["dev", "test"]:
+            glue.setDebug()
         enckeyname = ep.getParam("KEYNAME")
         iamusername = ep.getParam("CHAIMUSER")
         log.info("Rotating access key for {}".format(iamusername))
