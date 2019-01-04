@@ -29,7 +29,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py --novpc dev
-	aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "rate(7 days)" --state DISABLED
+	aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(38 4 ? * 5 *)" --state DISABLED
 	aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
 	touch $@
 endif
@@ -39,7 +39,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py --novpc dev
-	aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "rate(7 days)" --state DISABLED
+	aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(38 4 ? * 5 *)" --state DISABLED
 	aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
 endif
 
@@ -49,7 +49,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py --novpc prod
-	aws events put-rule --name $(LAMBDANAME)-prod --schedule-expression "rate(7 days)"
+	aws events put-rule --name $(LAMBDANAME)-prod --schedule-expression "cron(38 4 ? * 5 *)"
 	aws events put-targets --rule $(LAMBDANAME)-prod --targets "Id"=1,"Arn"="$(LARN)-prod"
 endif
 
