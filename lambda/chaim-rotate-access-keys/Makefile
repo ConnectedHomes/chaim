@@ -4,7 +4,7 @@
 # the prod lambda will always update when `make prod` is called
 
 LAMBDANAME = chaim-rotate-access-keys
-LARN = "arn:aws:lambda:eu-west-1:499223386158:function:chaim-rotate-access-keys"
+LARN = arn:aws:lambda:eu-west-1:499223386158:function:chaim-rotate-access-keys
 SRC = $(LAMBDANAME).yaml
 
 .PHONY: tags clean prod force
