@@ -29,7 +29,7 @@ def test_nocreds():
 def test_obtain_access_key_info():
     res = False
     try:
-        client = IamClient("sre.chaim", defaultsession=True)
+        client = IamClient("sre.chaim")
         user = client.getKeys()
         if type(user) is dict:
             if "keys" in user:
