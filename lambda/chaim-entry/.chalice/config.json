@@ -11,7 +11,8 @@
     },
     "environment_variables": {
         "WAVEFRONT_URL": "https://connectedhome.wavefront.com",
-        "REPORT_STANDARD_METRICS": "True"
+        "REPORT_STANDARD_METRICS": "True",
+        "SECRETPATH": "/sre/chaim/"
     },
     "stages": {
         "dev": {
