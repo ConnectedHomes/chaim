@@ -27,4 +27,5 @@ files:
     - chaimlib/glue.py
     - chaimlib/iamclient.py
     - chaimlib/paramstore.py
+    - chaimlib/kmsclient.py
     - version
