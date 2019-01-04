@@ -16,12 +16,14 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
+from chaimlib.assumedrole import AssumedRole
 from chaimlib.commandparse import CommandParse
 from chaimlib.envparams import EnvParam
 from chaimlib.permissions import DataNotFound
 from chaimlib.permissions import Permissions
 from chaimlib.wflambda import wfwrapper
 from chalice import Chalice
+from urllib.parse import parse_qs
 import chaimlib.chaim as chaim
 import chaimlib.glue as glue
 
@@ -106,5 +108,57 @@ def start():
         return chaim.output(emsg, msg)
     except Exception as e:
         emsg = "cli start: {}: {}".format(type(e).__name__, e)
+        log.error(emsg)
+        return chaim.output(emsg)
+
+
+@wfwrapper
+def doStartGui(rbody, env, version):
+    try:
+        verstr = "chaim-cligui-{}".format(env) + " " + version
+        log.debug("{} doStartGui entered: {}".format(verstr, rbody))
+        parsed = parse_qs(reqbody)
+        creds = {"Credentials": {"AccessKeyId": parsed.get("accesskey")[0],
+                                 "SecretAccessKey": parsed.get("secret")[0],
+                                 "SessionToken": parsed.get("session")[0]}}
+        log.debug("creds {}".format(creds))
+        ar = AssumedRole(creds)
+        duration = parsed.get("duration")[0]
+        useragent = None
+        tmp = parsed.get("useragent")
+        if tmp is not None:
+            useragent = tmp[0]
+        msg = "incoming url request: user agent: "
+        msg += "unknown!" if useragent is None else "{}".format(useragent)
+        log.info(msg)
+        loginurl = ar.getLoginUrl(duration)
+        emsg = None if loginurl is not None else "Failed to obtain a url"
+        msg = "GUI url issued to "
+        msg += parsed.get("username")[0]
+        msg += " for account "
+        msg += parsed.get("account")[0]
+        return [emsg, msg]
+    except Exception as e:
+        emsg = "start cli gui: {}: {}".format(type(e).__name__, e)
+        log.error(emsg)
+        return [emsg, None]
+
+
+@app.route('/gui', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+def startgui():
+    """
+    The entry point for the CLI to obtain a gui url
+    """
+    try:
+        config = {}
+        ep = EnvParam()
+        config["environment"] = ep.getParam("environment")
+        rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
+        with open("version", "r") as vfn:
+            version = vfn.read()
+        emsg, msg = doStartGui(rbody, config["environment"], version)
+        return chaim.output(emsg, msg)
+    except Exception as e:
+        emsg = "cligui start: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
         return chaim.output(emsg)
