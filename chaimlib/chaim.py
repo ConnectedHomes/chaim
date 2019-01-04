@@ -24,11 +24,11 @@ import chaimlib.glue as glue
 from chaimlib.assumedrole import AssumedRole
 from chaimlib.permissions import DataNotFound
 from chaimlib.permissions import IncorrectCredentials
+from chaimlib.snsclient import SnsClient
 from chaimlib.stsclient import StsClient
 from chaimlib.utils import Utils
 from chaimlib.wflambda import getWFKey
 from chaimlib.wflambda import incMetric
-from chaimlib.snsclient import SnsClient
 
 log = glue.log
 
@@ -123,7 +123,9 @@ def sendToSlack(respondurl, msg):
                     emsg += ". status: {}, text: {}".format(r.status_code, r.text)
                     raise(SlackSendFail(emsg))
     except Exception as e:
-        log.error("Send to Slack Failed: {}".format(e))
+        emsg = "sendToSlack: Error {}: {}".format(type(e).__name__, e)
+        log.error(emsg)
+        raise
 
 
 def sendSlackBot(apitoken, channel, msg, attach=None, title="\n*URL*\n"):
