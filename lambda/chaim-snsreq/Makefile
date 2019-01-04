@@ -12,7 +12,6 @@ SRC = $(LAMBDANAME).yaml
 	../../depends.py
 
 $(SRC):
-	:
 
 
 tags: $(SRC)
