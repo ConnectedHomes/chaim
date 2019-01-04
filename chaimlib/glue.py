@@ -23,6 +23,7 @@ chaim functions for both CLI and Slack
 import logging
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
 def getDefaultValue(xdict, key, default=""):
