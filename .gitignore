@@ -9,3 +9,5 @@ package/
 tags
 dev
 *.d
+.chalice/deployed
+.chalice/deployments
