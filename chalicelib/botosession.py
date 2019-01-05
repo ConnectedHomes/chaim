@@ -56,7 +56,7 @@ class BotoSession():
             elif "accesskey" in kwargs and "secretkey" in kwargs:
                 self.kwargs = {}
                 self.kwargs["aws_access_key_id"] = kwargs["accesskey"]
-                self.kwargs["aws_secret_key_id"] = kwargs["secretkey"]
+                self.kwargs["aws_secret_access_key"] = kwargs["secretkey"]
                 if "stoken" in kwargs:
                     self.kwargs["aws_session_token"] = kwargs["stoken"]
                 self.usekeys = True
