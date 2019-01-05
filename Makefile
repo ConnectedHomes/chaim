@@ -1,5 +1,4 @@
-# SUBDIRS := lambda/chaim-cleanup lambda/chaim-snsreq lambda/chaim-rotate-access-keys
-SUBDIRS := lambda/chaim-cleanup lambda/chaim-snsreq
+SUBDIRS := lambda/chaim-cleanup lambda/chaim-snsreq lambda/chaim-rotate-access-keys
 
 .PHONY: $(SUBDIRS) tags clean build dev prod force
 
