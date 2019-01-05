@@ -26,18 +26,18 @@ vpc:
 files:
     - README.md
     - chaim-snsreq.py
-    - chaimlib/assumedrole.py
-    - chaimlib/botosession.py
-    - chaimlib/chaim.py
-    - chaimlib/cognitoclient.py
-    - chaimlib/commandparse.py
-    - chaimlib/envparams.py
-    - chaimlib/glue.py
-    - chaimlib/kmsclient.py
-    - chaimlib/paramstore.py
-    - chaimlib/permissions.py
-    - chaimlib/slackiamdb.py
-    - chaimlib/stsclient.py
-    - chaimlib/utils.py
-    - chaimlib/wflambda.py
+    - chalicelib/assumedrole.py
+    - chalicelib/botosession.py
+    - chalicelib/chaim.py
+    - chalicelib/cognitoclient.py
+    - chalicelib/commandparse.py
+    - chalicelib/envparams.py
+    - chalicelib/glue.py
+    - chalicelib/kmsclient.py
+    - chalicelib/paramstore.py
+    - chalicelib/permissions.py
+    - chalicelib/slackiamdb.py
+    - chalicelib/stsclient.py
+    - chalicelib/utils.py
+    - chalicelib/wflambda.py
     - version

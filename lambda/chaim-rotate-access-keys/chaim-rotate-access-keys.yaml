@@ -22,10 +22,10 @@ tags:
 files:
     - README.md
     - chaim-rotate-access-keys.py
-    - chaimlib/botosession.py
-    - chaimlib/envparams.py
-    - chaimlib/glue.py
-    - chaimlib/iamclient.py
-    - chaimlib/paramstore.py
-    - chaimlib/kmsclient.py
+    - chalicelib/botosession.py
+    - chalicelib/envparams.py
+    - chalicelib/glue.py
+    - chalicelib/iamclient.py
+    - chalicelib/paramstore.py
+    - chalicelib/kmsclient.py
     - version

@@ -25,14 +25,14 @@ vpc:
 files:
     - chaim-cleanup.py
     - README.md
-    - chaimlib/botosession.py
-    - chaimlib/cognitoclient.py
-    - chaimlib/slackiamdb.py
-    - chaimlib/kmsclient.py
-    - chaimlib/glue.py
-    - chaimlib/envparams.py
-    - chaimlib/paramstore.py
-    - chaimlib/permissions.py
-    - chaimlib/wflambda.py
-    - chaimlib/utils.py
+    - chalicelib/botosession.py
+    - chalicelib/cognitoclient.py
+    - chalicelib/slackiamdb.py
+    - chalicelib/kmsclient.py
+    - chalicelib/glue.py
+    - chalicelib/envparams.py
+    - chalicelib/paramstore.py
+    - chalicelib/permissions.py
+    - chalicelib/wflambda.py
+    - chalicelib/utils.py
     - version
