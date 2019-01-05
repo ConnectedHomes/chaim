@@ -6,19 +6,27 @@
 LAMBDANAME = chaim-cleanup
 SRC = $(LAMBDANAME).yaml
 
-.PHONY: tags clean prod force
+.PHONY: tags clean prod force depends
+
 
 %.d: %.yaml
 	../../depends.py
 
+
 $(SRC):
+
+
+depends:
+	../../depends.py
 
 
 tags:
 	ctags -R
 
+
 clean:
 	../../install_lambda.py -c dev
+
 
 dev: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
@@ -28,6 +36,7 @@ else
 	touch $@
 endif
 
+
 force:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
@@ -35,11 +44,13 @@ else
 	../../install_lambda.py dev
 endif
 
+
 prod: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py prod
 endif
+
 
 include $(SRC:.yaml=.d)
