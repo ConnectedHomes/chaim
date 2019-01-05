@@ -40,4 +40,5 @@ files:
     - chalicelib/stsclient.py
     - chalicelib/utils.py
     - chalicelib/wflambda.py
+    - chalicelib/snsclient.py
     - version
