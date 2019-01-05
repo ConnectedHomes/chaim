@@ -51,7 +51,7 @@ def rotate(event, context):
             log.debug("new key: {}".format(key))
             accesskeyid = key["AccessKey"]["AccessKeyId"]
             secretkeyid = key["AccessKey"]["SecretAccessKey"]
-            ps = ParamStore(usedefault=True)
+            ps = ParamStore()
             ret = ps.putEStringParam("/sre/chaim/accesskeyid", accesskeyid, "alias/" + enckeyname)
             if ret is None:
                 raise AccessKeyError("Failed to store encrypted parameter 'accesskeyid'")
