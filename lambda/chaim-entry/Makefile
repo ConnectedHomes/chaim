@@ -1,19 +1,7 @@
 LAMBDANAME = chaim-entry
-SRC = $(LAMBDANAME).yaml
 
 
 .PHONY: tags clean prod force depends
-
-
-%.d: %.yaml
-	../../depends.py
-
-
-$(SRC):
-
-
-depends:
-	../../depends.py
 
 
 tags:
@@ -23,7 +11,7 @@ tags:
 clean:
 
 
-dev: $(SRC)
+dev:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
@@ -40,12 +28,9 @@ else
 endif
 
 
-prod: $(SRC)
+prod:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	chalice deploy --stage=prod
 endif
-
-
-include $(SRC:.yaml=.d)
