@@ -42,7 +42,8 @@ class Permissions():
         self.spath = secretpath
         if len(stagepath) == 0:
             stagepath = "prod"
-        self.ps = ParamStore(usedefault=True, env=stagepath)
+        # self.ps = ParamStore(env=stagepath)
+        self.ps = ParamStore()
         plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
                  "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
         self.params = self.ps.getParams(plist, environment=stagepath)

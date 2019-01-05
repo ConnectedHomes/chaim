@@ -22,7 +22,7 @@ from chalicelib.commandparse import BadCommandStr
 from chalicelib.permissions import Permissions
 
 secretpath = "/sre/chaim/"
-stagepath = "dev/"
+stagepath = "dev"
 testbody = "user_name=chris.allison&token=ABCDEF&response_url=http://example.com"
 testbody += "&stage=dev&useragent=chaimtest"
 goodbody = testbody + "&text=secadmin-prod,apu,1"

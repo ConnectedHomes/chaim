@@ -29,12 +29,13 @@ os.environ["WAVEFRONT_URL"] = "https://connectedhome.wavefront.com"
 testbody = "user_name=chris.allison&token=" + os.environ["UTOK"] + "&response_url=http://example.com"
 goodbody = testbody + "&text=secadmin-prod,apu,1"
 testextra = "&text=-i"
-context = {"useragent": "chaimtest", "stage": "dev", "apiId": "testapi"}
+context = {"useragent": "chaimtest", "environment": "dev", "apiid": "testapi"}
+contextbody = testbody + "&stage=dev&apiid=testapi&useragent=chaimtest"
 
 
 def test_begin():
-    b = chaim.begin(testbody, context, False)
-    assert len(b) != len(testbody)
+    b = chaim.begin(testbody, **context)
+    assert b == contextbody
 
 
 def test_bodyparams():
@@ -44,8 +45,8 @@ def test_bodyparams():
 
 def test_begin_fully():
     tb = chaim.bodyParams(testbody)
-    td = chaim.bodyParams(chaim.begin(testbody, context, isSlack=True))
-    assert ("useragent" not in tb) and (td["useragent"] == "slack")
+    td = chaim.bodyParams(chaim.begin(testbody, **context))
+    assert ("useragent" not in tb) and (td["useragent"] == "chaimtest")
 
 
 def test_makeattachments():
@@ -69,7 +70,7 @@ def test_output():
 
 
 def test_readKeyInit():
-    b = chaim.begin(testbody + testextra, context, False)
+    b = chaim.begin(testbody + testextra, **context)
     pms = Permissions(os.environ["SECRETPATH"], True)
     cp = CommandParse(b, pms.roleAliasDict())
     xs = chaim.readKeyInit(cp.requestDict(), pms)

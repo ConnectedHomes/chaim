@@ -56,28 +56,28 @@ def test_getWFKey():
     assert wft is not False
 
 
-def test_loglevelwarn():
+def test_loglevelinfo():
     lvl = glue.log.getEffectiveLevel()
-    assert lvl is 30
+    assert lvl is 20
 
 
 def test_logleveldebug():
     lvl = glue.log.getEffectiveLevel()
     glue.setDebug()
-    assert (lvl is 30) and (10 is glue.log.getEffectiveLevel())
+    assert (lvl is 20) and (10 is glue.log.getEffectiveLevel())
 
 
 def test_addToOutStr_empty():
     xstr = glue.addToOutStr("", "", "")
-    assert xstr == "\n = \n"
+    assert xstr == " = "
 
 
 def test_addToOutStr_empty_init():
     xstr = glue.addToOutStr("", "new", "new")
-    assert xstr == "\nnew = new\n"
+    assert xstr == "new = new"
 
 
 def test_addToOutStr():
     xstr = "eric = two"
     xstr = glue.addToOutStr(xstr, "new", "unnew")
-    assert xstr == "eric = two\nnew = unnew\n"
+    assert xstr == "eric = two\nnew = unnew"
