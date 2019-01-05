@@ -410,7 +410,7 @@ def startSTS(pms, rdict, accountid, ut, zstart):
         sname = rdict["username"]
         dur = rdict["duration"]
         role = rdict["role"]
-        stsc = StsClient(awsaccessid=akey, awssecretkey=skey, sessionname=sname, duration=dur)
+        stsc = StsClient(accesskey=akey, secretkey=skey, sessionname=sname, duration=dur)
         rolearn = "arn:aws:iam::{}:role/{}".format(accountid, role)
         aro, xstr = stsc.assumeRoleStr(rolearn)
         log.debug("sts completed")
