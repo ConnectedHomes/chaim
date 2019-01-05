@@ -17,9 +17,9 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 import os
-import chaimlib.chaim as chaim
-from chaimlib.permissions import Permissions
-from chaimlib.commandparse import CommandParse
+import chalicelib.chaim as chaim
+from chalicelib.permissions import Permissions
+from chalicelib.commandparse import CommandParse
 
 os.environ["REPORT_STANDARD_METRICS"] = "True"
 os.environ["SECRETPATH"] = "/sre/chaim"

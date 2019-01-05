@@ -16,8 +16,8 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-from chaimlib.stsclient import StsClient
-from chaimlib.assumedrole import AssumedRole
+from chalicelib.stsclient import StsClient
+from chalicelib.assumedrole import AssumedRole
 
 
 def test_stsclient():

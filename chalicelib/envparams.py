@@ -20,8 +20,8 @@
 
 import os
 import chardet
-from chaimlib.kmsclient import KmsClient
-import chaimlib.glue as glue
+from chalicelib.kmsclient import KmsClient
+import chalicelib.glue as glue
 
 log = glue.log
 

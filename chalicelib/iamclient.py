@@ -16,8 +16,8 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-import chaimlib.glue as glue
-from chaimlib.botosession import BotoSession
+import chalicelib.glue as glue
+from chalicelib.botosession import BotoSession
 
 log = glue.log
 

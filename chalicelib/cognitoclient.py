@@ -17,9 +17,9 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 """AWS Cognito-IDP client functions"""
 
-from chaimlib.botosession import BotoSession
+from chalicelib.botosession import BotoSession
 import re
-import chaimlib.glue as glue
+import chalicelib.glue as glue
 
 log = glue.log
 

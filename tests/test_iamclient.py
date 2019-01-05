@@ -17,8 +17,8 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 import pytest
-from chaimlib.iamclient import IamClient
-from chaimlib.botosession import NoCreds
+from chalicelib.iamclient import IamClient
+from chalicelib.botosession import NoCreds
 
 
 def test_nocreds():

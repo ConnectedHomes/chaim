@@ -20,7 +20,7 @@
 import os
 import shutil
 from pathlib import Path
-import chaimlib.glue as glue
+import chalicelib.glue as glue
 
 log = glue.log
 

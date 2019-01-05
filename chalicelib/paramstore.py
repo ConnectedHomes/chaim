@@ -19,9 +19,9 @@
 AWS SSM Parameter Store client functions
 """
 
-from chaimlib.botosession import BotoSession
+from chalicelib.botosession import BotoSession
 import os
-import chaimlib.glue as glue
+import chalicelib.glue as glue
 
 log = glue.log
 

@@ -31,9 +31,9 @@ import yaml
 # version module is at the top level of this repo (where
 # this script lives)
 import version
-# from chaimlib.filesystem import DirNotFound
-# from chaimlib.filesystem import FileNotFound
-from chaimlib.filesystem import FileSystem
+# from chalicelib.filesystem import DirNotFound
+# from chalicelib.filesystem import FileNotFound
+from chalicelib.filesystem import FileSystem
 
 
 def getVer():

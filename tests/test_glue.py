@@ -17,9 +17,9 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 import os
-import chaimlib.glue as glue
-from chaimlib.envparams import EnvParam
-from chaimlib.wflambda import getWFKey
+import chalicelib.glue as glue
+from chalicelib.envparams import EnvParam
+from chalicelib.wflambda import getWFKey
 
 os.environ["SECRETPATH"] = "/sre/chaim/"
 os.environ["WAVEFRONT_URL"] = "https://connectedhome.wavefront.com"

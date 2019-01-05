@@ -16,12 +16,12 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-from chaimlib.cognitoclient import CognitoClient
-from chaimlib.paramstore import ParamStore
-from chaimlib.slackiamdb import SlackIamDB
-from chaimlib.slackiamdb import DBNotConnected
-from chaimlib.utils import Utils
-import chaimlib.glue as glue
+from chalicelib.cognitoclient import CognitoClient
+from chalicelib.paramstore import ParamStore
+from chalicelib.slackiamdb import SlackIamDB
+from chalicelib.slackiamdb import DBNotConnected
+from chalicelib.utils import Utils
+import chalicelib.glue as glue
 
 log = glue.log
 

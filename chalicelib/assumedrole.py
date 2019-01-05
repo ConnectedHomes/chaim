@@ -26,7 +26,7 @@ requires python3
 from urllib.parse import quote_plus
 import json
 import requests
-import chaimlib.glue as glue
+import chalicelib.glue as glue
 
 log = glue.log
 

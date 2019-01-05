@@ -17,8 +17,8 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 import pytest
-from chaimlib.botosession import NoCreds
-from chaimlib.cognitoclient import CognitoClient
+from chalicelib.botosession import NoCreds
+from chalicelib.cognitoclient import CognitoClient
 
 chaimpoolid = "eu-west-1_o9gzAnQkS"
 chaimuserfind = "chris.allison"

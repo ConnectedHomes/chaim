@@ -18,9 +18,9 @@
 #
 """AWS KMS client functions"""
 
-from chaimlib.botosession import BotoSession
+from chalicelib.botosession import BotoSession
 from base64 import b64decode
-import chaimlib.glue as glue
+import chalicelib.glue as glue
 
 log = glue.log
 

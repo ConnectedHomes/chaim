@@ -16,7 +16,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-from chaimlib.utils import Utils
+from chalicelib.utils import Utils
 
 
 ut = Utils()

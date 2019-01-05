@@ -17,7 +17,7 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 """Base Module for creating a default session with boto3 to AWS"""
 import boto3
-import chaimlib.glue as glue
+import chalicelib.glue as glue
 
 log = glue.log
 

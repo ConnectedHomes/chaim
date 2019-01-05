@@ -16,16 +16,16 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-from chaimlib.assumedrole import AssumedRole
-from chaimlib.commandparse import CommandParse
-from chaimlib.envparams import EnvParam
-from chaimlib.permissions import DataNotFound
-from chaimlib.permissions import Permissions
-from chaimlib.wflambda import wfwrapper
+from chalicelib.assumedrole import AssumedRole
+from chalicelib.commandparse import CommandParse
+from chalicelib.envparams import EnvParam
+from chalicelib.permissions import DataNotFound
+from chalicelib.permissions import Permissions
+from chalicelib.wflambda import wfwrapper
 from chalice import Chalice
 from urllib.parse import parse_qs
-import chaimlib.chaim as chaim
-import chaimlib.glue as glue
+import chalicelib.chaim as chaim
+import chalicelib.glue as glue
 
 
 log = glue.log

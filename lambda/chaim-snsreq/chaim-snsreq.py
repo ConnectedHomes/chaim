@@ -16,12 +16,12 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-import chaimlib.glue as glue
-import chaimlib.chaim as chaim
-from chaimlib.envparams import EnvParam
-from chaimlib.permissions import Permissions
-from chaimlib.commandparse import CommandParse
-from chaimlib.wflambda import wfwrapper
+import chalicelib.glue as glue
+import chalicelib.chaim as chaim
+from chalicelib.envparams import EnvParam
+from chalicelib.permissions import Permissions
+from chalicelib.commandparse import CommandParse
+from chalicelib.wflambda import wfwrapper
 
 log = glue.log
 

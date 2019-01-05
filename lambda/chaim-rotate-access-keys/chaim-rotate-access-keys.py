@@ -21,11 +21,11 @@ lambda code to rotate the long-term keys for the chaim application
 see: https://jira.bgchtest.info/browse/SRE-589
 """
 
-import chaimlib.glue as glue
-from chaimlib.envparams import EnvParam
-from chaimlib.iamclient import AccessKeyError
-from chaimlib.iamclient import IamClient
-from chaimlib.paramstore import ParamStore
+import chalicelib.glue as glue
+from chalicelib.envparams import EnvParam
+from chalicelib.iamclient import AccessKeyError
+from chalicelib.iamclient import IamClient
+from chalicelib.paramstore import ParamStore
 
 
 log = glue.log

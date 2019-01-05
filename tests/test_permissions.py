@@ -17,9 +17,9 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 import pytest
-from chaimlib.permissions import Permissions
-from chaimlib.permissions import DataNotFound
-from chaimlib.permissions import IncorrectCredentials
+from chalicelib.permissions import Permissions
+from chalicelib.permissions import DataNotFound
+from chalicelib.permissions import IncorrectCredentials
 
 secretpath = "/sre/chaim/"
 stagepath = "dev/"

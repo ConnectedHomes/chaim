@@ -16,7 +16,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-from chaimlib.paramstore import ParamStore
+from chalicelib.paramstore import ParamStore
 
 
 def test_list_parameters():

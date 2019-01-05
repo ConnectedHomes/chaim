@@ -22,13 +22,13 @@ The chaim api records issued keys to aid event tracing.
 """
 
 
-import chaimlib.glue as glue
-from chaimlib.permissions import Permissions
-from chaimlib.wflambda import wfwrapper
-from chaimlib.wflambda import getWFKey
-from chaimlib.wflambda import incMetric
-from chaimlib.wflambda import ggMetric
-from chaimlib.envparams import EnvParam
+import chalicelib.glue as glue
+from chalicelib.permissions import Permissions
+from chalicelib.wflambda import wfwrapper
+from chalicelib.wflambda import getWFKey
+from chalicelib.wflambda import incMetric
+from chalicelib.wflambda import ggMetric
+from chalicelib.envparams import EnvParam
 
 log = glue.log
 

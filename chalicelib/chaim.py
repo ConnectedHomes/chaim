@@ -20,15 +20,15 @@ import base64
 import json
 import requests
 from slackclient import SlackClient
-import chaimlib.glue as glue
-from chaimlib.assumedrole import AssumedRole
-from chaimlib.permissions import DataNotFound
-from chaimlib.permissions import IncorrectCredentials
-from chaimlib.snsclient import SnsClient
-from chaimlib.stsclient import StsClient
-from chaimlib.utils import Utils
-from chaimlib.wflambda import getWFKey
-from chaimlib.wflambda import incMetric
+import chalicelib.glue as glue
+from chalicelib.assumedrole import AssumedRole
+from chalicelib.permissions import DataNotFound
+from chalicelib.permissions import IncorrectCredentials
+from chalicelib.snsclient import SnsClient
+from chalicelib.stsclient import StsClient
+from chalicelib.utils import Utils
+from chalicelib.wflambda import getWFKey
+from chalicelib.wflambda import incMetric
 
 log = glue.log
 

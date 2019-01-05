@@ -24,9 +24,9 @@ from datetime import datetime
 from wavefront_pyformance.wavefront_reporter import WavefrontDirectReporter
 from pyformance import MetricsRegistry
 from wavefront_pyformance import delta
-from chaimlib.permissions import Permissions
-from chaimlib.envparams import EnvParam
-import chaimlib.glue as glue
+from chalicelib.permissions import Permissions
+from chalicelib.envparams import EnvParam
+import chalicelib.glue as glue
 
 log = glue.log
 is_cold_start = True

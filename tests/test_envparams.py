@@ -17,7 +17,7 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 import os
-from chaimlib.envparams import EnvParam
+from chalicelib.envparams import EnvParam
 
 os.environ["TESTPARAM"] = "ATESTPARAM"
 

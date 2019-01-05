@@ -16,7 +16,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 import pymysql
-import chaimlib.glue as glue
+import chalicelib.glue as glue
 
 log = glue.log
 

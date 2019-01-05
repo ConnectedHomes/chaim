@@ -16,8 +16,8 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-import chaimlib.glue as glue
-from chaimlib.utils import Utils
+import chalicelib.glue as glue
+from chalicelib.utils import Utils
 from urllib.parse import parse_qs
 
 log = glue.log

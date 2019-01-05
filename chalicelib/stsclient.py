@@ -18,8 +18,8 @@
 #
 """AWS STS client functions"""
 
-import chaimlib.glue as glue
-from chaimlib.botosession import BotoSession
+import chalicelib.glue as glue
+from chalicelib.botosession import BotoSession
 
 log = glue.log
 
