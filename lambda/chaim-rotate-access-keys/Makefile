@@ -7,12 +7,17 @@ LAMBDANAME = chaim-rotate-access-keys
 LARN = arn:aws:lambda:eu-west-1:499223386158:function:chaim-rotate-access-keys
 SRC = $(LAMBDANAME).yaml
 
-.PHONY: tags clean prod force
+.PHONY: tags clean prod force depends
 
 %.d: %.yaml
 	../../depends.py
 
+
 $(SRC):
+
+
+depends:
+	../../depends.py
 
 requirements.txt:
 
@@ -21,8 +26,10 @@ requirements.txt:
 tags: $(SRC)
 	ctags -R
 
+
 clean:
 	../../install_lambda.py -c dev
+
 
 dev: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
@@ -33,6 +40,7 @@ else
 	aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
 	touch $@
 endif
+
 
 force:
 ifeq ($(strip $(VIRTUAL_ENV)),)
@@ -52,5 +60,6 @@ else
 	aws events put-rule --name $(LAMBDANAME)-prod --schedule-expression "cron(38 4 ? * 5 *)"
 	aws events put-targets --rule $(LAMBDANAME)-prod --targets "Id"=1,"Arn"="$(LARN)-prod"
 endif
+
 
 include $(SRC:.yaml=.d)

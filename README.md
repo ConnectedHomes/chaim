@@ -33,6 +33,7 @@ in the individual READMEs for each lambda (if any).
 
 The Makefiles have the following targets:
 1. `tags` - this will rebuild the tags files for each lambda
+1. `depends` - this will rebuild the dependency chain for each lambda
 1. `clean` - this will remove all but the latest zip file for each lambda
 1. `dev` - this will increment the build number and rebuild the dev enviroment
          lambda if any of the files have changed.
