@@ -1,4 +1,5 @@
 LAMBDANAME = chaim-entry
+SRC = app.py
 
 
 .PHONY: tags clean prod force depends
@@ -11,7 +12,7 @@ tags:
 clean:
 
 
-dev:
+dev: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
