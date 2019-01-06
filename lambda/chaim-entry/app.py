@@ -113,7 +113,7 @@ def start():
 
 
 @wfwrapper
-def doStartGui(rbody, env, version):
+def doStartGui(rbody, context, env, version):
     try:
         verstr = "chaim-cligui-{}".format(env) + " " + version
         log.debug("{} doStartGui entered: {}".format(verstr, rbody))
@@ -156,7 +156,7 @@ def startgui():
         rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
         with open("version", "r") as vfn:
             version = vfn.read()
-        emsg, msg = doStartGui(rbody, config["environment"], version)
+        emsg, msg = doStartGui(rbody, app.lambda_context, config["environment"], version)
         return chaim.output(emsg, msg)
     except Exception as e:
         emsg = "cligui start: {}: {}".format(type(e).__name__, e)
