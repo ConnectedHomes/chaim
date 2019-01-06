@@ -137,7 +137,12 @@ def doStartGui(rbody, context, env, version):
         msg += parsed.get("username")[0]
         msg += " for account "
         msg += parsed.get("account")[0]
-        return [emsg, msg]
+        if emsg is None:
+            log.info(msg)
+            incMetric("gui")
+        else:
+            log.error(emsg)
+        return [emsg, {"url": loginurl}]
     except Exception as e:
         emsg = "start cli gui: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
