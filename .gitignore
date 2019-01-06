@@ -11,3 +11,4 @@ dev
 *.d
 deployed/
 deployments/
+vendor/
