@@ -117,7 +117,7 @@ def doStartGui(rbody, context, env, version):
     try:
         verstr = "chaim-cligui-{}".format(env) + " " + version
         log.debug("{} doStartGui entered: {}".format(verstr, rbody))
-        parsed = parse_qs(reqbody)
+        parsed = parse_qs(rbody)
         creds = {"Credentials": {"AccessKeyId": parsed.get("accesskey")[0],
                                  "SecretAccessKey": parsed.get("secret")[0],
                                  "SessionToken": parsed.get("session")[0]}}
