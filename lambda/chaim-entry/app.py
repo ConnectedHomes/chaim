@@ -162,3 +162,47 @@ def startgui():
         emsg = "cligui start: {}: {}".format(type(e).__name__, e)
         log.error(emsg)
         return chaim.output(emsg)
+
+
+@app.route('/keyinit', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+def keyinit():
+    """
+    the entry point to request a user key (from slack /initchaim)
+    """
+    try:
+        with open("version", "r") as vfn:
+            version = vfn.read()
+        config = {}
+        ep = EnvParam()
+        config["environment"] = ep.getParam("environment")
+        config["useragent"] = "slack"
+        config["apiid"] = app.current_request.context["apiId"]
+        rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
+        rbody = glue.addToReqBody(rbody, "keyinit", "true")
+        chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
+        verstr = "chaim-slack-" + config["environment"] + " " + version
+        return chaim.output(None, "{}\n\nPlease wait".format(verstr))
+
+
+        # reqbody = app.current_request.raw_body.decode()
+        # reqbody += "&stage="
+        # stage = app.current_request.context["stage"]
+        # apiid = app.current_request.context["apiId"]
+        # useragent = "slack"
+        # if stage == "dev":
+        #     log.setLevel(logging.DEBUG)
+        # reqbody += stage
+        # reqbody += "&apiid={}&keyinit=true".format(apiid)
+        # reqbody += "&useragent={}".format(useragent)
+        # log.debug("keyinit starting: {}".format(reqbody))
+        # log.debug("sending to sns: {}".format(reqbody))
+        # epm = EnvParam()
+        # snstopicarn = epm.getParam("SNSTOPIC", decode=True)
+        # snsc = boto3.client('sns')
+        # snsc.publish(TopicArn=snstopicarn, Message=reqbody)
+        # extrav = "-{}".format(stage) if stage in ["beta", "dev"] else ""
+        # return output(None, "{}\n\nPlease wait".format(verstr + extrav))
+    except Exception as e:
+        msg = "A keyinit error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        return output(msg)
