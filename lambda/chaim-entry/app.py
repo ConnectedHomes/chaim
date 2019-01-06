@@ -139,7 +139,7 @@ def doStartGui(rbody, context, env, version):
         msg += parsed.get("account")[0]
         if emsg is None:
             log.info(msg)
-            incMetric("gui")
+            chaim.incMetric("gui")
         else:
             log.error(emsg)
         return [emsg, {"url": loginurl}]
