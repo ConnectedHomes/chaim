@@ -58,7 +58,7 @@ def slackreq():
 
 
 @wfwrapper
-def doStart(reqbody, env, version):
+def doStart(reqbody, context, env, version):
     try:
         verstr = "chaim-cli-{}".format(env) + " " + version
         log.debug("{} doStart entered: {}".format(verstr, reqbody))
@@ -104,7 +104,7 @@ def start():
         rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
         with open("version", "r") as vfn:
             version = vfn.read()
-        emsg, msg = doStart(rbody, config["environment"], version)
+        emsg, msg = doStart(rbody, app.lambda_context, config["environment"], version)
         return chaim.output(emsg, msg)
     except Exception as e:
         emsg = "cli start: {}: {}".format(type(e).__name__, e)
