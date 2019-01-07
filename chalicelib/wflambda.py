@@ -18,6 +18,8 @@
 #
 # Cloned from https://github.com/wavefrontHQ/wavefront-lambda-python
 # Parts of which are under the Apache License 2.0 (see apache-license-2.0)
+# Original Source Code Authors: Wavefront/VMWare
+# Retrieved: 03/08/2018
 #
 import os
 from datetime import datetime
