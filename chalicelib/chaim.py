@@ -292,7 +292,7 @@ def doKeyInit(rdict, pms):
         uuid, expires = ut.newUserToken(expiredays)
         if pms.updateUserToken(rdict["username"], uuid, expires):
             expat, xstr, bstr = buildInitOutputStr(uuid, expires, rdict)
-            msg = "New Chaim Credentials Expire {}\n{}\n```{}```".format(expat, xstr, bstr)
+            msg = "New Chaim Credentials Expire {}\n{}\n{}".format(expat, xstr, bstr)
         else:
             msg = "Failed to write a new user token, sorry."
             raise InvalidToken(msg)

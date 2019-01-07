@@ -1,5 +1,14 @@
 # Chaim
-this is the repository for all of the chaim backend and api code.
+Chaim is the Centrica Hive AWS access and Identity Manager.
+
+Chaim is a user service that enables easy access to Amazon Web Services.
+
+Using Chaim a user can enter a simple command into Slack and receive a
+clickable link that takes them to an already signed in AWS Console.  Chaim can
+also be used to manage a users credentials file for use with the AWS CLI (and
+boto like interfaces).
+
+This is the repository for all of the chaim backend and api code.
 
 ## Testing Chaimlib
 To run the full set of tests you will need your default aws credentials to be
