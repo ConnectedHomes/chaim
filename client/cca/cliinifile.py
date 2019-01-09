@@ -89,6 +89,13 @@ class IniFile(configparser.ConfigParser):
         sectionlist = self.sections()
         return sectionlist
 
+    def sectionExists(self, section):
+        ret = False
+        titles = self.titles()
+        if section in titles:
+            ret = True
+        return ret
+
     def getSectionItems(self, section):
         # section items look like
         # [('region', 'eu-west-1'), ('aws_access_key_id', 'xxxxx'), ('aws_secret_access_key', 'xxxxxx')]
