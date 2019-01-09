@@ -34,7 +34,7 @@ setup(
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=['docs', 'tests*']),
     install_requires=[
-        'Click',
+        'click',
         'requests',
         'pyperclip',
         'chardet',
