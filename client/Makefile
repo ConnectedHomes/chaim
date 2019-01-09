@@ -25,6 +25,10 @@ newbuildv=$(shell echo ${buildv}+1|bc)
 newverstr=${majorv}.${minorv}.${newbuildv}
 
 
+tags:
+	ctags -R
+
+
 dev:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
@@ -42,4 +46,9 @@ uninstall:
 
 install:
 	# pip3 install -r requirements.txt --user
+	pip3 install --user .
+
+update:
+	pip3 uninstall -y cca
+	git pull
 	pip3 install --user .
