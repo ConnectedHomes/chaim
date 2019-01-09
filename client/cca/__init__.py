@@ -16,8 +16,8 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-majorv = 1
-minorv = 2
-buildv = 38
+majorv = 2
+minorv = 0
+buildv = -1
 __version__ = str(majorv) + "." + str(minorv) + "." + str(buildv)
 __version_info__ = [majorv, minorv, buildv]
