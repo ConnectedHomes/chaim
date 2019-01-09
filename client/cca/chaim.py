@@ -50,8 +50,10 @@ def getDefaultSection(ifn):
 
 
 def getDefaultAccount(ifn):
+    ret = None
     defsect = getDefaultSection(ifn)
-    ret = defsect["alias"] if "alias" in defsect else defsect["section"]
+    if "section" in defsect:
+        ret = defsect["alias"] if "alias" in defsect else defsect["section"]
     return ret
 
 
@@ -209,6 +211,9 @@ def requestUrl(account, ifn):
 def doUrl(account, ifn, browser=False, logout=False):
     if len(account) == 0:
         account = [getDefaultAccount(ifn)]
+    if account is None:
+        click.echo("account name required or no default account set.")
+        return
     acct = account[0]
     checkRenewAccount(acct, ifn)
     url, expires = requestUrl(acct, ifn)
