@@ -37,7 +37,7 @@ dev: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	pip uninstall -y cca
+	pip uninstall -y chaim-cli
 	sed -i "/^buildv =/s/.*$$/buildv = ${newbuildv}/" cca/__init__.py
 	git add cca/__init__.py
 	git commit -m "updating to ${newverstr}"
