@@ -57,10 +57,6 @@ def getDefaultAccount(ifn):
     return ret
 
 
-def checkAccountInList(acct, ifn):
-    return ifn.sectionExists(acct)
-
-
 def getEndpoint(ifn):
     defsect = getDefaultSection(ifn)
     endpoint = "https://{}.".format(defsect['api'])
@@ -219,7 +215,7 @@ def doUrl(account, ifn, browser=False, logout=False):
         click.echo("account name required or no default account set.")
         return
     acct = account[0]
-    if not checkAccountInList(acct, ifn):
+    if not ifn.sectionExists(acct):
         return
     checkRenewAccount(acct, ifn)
     url, expires = requestUrl(acct, ifn)
