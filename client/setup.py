@@ -25,8 +25,8 @@ setup(
     python_requires='>=3',
     entry_points={
         'console_scripts': [
-            'cca=ccu.ccu:account',
-            'ccm=ccu.ccu:ccm',
+            # 'cca=cca.cca:account',
+            'cca=cca.cca:cca',
         ]
     },
     classifiers=(

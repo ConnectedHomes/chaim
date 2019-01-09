@@ -23,5 +23,5 @@ uninstall:
 	pip3 uninstall -y cca
 
 install:
-	pip3 install -r requirements.txt --user
+	# pip3 install -r requirements.txt --user
 	pip3 install --user .
