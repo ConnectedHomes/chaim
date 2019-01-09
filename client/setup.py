@@ -18,7 +18,7 @@
 #
 from setuptools import setup
 from setuptools import find_packages
-from ccu import __version__ as v
+from cca import __version__ as v
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
