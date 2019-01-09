@@ -373,6 +373,9 @@ def unparkAccount(account, ifn, pfn):
 
 
 def listParkAccounts(pfn):
-    pfn.titles().sort()
+    slst = []
     for title in pfn.titles():
+        slst.append(title)
+    slst.sort()
+    for title in slst:
         print(title)
