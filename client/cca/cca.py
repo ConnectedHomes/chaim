@@ -50,17 +50,17 @@ def cca():
 
 @cca.command()
 @click.option("-r", "--role", type=click.STRING, default="rro",
-              help="The role to assume for this account default: rro")
+              help="optional the role to assume for this account default: rro")
 @click.option("-d", "--duration", type=click.INT, default=1,
-              help="duration must be between 1-12 or 900-43,200 default 1")
+              help="optional duration must be between 1-12 or 900-43,200 default 1")
 @click.option("-a", "--alias", type=click.STRING, default="",
               help="optional alias for the account name, to be used as the profile name")
 @click.option("-D", "--default", is_flag=True, default=False,
-              help="set this account to be the default account profile to use")
+              help="optional set this account to be the default account profile to use")
 @click.option("-R", "--region", help="optional region")
 @click.argument("account")
 def account(account, role, duration, alias, default, region):
-    """Retrieve credentials for an account"""
+    """Retrieve credentials for ACCOUNT account"""
     setregion = False if region is None else region
     if not chaim.requestKeys(account, role, duration, alias, config, setregion, default):
         click.echo("Failed to obtain credentials for account " + account, err=True)
