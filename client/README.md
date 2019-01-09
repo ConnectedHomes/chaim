@@ -55,11 +55,11 @@ make update
 
 <a name='uninstall'></a>
 ## Uninstall
-To uninstall the dev version, delete the virtualenvironment or
+To uninstall the dev version, delete the virtualenvironment, or
 ```
 make uninstall
 ```
-To keep the virtualenvironment intact, but without this package installed.
+to keep the virtualenvironment intact, but uninstall this package.
 
 To uninstall the local, user's package cache version
 ```
