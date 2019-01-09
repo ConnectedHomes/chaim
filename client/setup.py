@@ -24,7 +24,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='cca',
+    name='chaim-cli',
     version=v,
     author="Chris Allison",
     author_email="chris.allison@hivehome.com",
