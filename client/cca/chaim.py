@@ -373,8 +373,6 @@ def unparkAccount(account, ifn, pfn):
 
 
 def listParkAccounts(pfn):
-    plist = []
+    pfn.titles().sort()
     for title in pfn.titles():
-        plist.append(title)
-    for tname in plist.sort():
-        print(tname)
+        print(title)
