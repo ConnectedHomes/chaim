@@ -216,6 +216,7 @@ def doUrl(account, ifn, browser=False, logout=False):
         return
     acct = account[0]
     if not ifn.sectionExists(acct):
+        click.echo("account {} not recognised.".format(acct))
         return
     checkRenewAccount(acct, ifn)
     url, expires = requestUrl(acct, ifn)
