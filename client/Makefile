@@ -16,9 +16,9 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-majorv=$(shell grep 'majorv =' ccu/__init__.py|cut -d" " -f3)
-minorv=$(shell grep 'minorv =' ccu/__init__.py|cut -d" " -f3)
-buildv=$(shell grep 'buildv =' ccu/__init__.py|cut -d" " -f3)
+majorv=$(shell grep 'majorv =' cca/__init__.py|cut -d" " -f3)
+minorv=$(shell grep 'minorv =' cca/__init__.py|cut -d" " -f3)
+buildv=$(shell grep 'buildv =' cca/__init__.py|cut -d" " -f3)
 verstr=${majorv}.${minorv}.${buildv}
 
 newbuildv=$(shell echo ${buildv}+1|bc)
