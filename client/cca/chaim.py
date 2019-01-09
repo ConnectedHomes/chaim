@@ -58,13 +58,7 @@ def getDefaultAccount(ifn):
 
 
 def checkAccountInList(acct, ifn):
-    try:
-        ret = ifn.getSectionItems(acct)
-    except NoSectionError as e:
-        msg = "Account {} doesn't exist: {}, {}".format(acct, type(e).__name__, e)
-        click.echo(msg)
-        return False
-    return True
+    return ifn.sectionExists(acct)
 
 
 def getEndpoint(ifn):
