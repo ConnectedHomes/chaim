@@ -17,7 +17,7 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-chaim module for click based chaim cli (ccu)
+chaim module for click based chaim cli (cca)
 
 This is the module that does all the work
 """
@@ -30,9 +30,9 @@ import requests
 import json
 import base64
 import pyperclip
-import ccu.cliutils as cliutils
+import cca.cliutils as cliutils
 import ast
-from ccu import __version__ as ccuversion
+from cca import __version__ as ccaversion
 
 
 class UnmanagedAccount(Exception):
@@ -95,7 +95,7 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
     params["user_name"] = defsect["username"]
     params["token"] = defsect["usertoken"]
     params["response_url"] = "ignoreme"
-    params["useragent"] = "ccu " + ccuversion
+    params["useragent"] = "cca " + ccaversion
     endpoint = getEndpoint(ifn)
     now = int(time.time())
     r = requests.post(endpoint, data=params)
@@ -186,7 +186,7 @@ def requestUrl(account, ifn):
                 params["duration"] = duration
                 params["username"] = defsect["username"]
                 params["account"] = accountname
-                params["useragent"] = "ccu " + ccuversion
+                params["useragent"] = "cca " + ccaversion
                 r = requests.post(endpoint + "gui", data=params)
                 if 200 == r.status_code:
                     if r.text == "null":
@@ -251,7 +251,7 @@ def askInit(ifn):
                 defsect[key] = input("{}: ".format(key))
     ifn.updateSection("default", defsect, True)
     estr = cliutils.hmsDisplay(int(defsect["tokenexpires"]) - int(time.time()), True)
-    click.echo("ccu has been re-initialised.\nYour token will expire in {}.".format(estr))
+    click.echo("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
 
 
 def doInit(initstr, ifn):
@@ -267,7 +267,7 @@ def doInit(initstr, ifn):
                 defsect[pl[0]] = pl[1]
         ifn.updateSection("default", defsect, True)
         estr = cliutils.hmsDisplay(int(defsect["tokenexpires"]) - int(time.time()), True)
-        click.echo("ccu has been re-initialised.\nYour token will expire in {}.".format(estr))
+        click.echo("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
     else:
         askInit(ifn)
 
@@ -296,7 +296,7 @@ def requestList(ifn):
     params["user_name"] = defsect["username"]
     params["token"] = defsect["usertoken"]
     params["response_url"] = "ignoreme"
-    params["useragent"] = "ccu " + ccuversion
+    params["useragent"] = "cca " + ccaversion
     r = requests.post(endpoint, data=params)
     if 200 == r.status_code:
         if r.text == 'null':
