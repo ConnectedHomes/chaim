@@ -24,12 +24,16 @@ verstr=${majorv}.${minorv}.${buildv}
 newbuildv=$(shell echo ${buildv}+1|bc)
 newverstr=${majorv}.${minorv}.${newbuildv}
 
+SRC = cca/cca.py cca/chaim.py cca/cliinifile.py cca/cliutils.py README.md setup.py
+
+$(SRC):
+
 
 tags:
 	ctags -R
 
 
-dev:
+dev: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
@@ -39,12 +43,13 @@ else
 	git commit -m "updating to ${newverstr}"
 	git push
 	pip install .
+	touch $@
 endif
 
 uninstall:
 	pip3 uninstall -y cca
 
-install:
+install: dev
 	# pip3 install -r requirements.txt --user
 	pip3 install --user .
 
