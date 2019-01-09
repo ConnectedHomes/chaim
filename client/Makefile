@@ -57,3 +57,9 @@ update:
 	pip3 uninstall -y cca
 	git pull
 	pip3 install --user .
+
+clean:
+	rm -rf dist
+
+dist: clean
+	python3 setup.py sdist bdist_wheel
