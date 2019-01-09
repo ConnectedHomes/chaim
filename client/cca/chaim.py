@@ -57,6 +57,16 @@ def getDefaultAccount(ifn):
     return ret
 
 
+def checkAccountInList(acct, ifn):
+    try:
+        ret = ifn.getSectionItems(acct)
+    except NoSectionError as e:
+        msg = "Account {} doesn't exist: {}, {}".format(acct, type(e).__name__, e)
+        click.echo(msg)
+        return False
+    return True
+
+
 def getEndpoint(ifn):
     defsect = getDefaultSection(ifn)
     endpoint = "https://{}.".format(defsect['api'])
@@ -215,6 +225,8 @@ def doUrl(account, ifn, browser=False, logout=False):
         click.echo("account name required or no default account set.")
         return
     acct = account[0]
+    if not checkAccountInList(acct, ifn):
+        return
     checkRenewAccount(acct, ifn)
     url, expires = requestUrl(acct, ifn)
     pyperclip.copy(url)
