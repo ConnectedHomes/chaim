@@ -12,3 +12,5 @@ dev
 deployed/
 deployments/
 vendor/
+dist/
+chaim_cli.egg-info/
