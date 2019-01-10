@@ -5,8 +5,6 @@ cca is a re-imagining of the chaim cli using the click parameter parsing
 python module.
 
 <a name='contents'></a>
-* [Install](#install)
-* [Uninstall](#uninstall)
 * [cca](#cca)
 * [cca sub-commands](#ccasubcommands)
     * [account](#ccaaccount)
@@ -23,49 +21,6 @@ python module.
     * [unpark](#ccaunpark)
     * [url](#ccaurl)
     * [version](#ccaversion)
-
-<a name='install'></a>
-## Install
-To install a development version (which will create a new branch tagged with
-your name):
-```
-mkvirtualenv -p $(which python3) clickchaim
-git pull
-git checkout -b ${USER}-cca-dev
-git push -u origin ${USER}-cca-dev
-make dev
-```
-If `make` exits with an error, you probably need to upgrade your pip version
-```
-pip3 install --upgrade pip --user
-```
-and try `make dev` again.
-
-To install a usable, no virtualenv needed, version, available from any prompt,
-in the user's own, local Python package cache
-```
-git pull
-make install
-```
-
-When a new version is released this can be updated with:
-```
-make update
-```
-
-<a name='uninstall'></a>
-## Uninstall
-To uninstall the dev version, delete the virtualenvironment, or
-```
-make uninstall
-```
-to keep the virtualenvironment intact, but uninstall this package.
-
-To uninstall the local, user's package cache version
-```
-make uninstall
-```
-from outside any virtualenvironment.
 
 <a name='cca'></a>
 ## [cca](#contents)
