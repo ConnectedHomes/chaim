@@ -63,7 +63,19 @@ clean:
 	rm -rf chaim_cli.egg-info
 
 dist: clean
+ifeq ($(strip $(VIRTUAL_ENV)),)
+	@echo "You need to be in a virtual environment"
+else
+	sed -i "/^buildv =/s/.*$$/buildv = ${newbuildv}/" cca/__init__.py
+	git add cca/__init__.py
+	git commit -m "updating to ${newverstr}"
+	git push
 	python3 setup.py sdist bdist_wheel
+endif
 
 pypi: dist
+ifeq ($(strip $(VIRTUAL_ENV)),)
+	@echo "You need to be in a virtual environment"
+else
 	twine upload dist/*
+endif
