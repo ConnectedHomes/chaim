@@ -8,6 +8,7 @@ python module.
 * [Install](#install)
     * [Linux](#linux)
     * [Mac OSx](#macosx)
+* [Upgrade](#upgrade)
 * [cca](#cca)
 * [cca sub-commands](#ccasubcommands)
     * [account](#ccaaccount)
@@ -102,6 +103,12 @@ To check that all went well:
 cca version
 ```
 Should give you the current version number of the chaim-cli.
+
+<a name='upgrade'></a>
+## [Upgrade](#contents)
+```
+pip3 install chaim-cli --upgrade --user
+```
 
 <a name='cca'></a>
 ## [cca](#contents)
