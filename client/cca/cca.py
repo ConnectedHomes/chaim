@@ -55,14 +55,14 @@ def cca():
 
 @cca.command()
 @click.option("-r", "--role", type=click.STRING, default="rro",
-              help="optional the role to assume for this account default: rro")
+              help="Optional. The role to assume for this account, default rro")
 @click.option("-d", "--duration", type=click.INT, default=1,
-              help="optional duration must be between 1-12 or 900-43,200 default 1")
+              help="Optional. Duration must be between 1-12 or 900-43,200, default 1")
 @click.option("-a", "--alias", type=click.STRING, default="",
-              help="optional alias for the account name, to be used as the profile name")
+              help="Optional. Alias for the account name, to be used as the profile name")
 @click.option("-D", "--default", is_flag=True, default=False,
-              help="optional set this account to be the default account profile to use")
-@click.option("-R", "--region", help="optional region")
+              help="Optional. Set this account to be the default account profile to use")
+@click.option("-R", "--region", help="Optional. Region, default eu-west-1")
 @click.argument("account")
 def account(account, role, duration, alias, default, region):
     """Retrieve credentials for ACCOUNT account"""
