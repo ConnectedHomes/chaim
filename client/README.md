@@ -7,7 +7,7 @@ python module.
 <a name='contents'></a>
 * [Install](#install)
     * [Linux](#linux)
-    * [Mac OSx](#macosx)
+    * [Mac OSX](#macosx)
 * [Upgrade](#upgrade)
 * [cca](#cca)
 * [cca sub-commands](#ccasubcommands)
@@ -72,7 +72,7 @@ cca version
 Should give you the current version number of the chaim-cli.
 
 <a name='macosx'></a>
-### [Mac OSx](#contents)
+### [Mac OSX](#contents)
 #### Install python3
 Recently the folks that manage homebrew changed the default python, which
 conflicts with the python supplied by the OS.  See this home brew
@@ -91,10 +91,10 @@ pip install chaim-cli --user
 ```
 
 #### Update PATH
-Once installed you will want to add `$HOME/.local/bin` to your path, if it
-isn't already there:
+Once installed you will want to add `$HOME/Library/.Python/3.7/bin` to your path, if it
+isn't already there (adjust the version to suit your circumstances):
 ```
-echo 'export PATH=${HOME}/.local/bin:${PATH}' >>${HOME}/.bashrc
+echo 'export PATH=${HOME}/Library/Python/3.7/bin:${PATH}' >>${HOME}/.bashrc
 ```
 
 #### Testing
