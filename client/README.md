@@ -139,18 +139,19 @@ Commands:
 $ cca account --help
 Usage: cca account [OPTIONS] ACCOUNT
 
-  Retrieve credentials for an account
+  Retrieve credentials for ACCOUNT account
 
 Options:
-  -r, --role TEXT         optional the role to assume for this account default: rro
-  -d, --duration INTEGER  optional duration must be between 1-12 or 900-43,200 default 1
+  -r, --role TEXT         optional the role to assume for this account
+                          default: rro
+  -d, --duration INTEGER  optional duration must be between 1-12 or 900-43,200
+                          default 1
   -a, --alias TEXT        optional alias for the account name, to be used as
                           the profile name
-  -D, --default           set this account to be the default account profile
-                          to use
+  -D, --default           optional set this account to be the default account
+                          profile to use
   -R, --region TEXT       optional region
   --help                  Show this message and exit.
-
 ```
 
 <a name='ccadelete'></a>
