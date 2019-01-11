@@ -22,25 +22,30 @@ Centrica Chaim cli using click module for command line parsing
 """
 
 import os
+import sys
 import click
 import cca.chaim as chaim
 from cca.cliinifile import IniFile
 from cca import __version__ as ccaversion
 
 
-configfn = "~/.aws/credentials"
-config = IniFile(os.path.expanduser(configfn), takebackup=False)
-if "default" in config.titles():
-    defsect = config.getSectionItems("default")
-else:
-    config.add_section("default")
-    defsect = config.getSectionItems("default")
+try:
+    configfn = "~/.aws/credentials"
+    config = IniFile(os.path.expanduser(configfn), takebackup=False)
+    if "default" in config.titles():
+        defsect = config.getSectionItems("default")
+    else:
+        config.add_section("default")
+        defsect = config.getSectionItems("default")
 
-parkedfn = "~/.aws/chaim-parked"
-if not os.path.exists(parkedfn):
-    # create an emppty file
-    open(os.path.expanduser(parkedfn), "a").close()
-configparked = IniFile(os.path.expanduser(parkedfn), takebackup=False)
+    parkedfn = "~/.aws/chaim-parked"
+    if not os.path.exists(parkedfn):
+        # create an emppty file
+        open(os.path.expanduser(parkedfn), "a").close()
+    configparked = IniFile(os.path.expanduser(parkedfn), takebackup=False)
+except FileExistsError:
+    click.echo("Config file does not exist, run `cca init`")
+    sys.exit(1)
 
 
 @click.group()
