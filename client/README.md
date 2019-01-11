@@ -5,6 +5,9 @@ cca is a re-imagining of the chaim cli using the click parameter parsing
 python module.
 
 <a name='contents'></a>
+* [Install](#install)
+    * [Linux](#linux)
+    * [Mac OSx](#macosx)
 * [cca](#cca)
 * [cca sub-commands](#ccasubcommands)
     * [account](#ccaaccount)
@@ -21,6 +24,84 @@ python module.
     * [unpark](#ccaunpark)
     * [url](#ccaurl)
     * [version](#ccaversion)
+
+<a name='install'></a>
+## [Install](#contents)
+The chaim-cli is a python 3 application. I recommend installing into your
+local, users, python packages using pip.  If this is your first local python
+package then you will need to adjust your path so that the shell can find it.
+```
+echo 'export PATH=${HOME}/.local/bin:${PATH}' >>${HOME}/.bashrc
+```
+
+<a name='linux'></a>
+### [Linux](#contents)
+These instructions are for ubuntu and it's derivatives.  For other
+distributions the process is similiar, though probably with different package
+names.  You will need to have a version of python3 installed and a pip program
+that is python3 aware.
+
+#### Install python3
+For ubuntu pre 18.04 you will need to install python3 and it's associated pip
+application.  The easiest way to do this is:
+
+```
+sudo apt install python3-pip
+```
+which will pull in everything required.
+
+#### Install cca
+To install the chaim-cli:
+```
+pip3 install chaim-cli --user
+```
+
+#### Update PATH
+Once installed you will want to add `$HOME/.local/bin` to your path, if it
+isn't already there:
+```
+echo 'export PATH=${HOME}/.local/bin:${PATH}' >>${HOME}/.bashrc
+```
+
+#### Testing
+To check that all went well:
+```
+cca version
+```
+Should give you the current version number of the chaim-cli.
+
+<a name='macosx'></a>
+### [Mac OSx](#contents)
+#### Install python3
+Recently the folks that manage homebrew changed the default python, which
+conflicts with the python supplied by the OS.  See this home brew
+[discussion](https://discourse.brew.sh/t/brew-install-python3-fails/1756/8).
+So, to get python3 (and keep python2) you now need to do:
+```
+brew upgrade python
+brew install python2
+```
+which will install python3 and the latest released version of python2.
+
+#### Install cca
+To install the chaim-cli:
+```
+pip install chaim-cli --user
+```
+
+#### Update PATH
+Once installed you will want to add `$HOME/.local/bin` to your path, if it
+isn't already there:
+```
+echo 'export PATH=${HOME}/.local/bin:${PATH}' >>${HOME}/.bashrc
+```
+
+#### Testing
+To check that all went well:
+```
+cca version
+```
+Should give you the current version number of the chaim-cli.
 
 <a name='cca'></a>
 ## [cca](#contents)
