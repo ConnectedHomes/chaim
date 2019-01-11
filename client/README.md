@@ -28,7 +28,7 @@ python module.
 
 <a name='install'></a>
 ## [Install](#contents)
-The chaim-cli is a python 3 application. I recommend installing into your
+The chaim-cli is a python 3 application. It is recommended to install into your
 local, users, python packages using pip.  If this is your first local python
 package then you will need to adjust your path so that the shell can find it.
 ```
