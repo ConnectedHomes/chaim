@@ -24,7 +24,7 @@ Centrica Chaim cli using click module for command line parsing
 import os
 import sys
 import click
-import cca.chaim as chaim
+import cca.chaimcli as chaim
 from cca.cliinifile import IniFile
 from cca import __version__ as ccaversion
 
