@@ -91,21 +91,21 @@ def renew():
 @cca.command()
 @click.argument("account", nargs=-1)
 def gui(account):
-    """obtains a console session url and opens a browser window to it"""
+    """Obtains a console session url and opens a browser window to it"""
     chaim.doUrl(account, config, browser=True)
 
 
 @cca.command()
 @click.argument("account", nargs=-1)
 def url(account):
-    """obtains a console session url and copies it to the system clipboard"""
+    """Obtains a console session url and copies it to the system clipboard"""
     chaim.doUrl(account, config)
 
 
 @cca.command()
 @click.argument("account", nargs=-1)
 def gso(account):
-    """obtains a console session url, logs out of any other AWS session and opens a browser tab on the url"""
+    """Obtains a console session url, logs out of any other AWS session and opens a browser tab on the url"""
     chaim.doUrl(account, config, logout=True)
 
 
@@ -118,25 +118,26 @@ def init(initstring):
 
 @cca.command()
 def version():
+    """Displays the version and exits."""
     click.echo(ccaversion)
 
 
 @cca.command()
 def list():
-    """list all registered accounts and their expiry times"""
+    """List all registered accounts and their expiry times"""
     chaim.displayMyList(config)
 
 
 @cca.command()
 def listall():
-    """list all accounts available to chaim"""
+    """List all accounts available to chaim"""
     chaim.requestList(config)
 
 
 @cca.command()
 @click.argument("account", nargs=-1)
 def delete(account):
-    """delete an accounts credentials"""
+    """Delete an accounts credentials"""
     if len(account) > 0:
         for acct in account:
             chaim.deleteAccount(acct, config)
@@ -145,25 +146,25 @@ def delete(account):
 @cca.command()
 @click.argument("varpc")
 def setautorenew(varpc):
-    """sets the percentage of time remaining before account is auto-renewed when requesting a url"""
+    """Sets the percentage of time remaining before account is auto-renewed when requesting a url"""
     chaim.setVarPC(varpc, config)
 
 
 @cca.command()
 @click.argument("account")
 def park(account):
-    """removes account from credentials and parks it for later use"""
+    """Removes account from credentials and parks it for later use"""
     chaim.parkAccount(account, config, configparked)
 
 
 @cca.command()
 @click.argument("account")
 def unpark(account):
-    """returns an account from parking to credentials and auto-renews it"""
+    """Returns an account from parking to credentials and auto-renews it"""
     chaim.unparkAccount(account, config, configparked)
 
 
 @cca.command()
 def listpark():
-    """list of parked accounts"""
+    """List of parked accounts"""
     chaim.listParkAccounts(configparked)
