@@ -177,6 +177,10 @@ This command generates a console session url, attempts to logout of any current
 session, and opens a browser window to the url.
 If the original session is less than the auto-renew session percentage the
 account will be automatically renewed first.
+Note: There doesn't seem to be any way to access the browser tab with AWS
+running in it, so this process first opens a new tab to issue the logout
+command, then a 2nd new tab to log you into the new account.  This will leave
+you with 2 extra tabs, sorry.
 
 <a name='ccainit'></a>
 #### [init](#contents)
