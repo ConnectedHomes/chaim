@@ -234,7 +234,7 @@ def doUrl(account, ifn, browser=False, logout=False):
         try:
             logouturl = "https://signin.aws.amazon.com/oauth?Action=logout"
             subprocess.Popen([cmd, logouturl])
-            click.echo("Looging out of current session (if any)")
+            click.echo("Loging out of current session (if any)")
             time.sleep(1)
             subprocess.Popen([cmd, url])
             click.echo("GUI session opened for account {}\nExpires: {}".format(acct, msg))
