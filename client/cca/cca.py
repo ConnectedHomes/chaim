@@ -65,7 +65,7 @@ def cca():
 @click.option("-R", "--region", help="Optional. Region, default eu-west-1")
 @click.argument("account")
 def account(account, role, duration, alias, default, region):
-    """Retrieve credentials for ACCOUNT account"""
+    """Configure credentials for ACCOUNT account"""
     setregion = False if region is None else region
     if not chaim.requestKeys(account, role, duration, alias, config, setregion, default):
         click.echo("Failed to obtain credentials for account " + account, err=True)
