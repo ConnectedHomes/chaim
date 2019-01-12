@@ -44,8 +44,11 @@ try:
         open(os.path.expanduser(parkedfn), "a").close()
     configparked = IniFile(os.path.expanduser(parkedfn), takebackup=False)
 except FileExistsError:
-    click.echo("Config file does not exist, run `cca init`")
-    sys.exit(1)
+    # create an empty config file
+    open(os.path.expanduser(configfn), "a").close()
+    config = IniFile(os.path.expanduser(configfn), takebackup=False)
+    config.add_section("default")
+    defsect = config.getSectionItems("default")
 
 
 @click.group()
