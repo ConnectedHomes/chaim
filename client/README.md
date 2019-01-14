@@ -54,7 +54,7 @@ which will pull in everything required.
 #### Install cca
 To install the chaim-cli:
 ```
-pip3 install chaim-cli --user
+pip3 install chaim-cli --upgrade --user --no-cache-dir
 ```
 
 #### Update PATH
@@ -87,7 +87,7 @@ which will install python3 and the latest released version of python2.
 #### Install cca
 To install the chaim-cli:
 ```
-pip install chaim-cli --user
+pip install chaim-cli --upgrade --user --no-cache-dir
 ```
 
 #### Update PATH

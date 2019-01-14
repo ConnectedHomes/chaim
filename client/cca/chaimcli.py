@@ -75,7 +75,9 @@ def renewSection(section, ifn):
             duration = sect["duration"]
             role = sect["role"]
             alias = section
-            default = True if defsect["alias"] == section else False
+            default = False
+            if "alias" in defsect:
+                default = True if defsect["alias"] == section else False
             if "region" in sect:
                 setregion = sect["region"]
             return requestKeys(account, role, duration, alias, ifn, setregion, default)
