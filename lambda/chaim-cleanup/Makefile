@@ -4,6 +4,7 @@
 # the prod lambda will always update when `make prod` is called
 
 LAMBDANAME = chaim-cleanup
+LARN = arn:aws:lambda:eu-west-1:499223386158:function:chaim-cleanup
 SRC = $(LAMBDANAME).yaml
 
 .PHONY: tags clean prod force depends
@@ -33,6 +34,8 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py dev
+	aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(13 3 ? * * *)" --state DISABLED
+	aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
 	touch $@
 endif
 
@@ -42,6 +45,8 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py dev
+	aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(13 3 ? * * *)" --state DISABLED
+	aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
 endif
 
 
@@ -50,6 +55,8 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	../../install_lambda.py prod
+	aws events put-rule --name $(LAMBDANAME)-prod --schedule-expression "cron(13 3 ? * * *)" --state DISABLED
+	aws events put-targets --rule $(LAMBDANAME)-prod --targets "Id"=1,"Arn"="$(LARN)-prod"
 endif
 
 
