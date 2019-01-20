@@ -41,7 +41,7 @@ def doCleanup(event, context, version):
         environment = ep.getParam("environment", True)
         if spath is not False:
             pms = Permissions(spath, missing=True)
-            dryrun = True if environment == "dev" else True
+            dryrun = True if environment == "dev" else False
             tfr, afr = pms.cleanKeyMap(dryrun=dryrun)
             kmsg = "key" if afr == 1 else "keys"
             kmsg += " would be" if environment == "dev" else ""

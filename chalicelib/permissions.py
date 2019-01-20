@@ -229,7 +229,7 @@ class Permissions():
                 for row in rows:
                     afrows = row[0]
             else:
-                afrows = self.rwsid.updateQuery(sql)
+                afrows = self.rwsid.deleteQuery(sql)
         except Exception as e:
             msg = "A cleantKeyMap error occurred: {}: {}".format(type(e).__name__, e)
             log.error(msg)
