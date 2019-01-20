@@ -25,6 +25,17 @@
                 "environment": "dev",
                 "Name": "chaim-entry"
             }
+        },
+        "prod": {
+            "api_gateway_stage": "prod",
+            "environment_variables": {
+                "SNSTOPIC": "arn:aws:sns:eu-west-1:499223386158:chaim-entry-prod",
+                "environment": "prod"
+            },
+            "tags": {
+                "environment": "prod",
+                "Name": "chaim-entry"
+            }
         }
     }
 }
