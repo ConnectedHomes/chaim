@@ -78,10 +78,16 @@ class Utils():
         d, h, m, s = self.dhms(seconds)
         if fuzzy:
             if d > 0:
+                if h > 12:
+                    d = d + 1
                 xstr = self.displayWord(d, "day")
             elif h > 0:
+                if m > 30:
+                    h = h + 1
                 xstr = self.displayWord(h, "hour")
             elif m > 0:
+                if s > 30:
+                    m = m + 1
                 xstr = self.displayWord(m, "minute")
             else:
                 xstr = self.displayWord(s, "second")
