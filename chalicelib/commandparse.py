@@ -139,7 +139,7 @@ class CommandParse():
         elif self.duration > 43200:
             self.duration = 43200
         ut = Utils()
-        self.durationstr = ut.hmsDisplay(self.duration)
+        self.durationstr = ut.displayHMS(self.duration)
 
     def roleAliasToRole(self):
         if self.roledict is not None and self.rolealias in self.roledict:

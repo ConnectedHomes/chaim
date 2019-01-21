@@ -223,7 +223,7 @@ def doUrl(account, ifn, browser=False, logout=False):
     checkRenewAccount(acct, ifn)
     url, expires = requestUrl(acct, ifn)
     pyperclip.copy(url)
-    msg = cliutils.hmsDisplay(expires)
+    msg = cliutils.displayHMS(expires)
     cmsg = "URL copied to clipboard for account {}\nExpires: {}".format(acct, msg)
     cmd = "open" if sys.platform == "Darwin" else "xdg-open"
     if browser:
@@ -260,7 +260,7 @@ def askInit(ifn):
             else:
                 defsect[key] = input("{}: ".format(key))
     ifn.updateSection("default", defsect, True)
-    estr = cliutils.hmsDisplay(int(defsect["tokenexpires"]) - int(time.time()), True)
+    estr = cliutils.displayHMS(int(defsect["tokenexpires"]) - int(time.time()), True)
     click.echo("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
 
 
@@ -276,7 +276,7 @@ def doInit(initstr, ifn):
             else:
                 defsect[pl[0]] = pl[1]
         ifn.updateSection("default", defsect, True)
-        estr = cliutils.hmsDisplay(int(defsect["tokenexpires"]) - int(time.time()), True)
+        estr = cliutils.displayHMS(int(defsect["tokenexpires"]) - int(time.time()), True)
         click.echo("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
     else:
         askInit(ifn)

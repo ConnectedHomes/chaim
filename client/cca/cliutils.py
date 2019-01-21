@@ -77,15 +77,49 @@ def hmsDisplay(seconds, full=False):
             ret = "{}, {} and {}".format(hstr, mstr, sstr)
     return ret
 
+def displayHMS(seconds, fuzzy=True):
+    xstr = ""
+    d, h, m, s = dhms(seconds)
+    if fuzzy:
+        if d > 0:
+            if h > 12:
+                d = d + 1
+            xstr = displayWord(d, "day")
+        elif h > 0:
+            if m > 30:
+                h = h + 1
+            xstr = displayWord(h, "hour")
+        elif m > 0:
+            if s > 30:
+                m = m + 1
+            xstr = displayWord(m, "minute")
+        else:
+            xstr = displayWord(s, "second")
+    else:
+        xstr = displayWord(d, "day")
+        xstr += ", " + displayWord(h, "hour")
+        xstr += ", " + displayWord(m, "minute")
+        xstr += " and " + displayWord(s, "second")
+    return xstr
 
-def expiresInAt(seconds):
-    xstr = "Expires in "
-    xstr += hmsDisplay(seconds)
+
+# def expiresInAt(seconds):
+#     xstr = "Expires in "
+#     xstr += hmsDisplay(seconds)
+#     now = getNow()
+#     then = now + seconds
+#     whenat = datetime.datetime.fromtimestamp(then).strftime("%H:%M:%S")
+#     xstr += " at {}.".format(whenat)
+#     return [then, xstr]
+def expiresInAt(seconds, plural=True):
+    xstr = "Expires in " if plural else "Expire in "
+    xstr += displayHMS(seconds)
     now = getNow()
     then = now + seconds
     whenat = datetime.datetime.fromtimestamp(then).strftime("%H:%M:%S")
     xstr += " at {}.".format(whenat)
     return [then, xstr]
+
 
 
 def displayExpires(expires, duration=None):

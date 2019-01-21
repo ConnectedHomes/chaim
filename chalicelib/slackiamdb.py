@@ -90,3 +90,8 @@ class SlackIamDB():
         self.query(sql)
         self.con.commit()
         return self.affectedrows
+
+    def deleteQuery(self, sql):
+        self.query(sql)
+        self.con.commit()
+        return self.affectedrows

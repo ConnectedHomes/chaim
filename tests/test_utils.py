@@ -66,6 +66,83 @@ def test_hmsDisplay_short():
     x = ut.hmsDisplay(86821)
     assert x == "1 day, 0 hours, 7 minutes and 1 second"
 
+
 def test_expiresAt():
     x = ut.expiresAt(1546345853)
     assert x == "Tue Jan  1 12:30:53 2019"
+
+
+def test_displayHMS_full():
+    x = ut.displayHMS(86821, fuzzy=False)
+    assert x == "1 day, 0 hours, 7 minutes and 1 second"
+
+
+def test_fuzzy_big2days():
+    x = ut.displayHMS(223200)
+    assert x == "3 days"
+
+
+def test_fuzzy_2days():
+    x = ut.displayHMS(180122)
+    assert x == "2 days"
+
+
+def test_fuzzy_big2hours():
+    x = ut.displayHMS(10000)
+    assert x == "3 hours"
+
+
+def test_fuzzy_2hours():
+    x = ut.displayHMS(7777)
+    assert x == "2 hours"
+
+
+def test_fuzzy_big2mins():
+    x = ut.displayHMS(170)
+    assert x == "3 minutes"
+
+
+def test_fuzzy_2mins():
+    x = ut.displayHMS(130)
+    assert x == "2 minutes"
+
+
+def test_fuzzy_2secs():
+    x = ut.displayHMS(2)
+    assert x == "2 seconds"
+
+
+def test_fuzzy_9hours():
+    x = ut.displayHMS(32400)
+    assert x == "9 hours"
+
+
+def test_fuzzy_big9hours():
+    x = ut.displayHMS(32400 + 1900)
+    assert x == "10 hours"
+
+
+def test_fuzzy_big_under1day():
+    x = ut.displayHMS(86000)
+    assert x == "24 hours"
+
+
+def test_fuzzy_under1day():
+    x = ut.displayHMS(84000)
+    assert x == "23 hours"
+
+
+def test_fuzzy_1day():
+    x = ut.displayHMS(87777)
+    assert x == "1 day"
+
+
+def test_nonfuzzy_full():
+    x = ut.displayHMS(180122, fuzzy=False)
+    assert x == "2 days, 2 hours, 2 minutes and 2 seconds"
+
+
+def test_expiresInAt():
+    tm, x = ut.expiresInAt(190122, True)
+    cnx = len(x)
+    assert x[0:21] == "Expires in 2 days at " and cnx == 30
