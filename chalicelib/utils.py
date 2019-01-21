@@ -73,6 +73,25 @@ class Utils():
                 ret = "{}, {} and {}".format(hstr, mstr, sstr)
         return ret
 
+    def displayHMS(self, seconds, fuzzy=True):
+        xstr = ""
+        d, h, m, s = self.dhms(seconds)
+        if fuzzy:
+            if d > 0:
+                xstr = self.displayWord(d, "day")
+            elif h > 0:
+                xstr = self.displayWord(h, "hour")
+            elif m > 0:
+                xstr = self.displayWord(m, "minute")
+            else:
+                xstr = self.displayWord(s, "second")
+        else:
+            xstr = self.displayWord(d, "day")
+            xstr += ", " + self.displayWord(h, "hour")
+            xstr += ", " + self.displayWord(m, "minute")
+            xstr += " and " + self.displayWord(s, "second")
+        return xstr
+
     def expiresInAt(self, seconds, plural=True):
         xstr = "Expires in " if plural else "Expire in "
         xstr += self.hmsDisplay(seconds)
