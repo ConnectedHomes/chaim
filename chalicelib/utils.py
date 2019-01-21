@@ -94,7 +94,7 @@ class Utils():
 
     def expiresInAt(self, seconds, plural=True):
         xstr = "Expires in " if plural else "Expire in "
-        xstr += self.hmsDisplay(seconds)
+        xstr += self.displayHMS(seconds)
         now = self.getNow()
         then = now + seconds
         whenat = datetime.datetime.fromtimestamp(then).strftime("%H:%M:%S")
