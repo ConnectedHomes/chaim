@@ -249,10 +249,11 @@ deleted after each run of the script.  This will also be set as the default acco
 So, your script can either use the hard coded profile of `tmpnam` or rely on the
 default account being the correct one.
 
-Script output will be in LOGFILE, unless no LOGFILE is supplied, whereupon it will be
-in `~/ACCOUNT.chaim.log`.  The output will also be on screen.
-The account name will be written to the log file immediately followed by the script
-output, then a blank line.
+Script output will be in LOGFILE, default is `~/chaim.run.log`.
+The output will also be on screen.
+
+The account name and a newline will be written to the log file immediately
+followed by the script output, then a blank line.
 
 After the list of accounts have been processed the previous default account will
 be restored and the credentials for it renewed.

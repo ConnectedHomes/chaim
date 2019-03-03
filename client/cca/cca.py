@@ -177,10 +177,12 @@ def listpark():
 @cca.command()
 @click.option("--script", "-s", help="Fully qualified filename of the script to run")
 @click.option("--account", "-a", multiple=True, help="Account(s) to run the script against")
-@click.option("-r", "--role", type=click.STRING, default="rro",
+@click.option("--role", "-r", type=click.STRING, default="rro",
               help="Optional. The role to assume for this account, default rro")
+@click.option("--logfile", "-l", type=click.STRING, default="~/chaim.run.log",
+              help="Optional. logfile for script output (default: ~/chaim.run.log)")
 @click.argument("script_args", nargs=-1)
-def run(script, account, role, script_args):
+def run(script, account, role, logfile, script_args):
     """Run a script across a number of accounts."""
     if shutil.which(script) is None:
         msg = "run: script {} is not executable, ".format(script)
@@ -191,4 +193,5 @@ def run(script, account, role, script_args):
         msg = "run: accounts list is zero length, you need to supply an account name or alias."
         click.echo(msg)
         sys.exit(1)
-    chaim.run(config, script, account, role, script_args)
+    lfn = os.path.expanduser(logfile)
+    chaim.run(config, script, account, role, lfn, script_args)
