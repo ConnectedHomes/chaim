@@ -174,9 +174,9 @@ def listpark():
 
 
 @cca.command()
-@click.argument("--script", "-s")
-@click.argument("--account", "-a", multiple=True)
-@click.argument("script-args")
+@click.option("--script", "-s", help="filename of the script to run")
+@click.option("--account", "-a", multiple=True, help="account(s) to run the script over")
+@click.argument("script_args", nargs=-1)
 def run(script, account, script_args):
     """Run a script across a number of accounts."""
     click.echo("script is {}".format(script))
