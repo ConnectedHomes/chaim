@@ -183,10 +183,12 @@ def listpark():
 def run(script, account, role, script_args):
     """Run a script across a number of accounts."""
     if shutil.which(script) is None:
-        click.echo("run: script {} does not exist, is not executable or is not on the path.".format(script))
+        msg = "run: script {} is not executable, ".format(script)
+        msg += "is not on the path or does not exist at all."
+        click.echo(msg)
         sys.exit(1)
     if len(account) == 0:
-        click.echo("run: accounts list is zero length.")
+        msg = "run: accounts list is zero length, you need to supply an account name or alias."
+        click.echo(msg)
         sys.exit(1)
-    click.echo("role is {}".format(role))
     chaim.run(config, script, account, role, script_args)
