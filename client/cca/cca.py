@@ -171,3 +171,14 @@ def unpark(account):
 def listpark():
     """List of parked accounts"""
     chaim.listParkAccounts(configparked)
+
+
+@cca.command()
+@click.argument("--script", "-s")
+@click.argument("--account", "-a", multiple=True)
+@click.argument("script-args")
+def run(script, account, script-args):
+    """Run a script across a number of accounts."""
+    click.echo("script is {}".format(script))
+    click.echo("account is {}".format(account))
+    click.echo("script-args is {}".format(script-args))

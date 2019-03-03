@@ -21,6 +21,7 @@ python module.
     * [listpark](#ccalistpark)
     * [park](#ccapark)
     * [renew](#ccarenew)
+    * [run](#ccarun)
     * [setautorenew](#ccaautorenew)
     * [unpark](#ccaunpark)
     * [url](#ccaurl)
@@ -235,6 +236,10 @@ use.
 $ cca park extbackup
 extbackup account has been parked
 ```
+
+<a name='ccarun'></a>
+#### [run](#contents)
+Run a script across a number of accounts.
 
 <a name='ccarenew'></a>
 #### [renew](#contents)
