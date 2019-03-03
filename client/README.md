@@ -240,18 +240,23 @@ extbackup account has been parked
 <a name='ccarun'></a>
 #### [run](#contents)
 Run a script across a number of accounts.
-The script can be any executable and needs to use the AWS Profile of `tmpnam`
-i.e. if running the aws cli it would be invoked by this command thus
-```
-aws --profile tmpnam ec2 describe-instances
-```
-For each account requested (`-a`) a temporary chaim credential of 1 hour duration
+
+The script can be any executable.
+
+For each account requested with `-a` a temporary chaim credential of 1 hour duration
 at role ROLE will be generated with an alias of `tmpnam`.  This credential will be
-deleted after each run of the script.
+deleted after each run of the script.  This will also be set as the default account.
+So, your script can either use the hard coded profile of `tmpnam` or rely on the
+default account being the correct one.
+
 Script output will be in LOGFILE, unless no LOGFILE is supplied, whereupon it will be
 in `~/ACCOUNT.chaim.log`.  The output will also be on screen.
 The account name will be written to the log file immediately followed by the script
 output, then a blank line.
+
+After the list of accounts have been processed the previous default account will
+be restored and the credentials for it renewed.
+
 ```
 $ cca run --help
 Usage: cca run [OPTIONS] [SCRIPT_ARGS]...
@@ -259,8 +264,10 @@ Usage: cca run [OPTIONS] [SCRIPT_ARGS]...
   Run a script across a number of accounts.
 
 Options:
-  -s, --script TEXT   filename of the script to run
-  -a, --account TEXT  account(s) to run the script over
+  -s, --script TEXT   Fully qualified filename of the script to run
+  -a, --account TEXT  Account(s) to run the script against
+  -r, --role TEXT     Optional. The role to assume for this account, default
+                      rro
   --help              Show this message and exit.
 ```
 
