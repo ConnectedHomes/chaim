@@ -389,3 +389,7 @@ def listParkAccounts(pfn):
     slst.sort()
     for title in slst:
         print(title)
+
+
+def run(ifn, script, accounts, script_args):
+    pass

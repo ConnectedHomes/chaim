@@ -179,6 +179,10 @@ def listpark():
 @click.argument("script_args", nargs=-1)
 def run(script, account, script_args):
     """Run a script across a number of accounts."""
-    click.echo("script is {}".format(script))
-    click.echo("account is {}".format(account))
-    click.echo("script-args is {}".format(script_args))
+    if not os.path.exists(script):
+        click.echo("run: script {} does not exists.".format(script))
+        sys.exit(1)
+    if len(account) == 0:
+        click.echo("run: accounts list is zero length.")
+        sys.exit(1)
+    chaim.run(config, script, account, script_args)
