@@ -23,6 +23,7 @@ Centrica Chaim cli using click module for command line parsing
 
 import os
 import sys
+import shutil
 import click
 import cca.chaimcli as chaim
 from cca.cliinifile import IniFile
@@ -181,10 +182,11 @@ def listpark():
 @click.argument("script_args", nargs=-1)
 def run(script, account, role, script_args):
     """Run a script across a number of accounts."""
-    if not os.path.exists(script):
-        click.echo("run: script {} does not exists.".format(script))
+    if shutil.which(script) is None:
+        click.echo("run: script {} does not exist, is not executable or is not on the path.".format(script))
         sys.exit(1)
     if len(account) == 0:
         click.echo("run: accounts list is zero length.")
         sys.exit(1)
+    click.echo("role is {}".format(role))
     chaim.run(config, script, account, role, script_args)

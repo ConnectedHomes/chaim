@@ -391,5 +391,5 @@ def listParkAccounts(pfn):
         print(title)
 
 
-def run(ifn, script, accounts, script_args):
+def run(ifn, script, accounts, role, script_args):
     pass
