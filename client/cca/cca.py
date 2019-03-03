@@ -177,8 +177,8 @@ def listpark():
 @click.argument("--script", "-s")
 @click.argument("--account", "-a", multiple=True)
 @click.argument("script-args")
-def run(script, account, script-args):
+def run(script, account, script_args):
     """Run a script across a number of accounts."""
     click.echo("script is {}".format(script))
     click.echo("account is {}".format(account))
-    click.echo("script-args is {}".format(script-args))
+    click.echo("script-args is {}".format(script_args))
