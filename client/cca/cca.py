@@ -175,9 +175,10 @@ def listpark():
 
 @cca.command()
 @click.option("--script", "-s", help="filename of the script to run")
-@click.option("--account", "-a", multiple=True, help="account(s) to run the script over")
+@click.option("--account", "-a", multiple=True, help="account(s) to run the script against")
+@click.option("--role", "-r", help="Role to run the script as (default: rro)")
 @click.argument("script_args", nargs=-1)
-def run(script, account, script_args):
+def run(script, account, role, script_args):
     """Run a script across a number of accounts."""
     if not os.path.exists(script):
         click.echo("run: script {} does not exists.".format(script))
@@ -185,4 +186,4 @@ def run(script, account, script_args):
     if len(account) == 0:
         click.echo("run: accounts list is zero length.")
         sys.exit(1)
-    chaim.run(config, script, account, script_args)
+    chaim.run(config, script, account, role, script_args)
