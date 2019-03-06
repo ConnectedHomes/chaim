@@ -41,12 +41,14 @@ class CommandParse():
         self.docommand = False
         self.roledict = roledict
         self.apiid = None
+        self.slackid = None
         log.debug("Command parse entry")
         log.debug("rawbody: {}".format(rawbody))
         self.parsed = parse_qs(rawbody)
         log.debug("parsed: {}".format(self.parsed))
         self.blankbody = blankbody
         self.username = self.extractField('user_name')
+        self.slackid = self.extractField('user_id')
         self.incomingtoken = self.extractField('token')
         log.debug("token: {}".format(self.incomingtoken))
         self.responseurl = self.extractField('response_url')
@@ -165,6 +167,7 @@ class CommandParse():
         rdict["responseurl"] = self.responseurl
         rdict["stage"] = self.stage
         rdict["useragent"] = self.useragent
+        rdict["slackid"] = self.slackid
         if self.apiid is not None:
             rdict["apiid"] = self.apiid
         if not self.blankbody:
