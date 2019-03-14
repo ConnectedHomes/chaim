@@ -160,6 +160,13 @@ class Permissions():
     def createDataNotFoundMessage(self, dataname, data):
         return "{} not found: {}".format(dataname, data)
 
+    def addUpdateSlackUserId(self, username, slackuserid):
+        if self.sid is not None:
+            userid = self.checkIDs("awsusers", "name", "User", username)
+        else:
+            raise DBNotConnected("No connection to database")
+
+
     def userAllowed(self, username, account, role):
         log.debug("userAllowed test: {} {} {}".format(username, account, role))
         if self.sid is not None:

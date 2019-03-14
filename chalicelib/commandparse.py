@@ -38,6 +38,7 @@ class CommandParse():
         self.keyinit = False
         self.doshowroles = False
         self.docountusers = False
+        self.doidentify = False
         self.docommand = False
         self.roledict = roledict
         self.apiid = None
@@ -58,6 +59,12 @@ class CommandParse():
         if "keyinit" in self.parsed:
             self.duration = 900
             self.keyinit = True
+            self.blankbody = True
+            self.apiid = self.extractField("apiid")
+            self.docommand = True
+        elif "identify" in self.parsed:
+            self.duration = 900
+            self.doidentify = True
             self.blankbody = True
             self.apiid = self.extractField("apiid")
             self.docommand = True

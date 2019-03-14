@@ -210,4 +210,28 @@ def keyinit():
     except Exception as e:
         msg = "A keyinit error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
-        return output(msg)
+        return chaim.output(msg)
+
+
+@app.route('/identify', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+def identify():
+    """
+    the entry point to display the users identity from slack
+    """
+    try:
+        with open("version", "r") as vfn:
+            version = vfn.read()
+        config = {}
+        ep = EnvParam()
+        config["environment"] = ep.getParam("environment")
+        config["useragent"] = "slack"
+        config["apiid"] = app.current_request.context["apiId"]
+        rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
+        rbody = glue.addToReqBody(rbody, "identify", "true")
+        chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
+        verstr = "chaim-slack-" + config["environment"] + " " + version
+        return chaim.output(None, "{}\n\nPlease wait".format(verstr))
+    except Exception as e:
+        msg = "An identify error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        return chaim.output(msg)
