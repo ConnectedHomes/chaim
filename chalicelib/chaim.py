@@ -238,6 +238,10 @@ def doCommand(cp, pms, verstr):
         msg = pms.countLastSince(2)
         sendToSlack(rdict["responseurl"], "```{}```".format(msg))
         incMetric("countusers")
+    elif cp.doidentify:
+        msg = "Slack User: {} Slack UID: {}".format(cp.username, cp.slackid)
+        sendToSlack(rdict["responseurl"], msg)
+        incMetric("slack.identify")
 
 
 def whosKey(pms, key):
