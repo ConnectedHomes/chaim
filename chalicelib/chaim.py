@@ -332,23 +332,15 @@ def buildInitOutputStr(token, expires, rdict):
     ut = Utils()
     expa = ut.expiresAt(expires)
     bstr = ""
-    xstr = "```"
     log.debug("calling first addToOutStr: {}, {}, {}".format(xstr, "api", rdict["apiid"]))
-    xstr = glue.addToOutStr(xstr, "api", rdict["apiid"])
     bstr = glue.addToReqBody(bstr, "api", rdict["apiid"])
-    xstr = glue.addToOutStr(xstr, "slackid", rdict["slackid"])
     bstr = glue.addToReqBody(bstr, "slackid", rdict["slackid"])
-    xstr = glue.addToOutStr(xstr, "username", rdict["username"])
     bstr = glue.addToReqBody(bstr, "username", rdict["username"])
-    xstr = glue.addToOutStr(xstr, "usertoken", token)
     bstr = glue.addToReqBody(bstr, "usertoken", token)
-    xstr = glue.addToOutStr(xstr, "expires", expires)
     bstr = glue.addToReqBody(bstr, "expires", expires)
-    xstr = glue.addToOutStr(xstr, "stage", rdict["stage"])
     bstr = glue.addToReqBody(bstr, "stage", rdict["stage"])
-    xstr = glue.addToOutStr(xstr, "region", "eu-west-1")
     bstr = glue.addToReqBody(bstr, "region", "eu-west-1")
-    xstr += "```\n"
+    xstr = "```\n{}```\n".format(bstr)
     butf8 = bstr.encode('utf8')
     benc = base64.urlsafe_b64encode(butf8)
     bstr = "```chaim -j " + benc.decode('utf8') + "```"
