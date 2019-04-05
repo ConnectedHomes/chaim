@@ -16,14 +16,14 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
+from chalice import Chalice
+from urllib.parse import parse_qs
 from chalicelib.assumedrole import AssumedRole
 from chalicelib.commandparse import CommandParse
 from chalicelib.envparams import EnvParam
 from chalicelib.permissions import DataNotFound
 from chalicelib.permissions import Permissions
 from chalicelib.wflambda import wfwrapper
-from chalice import Chalice
-from urllib.parse import parse_qs
 import chalicelib.chaim as chaim
 import chalicelib.glue as glue
 
