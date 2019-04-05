@@ -1,4 +1,4 @@
 pymysql
 chardet
-wavefront_pyformance
 slackclient
+wavefront_pyformance==0.9.2
