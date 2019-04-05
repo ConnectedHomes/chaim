@@ -332,7 +332,6 @@ def buildInitOutputStr(token, expires, rdict):
     ut = Utils()
     expa = ut.expiresAt(expires)
     bstr = ""
-    log.debug("calling first addToOutStr: {}, {}, {}".format(xstr, "api", rdict["apiid"]))
     bstr = glue.addToReqBody(bstr, "api", rdict["apiid"])
     bstr = glue.addToReqBody(bstr, "slackid", rdict["slackid"])
     bstr = glue.addToReqBody(bstr, "username", rdict["username"])
