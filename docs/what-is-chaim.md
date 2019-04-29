@@ -9,7 +9,7 @@ Chaim has 4 parts
 
 ## Authorisation Database
 
-1. cognito db callback for simple enabled/disabled switch (in the absense of
+1. cognito db callback for simple enabled/disabled switch (in the absence of
 any sane connection to AD)
 
 2. A single table mapping userids, roleids and accountids - a single call
