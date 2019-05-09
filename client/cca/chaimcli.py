@@ -87,7 +87,7 @@ def renewSection(section, ifn):
         return False
 
 
-def requestKeys(account, role, duration, accountalias, ifn, setregion, default=False):
+def requestKeys(account, role, duration, accountalias, ifn, setregion, default=False, terrible=False):
     ret = False
     defsect = getDefaultSection(ifn)
     if account == "NOT SET":
@@ -112,7 +112,7 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
                 if sc > 399:
                     click.echo("Error: {}: {}".format(sc, d["text"]), err=True)
                 else:
-                    ret = storeKeys(d["text"], duration, role, accountalias, ifn, setregion, default)
+                    ret = storeKeys(d["text"], duration, role, accountalias, ifn, setregion, default, terrible)
                     click.echo("retrieval took {} seconds.".format(taken))
         else:
             click.echo("d is not a dict", err=True)
@@ -121,7 +121,7 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
     return ret
 
 
-def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=False):
+def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=False, terrible=False):
     ret = False
     defsect = getDefaultSection(ifn)
     xd = json.loads(text.replace("'", '"'))
@@ -130,6 +130,8 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
         dd["aws_access_key_id"] = xd["accesskeyid"]
         dd["aws_secret_access_key"] = xd["secretkey"]
         dd["aws_session_token"] = xd["sessiontoken"]
+        if terrible:
+            dd["aws_security_token"] = xd["sessiontoken"]
         dd["region"] = defsect["region"]
         dd["expires"] = str(xd["expires"])
         dd["expstr"] = xd["expiresstr"]
@@ -150,6 +152,8 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
                     defsect["aws_access_key_id"] = xd["accesskeyid"]
                     defsect["aws_secret_access_key"] = xd["secretkey"]
                     defsect["aws_session_token"] = xd["sessiontoken"]
+                    if terrible:
+                        defsect["aws_security_token"] = xd["sessiontoken"]
                     defsect["alias"] = accountalias
                     defsect["expires"] = str(xd["expires"])
                     if ifn.updateSection("default", defsect, True):
@@ -159,6 +163,8 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
                 defsect["aws_access_key_id"] = xd["accesskeyid"]
                 defsect["aws_secret_access_key"] = xd["secretkey"]
                 defsect["aws_session_token"] = xd["sessiontoken"]
+                if terrible:
+                    defsect["aws_security_token"] = xd["sessiontoken"]
                 defsect["section"] = xd["sectionname"]
                 defsect["alias"] = accountalias
                 defsect["expires"] = str(xd["expires"])
