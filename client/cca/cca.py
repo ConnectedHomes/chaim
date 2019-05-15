@@ -66,11 +66,13 @@ def cca():
 @click.option("-D", "--default", is_flag=True, default=False,
               help="Optional. Set this account to be the default account profile to use")
 @click.option("-R", "--region", help="Optional. Region, default eu-west-1")
+@click.option("-T", "--terrible", is_flag=True, default=False,
+              help="Add support for Terraform/Ansible to the credentials file")
 @click.argument("account")
-def account(account, role, duration, alias, default, region):
+def account(account, role, duration, alias, default, region, terrible):
     """Configure credentials for AWS account ACCOUNT """
     setregion = False if region is None else region
-    if not chaim.requestKeys(account, role, duration, alias, config, setregion, default):
+    if not chaim.requestKeys(account, role, duration, alias, config, setregion, default, terrible):
         click.echo("Failed to obtain credentials for account " + account, err=True)
 
 
