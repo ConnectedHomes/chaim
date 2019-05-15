@@ -158,8 +158,13 @@ Options:
   -D, --default           optional set this account to be the default account
                           profile to use
   -R, --region TEXT       optional region
+  -T, --terrible          Add support for Terraform/Ansible to the credentials
+                          file
   --help                  Show this message and exit.
 ```
+The `-T|--terrible` switch copies the `aws_session_token` key to the `aws_security_token` key.
+This ensures that products such as Ansible and Terraform which still use the `aws_security_token`
+will continue to work.
 
 <a name='ccadelete'></a>
 #### [delete](#contents)
