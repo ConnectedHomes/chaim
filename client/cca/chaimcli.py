@@ -80,7 +80,8 @@ def renewSection(section, ifn):
                 default = True if defsect["alias"] == section else False
             if "region" in sect:
                 setregion = sect["region"]
-            return requestKeys(account, role, duration, alias, ifn, setregion, default)
+            terrible = True if "aws_security_token" in sect else False
+            return requestKeys(account, role, duration, alias, ifn, setregion, default, terrible)
         else:
             raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
     else:
