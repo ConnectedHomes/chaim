@@ -24,6 +24,7 @@ Centrica Chaim cli using click module for command line parsing
 import os
 import sys
 import click
+import threading
 import cca.chaimcli as chaim
 from cca.cliinifile import IniFile
 from cca import __version__ as ccaversion
@@ -83,8 +84,9 @@ def renew():
         for section in config.titles():
             if section != "default":
                 try:
-                    if not chaim.renewSection(section, config):
-                        click.echo("Failed to obtain credentials for account " + section, err=True)
+                    threading.Thread(target=chaim.renewSection,args=(section,config)).start()
+                    # if not chaim.renewSection(section, config):
+                    #     click.echo("Failed to obtain credentials for account " + section, err=True)
                 except chaim.UnmanagedAccount as e:
                     click.echo("{}".format(e))
                     pass

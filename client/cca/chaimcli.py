@@ -114,7 +114,7 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
                     click.echo("Error: {}: {}".format(sc, d["text"]), err=True)
                 else:
                     ret = storeKeys(d["text"], duration, role, accountalias, ifn, setregion, default, terrible)
-                    click.echo("retrieval took {} seconds.".format(taken))
+                    click.echo("{} retrieval took {} seconds.".format(accountalias,taken))
         else:
             click.echo("d is not a dict", err=True)
     else:

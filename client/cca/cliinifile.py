@@ -24,6 +24,7 @@ import time
 from shutil import copyfile
 import errno
 import logging
+import threading
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
@@ -52,6 +53,7 @@ class IniFile(configparser.ConfigParser):
         self.makeBackup()
         # fp=open(self.filename,"r")
         self.read(self.filename)
+        self._lock = threading.Lock()
         # fp.close()
 
     def makeBackup(self):
@@ -125,7 +127,8 @@ class IniFile(configparser.ConfigParser):
         self.saveData()
 
     def saveData(self):
-        log.debug("writing out ini file")
-        fp = open(self.filename, "w")
-        self.write(fp)
-        fp.close()
+        with self._lock:
+            log.debug("writing out ini file")
+            fp = open(self.filename, "w")
+            self.write(fp)
+            fp.close()
