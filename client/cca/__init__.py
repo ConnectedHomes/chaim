@@ -18,6 +18,6 @@
 #
 majorv = 2
 minorv = 1
-buildv = 25
+buildv = 26
 __version__ = str(majorv) + "." + str(minorv) + "." + str(buildv)
 __version_info__ = [majorv, minorv, buildv]
