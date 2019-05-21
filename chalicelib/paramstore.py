@@ -29,6 +29,7 @@ log = glue.log
 class ParamStore(BotoSession):
 
     FETCHED_PARAMS = {}
+    FETCHED_PATHS = {}
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.newClient('ssm')
@@ -78,6 +79,7 @@ class ParamStore(BotoSession):
             http://boto3.readthedocs.io/en/latest/reference/services/ssm.html#SSM.Client.get_parameter
         """
         if pn in self.FETCHED_PARAMS:
+            log.info("Returning cached ssm parameter {}".format(pn))
             return self.FETCHED_PARAMS[pn]
         pval = None
         try:
@@ -165,6 +167,9 @@ class ParamStore(BotoSession):
             environment += "/"
         xpath = path + environment
         log.debug("param path: {}".format(xpath))
+        if xpath in self.FETCHED_PATHS:
+            log.debug("Returning cached path {}".format(xpath))
+            return self.FETCHED_PATHS[xpath]
         nl = []
         oparams = {}
         for name in names:
@@ -180,4 +185,5 @@ class ParamStore(BotoSession):
             for param in prams:
                 name = param["Name"].replace(xpath, '')
                 oparams[name] = param["Value"]
+        self.FETCHED_PATHS[xpath] = oparams
         return oparams

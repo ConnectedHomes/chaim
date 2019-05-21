@@ -83,13 +83,7 @@ def renew():
     try:
         for section in config.titles():
             if section != "default":
-                try:
-                    threading.Thread(target=chaim.renewSection,args=(section,config)).start()
-                    # if not chaim.renewSection(section, config):
-                    #     click.echo("Failed to obtain credentials for account " + section, err=True)
-                except chaim.UnmanagedAccount as e:
-                    click.echo("{}".format(e))
-                    pass
+                threading.Thread(target=chaim.renewSection,args=(section,config)).start()
     except Exception as e:
         msg = "An error occurred: {}: {}".format(type(e).__name__, e)
         click.echo(msg, err=True)

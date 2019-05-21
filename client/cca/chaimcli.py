@@ -83,7 +83,8 @@ def renewSection(section, ifn):
             terrible = True if "aws_security_token" in sect else False
             return requestKeys(account, role, duration, alias, ifn, setregion, default, terrible)
         else:
-            raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
+            click.echo("ignoring " + section + " as it is not managed by cca")
+            return False
     else:
         return False
 
