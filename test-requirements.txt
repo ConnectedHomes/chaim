@@ -2,5 +2,5 @@ pytest
 pymysql
 boto3
 chardet
-wavefront_pyformance
+wavefront_pyformance==0.9.2
 slackclient

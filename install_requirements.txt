@@ -1,3 +1,7 @@
 pyyaml
 boto3
 chalice
+requests
+pymysql
+wavefront_pyformance==0.9.2
+slackclient
