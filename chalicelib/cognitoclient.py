@@ -39,17 +39,18 @@ class CognitoClient(BotoSession):
         return data
 
     def listUsers(self, poolid, efilter=None):
+        LIMIT = 60
         if efilter is not None:
-            resp = self.client.list_users(Limit=30, UserPoolId=poolid,
+            resp = self.client.list_users(Limit=LIMIT, UserPoolId=poolid,
                                           Filter=efilter)
         else:
-            resp = self.client.list_users(Limit=30, UserPoolId=poolid)
+            resp = self.client.list_users(Limit=LIMIT, UserPoolId=poolid)
         data = resp["Users"]
         while resp.get("PaginationToken"):
             if efilter is not None:
-                resp = self.client.list_users(Limit=30, UserPoolId=poolid, PaginationToken=resp["PaginationToken"], Filter=efilter)  # nopep8
+                resp = self.client.list_users(Limit=LIMIT, UserPoolId=poolid, PaginationToken=resp["PaginationToken"], Filter=efilter)  # nopep8
             else:
-                resp = self.client.list_users(Limit=30, UserPoolId=poolid, PaginationToken=resp["PaginationToken"])  # nopep8
+                resp = self.client.list_users(Limit=LIMIT, UserPoolId=poolid, PaginationToken=resp["PaginationToken"])  # nopep8
             data.extend(resp["Users"])
         return data
 

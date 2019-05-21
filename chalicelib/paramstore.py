@@ -76,18 +76,15 @@ class ParamStore(BotoSession):
             http://boto3.readthedocs.io/en/latest/reference/services/ssm.html#SSM.Client.get_parameter
         """
         pval = None
-        bpn = os.path.dirname(pn)
-        plist = self.listParameters(bpn)
-        if pn in plist:
-            try:
-                param = self.client.get_parameter(Name=pn, WithDecryption=dcrypt)
-                if "Parameter" in param and "Value" in param["Parameter"]:
-                    pval = param["Parameter"]["Value"]
-            except Exception as e:
-                msg = "getParam failed for param: {}".format(pn)
-                msg += " Exception was: {}".format(e)
-                log.error(msg)
-                raise()
+        try:
+            param = self.client.get_parameter(Name=pn, WithDecryption=dcrypt)
+            if "Parameter" in param and "Value" in param["Parameter"]:
+                pval = param["Parameter"]["Value"]
+        except Exception as e:
+            msg = "getParam failed for param: {}".format(pn)
+            msg += " Exception was: {}".format(e)
+            log.error(msg)
+            raise()
         return pval
 
     def listParameters(self, Path='/'):
