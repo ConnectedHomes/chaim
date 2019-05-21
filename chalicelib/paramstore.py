@@ -27,6 +27,8 @@ log = glue.log
 
 
 class ParamStore(BotoSession):
+
+    FETCHED_PARAMS = {}
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.newClient('ssm')
@@ -75,6 +77,8 @@ class ParamStore(BotoSession):
         see boto3 doc:
             http://boto3.readthedocs.io/en/latest/reference/services/ssm.html#SSM.Client.get_parameter
         """
+        if pn in self.FETCHED_PARAMS:
+            return self.FETCHED_PARAMS[pn]
         pval = None
         try:
             param = self.client.get_parameter(Name=pn, WithDecryption=dcrypt)
@@ -85,6 +89,7 @@ class ParamStore(BotoSession):
             msg += " Exception was: {}".format(e)
             log.error(msg)
             raise()
+        self.FETCHED_PARAMS[pn] = pval
         return pval
 
     def listParameters(self, Path='/'):
