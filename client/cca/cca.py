@@ -78,12 +78,16 @@ def account(account, role, duration, alias, default, region, terrible):
 
 
 @cca.command()
-def renew():
+@click.option("-t", "--threaded", is_flag=True, default=False, help="Will use threaded calls to the backend (beware of overloading it")
+def renew(threaded):
     """Renews all account credentials"""
     try:
         for section in config.titles():
             if section != "default":
-                threading.Thread(target=chaim.renewSection,args=(section,config)).start()
+                if threaded:
+                    threading.Thread(target=chaim.renewSection,args=(section,config)).start()
+                else:
+                    chaim.renewSection(section,config)
     except Exception as e:
         msg = "An error occurred: {}: {}".format(type(e).__name__, e)
         click.echo(msg, err=True)
