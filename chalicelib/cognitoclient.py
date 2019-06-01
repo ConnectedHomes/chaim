@@ -25,6 +25,8 @@ log = glue.log
 
 
 class CognitoClient(BotoSession):
+
+    USERLIST = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.newClient('cognito-idp')
@@ -39,18 +41,24 @@ class CognitoClient(BotoSession):
         return data
 
     def listUsers(self, poolid, efilter=None):
+        if not efilter and self.USERLIST:
+            log.info("Returning cached version of listUsers")
+            return self.USERLIST
+        LIMIT = 60
         if efilter is not None:
-            resp = self.client.list_users(Limit=30, UserPoolId=poolid,
+            resp = self.client.list_users(Limit=LIMIT, UserPoolId=poolid,
                                           Filter=efilter)
         else:
-            resp = self.client.list_users(Limit=30, UserPoolId=poolid)
+            resp = self.client.list_users(Limit=LIMIT, UserPoolId=poolid)
         data = resp["Users"]
         while resp.get("PaginationToken"):
             if efilter is not None:
-                resp = self.client.list_users(Limit=30, UserPoolId=poolid, PaginationToken=resp["PaginationToken"], Filter=efilter)  # nopep8
+                resp = self.client.list_users(Limit=LIMIT, UserPoolId=poolid, PaginationToken=resp["PaginationToken"], Filter=efilter)  # nopep8
             else:
-                resp = self.client.list_users(Limit=30, UserPoolId=poolid, PaginationToken=resp["PaginationToken"])  # nopep8
+                resp = self.client.list_users(Limit=LIMIT, UserPoolId=poolid, PaginationToken=resp["PaginationToken"])  # nopep8
             data.extend(resp["Users"])
+        if not efilter:
+            self.USERLIST = data
         return data
 
     def enabledUserList(self, poolid):

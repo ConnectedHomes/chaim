@@ -27,6 +27,9 @@ log = glue.log
 
 
 class ParamStore(BotoSession):
+
+    FETCHED_PARAMS = {}
+    FETCHED_PATHS = {}
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.newClient('ssm')
@@ -75,19 +78,20 @@ class ParamStore(BotoSession):
         see boto3 doc:
             http://boto3.readthedocs.io/en/latest/reference/services/ssm.html#SSM.Client.get_parameter
         """
+        if pn in self.FETCHED_PARAMS:
+            log.info("Returning cached ssm parameter {}".format(pn))
+            return self.FETCHED_PARAMS[pn]
         pval = None
-        bpn = os.path.dirname(pn)
-        plist = self.listParameters(bpn)
-        if pn in plist:
-            try:
-                param = self.client.get_parameter(Name=pn, WithDecryption=dcrypt)
-                if "Parameter" in param and "Value" in param["Parameter"]:
-                    pval = param["Parameter"]["Value"]
-            except Exception as e:
-                msg = "getParam failed for param: {}".format(pn)
-                msg += " Exception was: {}".format(e)
-                log.error(msg)
-                raise()
+        try:
+            param = self.client.get_parameter(Name=pn, WithDecryption=dcrypt)
+            if "Parameter" in param and "Value" in param["Parameter"]:
+                pval = param["Parameter"]["Value"]
+        except Exception as e:
+            msg = "getParam failed for param: {}".format(pn)
+            msg += " Exception was: {}".format(e)
+            log.error(msg)
+            raise()
+        self.FETCHED_PARAMS[pn] = pval
         return pval
 
     def listParameters(self, Path='/'):
@@ -163,6 +167,9 @@ class ParamStore(BotoSession):
             environment += "/"
         xpath = path + environment
         log.debug("param path: {}".format(xpath))
+        if xpath in self.FETCHED_PATHS:
+            log.debug("Returning cached path {}".format(xpath))
+            return self.FETCHED_PATHS[xpath]
         nl = []
         oparams = {}
         for name in names:
@@ -178,4 +185,5 @@ class ParamStore(BotoSession):
             for param in prams:
                 name = param["Name"].replace(xpath, '')
                 oparams[name] = param["Value"]
+        self.FETCHED_PATHS[xpath] = oparams
         return oparams
