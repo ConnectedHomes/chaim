@@ -291,7 +291,7 @@ def doInit(initstr, ifn):
 
 def displayMyList(ifn):
     defsect = getDefaultSection(ifn)
-    click.echo("User Token {}".format(cliutils.displayExpires(defsect["tokenexpires"])))
+    click.echo("User Token {}".format(cliutils.displayExpires(int(defsect["tokenexpires"]))))
     if 'alias' in defsect:
         defname = defsect['alias']
     elif 'section' in defsect:
