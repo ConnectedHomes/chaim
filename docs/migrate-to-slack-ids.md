@@ -32,6 +32,6 @@ At first glance this should just be within the following files
 `lambda/chaim-entry/app.py`
 `lambda/chaim-snsreq/chaim-snsreq.py`
 
-there maybe others.
+There maybe others.
 
 [modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )
