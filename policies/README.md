@@ -39,12 +39,22 @@ aws iam create-policy --policy-name ${policyname} \
 ```
 
 ## Make The Policy Set
-To make a set of policies for your account (I use `sredev` as the account name here, adjust for your situation).
+
+To make a set of policies for your account (I use `sredev` as the account
+name here, adjust for your situation).
 
 ```
 accountname=sredev
+acctnum=627886280200
 cd policies
 mkdir <accountname>
+for fn in *json; do
+    if [ "$fn" != "lambda-role-policy.json" ]; then
+        if [ "$fn" != "chaim-kms.json" ]; then
+            sed "s/1\{8,10\}/$acctnum/" $fn >$accountname/$fn
+        fi
+    fi
+done
 
 ```
 
