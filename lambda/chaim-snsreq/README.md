@@ -9,3 +9,6 @@ users.
 
 ## configuration
 edit the chaim-snsreq.yaml file
+
+
+[modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )

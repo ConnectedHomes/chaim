@@ -38,6 +38,16 @@ aws iam create-policy --policy-name ${policyname} \
 --policy-document file://policies/${policyfile}
 ```
 
+## Make The Policy Set
+To make a set of policies for your account (I use `sredev` as the account name here, adjust for your situation).
+
+```
+accountname=sredev
+cd policies
+mkdir <accountname>
+
+```
+
 ### chaim-manage-access-key
 
 [chaim-manage-access-key.json](chaim-manage-access-key.json) is used to allow
@@ -81,3 +91,5 @@ encrypted parameters from the Parameter Store.
 
 [sts-assume-role.json](sts-assume-role.json) allows the chaim user to assume
 the requested role.
+
+[modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )
