@@ -6,6 +6,10 @@ The 'chaim account' is the central account that you wish to use for chaim to
 run in.  It is this account that assumable roles in all accounts are assumed
 from.
 
+Obtain credentials for this account and store them in `~/.aws/credentials`.
+
+Issue `export AWS_PROFILE=<chaim account profile name>` in your shell.
+
 ### Tagging
 
 In your shell create a default set of tags:
