@@ -79,7 +79,7 @@ def doStart(reqbody, context, env, version):
                 if rdict["role"] is None:
                     raise DataNotFound("Role not recognised: {}".format(rdict["rolealias"]))
             log.debug("incoming cli request: {}".format(rdict))
-            kdict, rdict = chaim.buildCredentials(pms, rdict, noUrl=True)
+            kdict, rdict = chaim.buildCredentials(pms, rdict, noUrl=False)
             if kdict is None:
                 emsg = "Failed to build credentials"
             else:
