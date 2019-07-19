@@ -229,11 +229,12 @@ def doUrl(account, ifn, browser=False, logout=False):
     if not ifn.sectionExists(acct):
         click.echo("account {} not recognised.".format(acct))
         return
-    # checkRenewAccount(acct, ifn)
     renewSection(acct, ifn)
-    url, expires = requestUrl(acct, ifn)
+    sect = ifn.getSectionItems(acct)
+    if "url" in sect:
+        if sect["url"] != "notset":
+            url = sect["url"]
     pyperclip.copy(url)
-    msg = cliutils.displayHMS(expires)
     cmsg = "URL copied to clipboard for account {}\nExpires: {}".format(acct, msg)
     cmd = "open" if sys.platform == "Darwin" else "xdg-open"
     if browser:
