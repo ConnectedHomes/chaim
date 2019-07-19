@@ -39,6 +39,10 @@ class UnmanagedAccount(Exception):
     pass
 
 
+class NoUrl(Exception):
+    pass
+
+
 def getDefaultSection(ifn):
     ret = None
     if "default" in ifn.titles():
@@ -231,9 +235,14 @@ def doUrl(account, ifn, browser=False, logout=False):
         return
     renewSection(acct, ifn)
     sect = ifn.getSectionItems(acct)
+    url = None
     if "url" in sect:
         if sect["url"] != "notset":
             url = sect["url"]
+        else:
+            raise NoUrl("url == notset")
+    else:
+        raise NoUrl("url not set in credentials")
     pyperclip.copy(url)
     cmsg = "URL copied to clipboard for account {}\nExpires: {}".format(acct, msg)
     cmd = "open" if sys.platform == "Darwin" else "xdg-open"
