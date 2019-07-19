@@ -173,15 +173,13 @@ Delete credentials for the named account(s).
 <a name='ccagui'></a>
 #### [gui](#contents)
 This command generates a console session url and opens a browser window to it.
-If the original session is less than the auto-renew session percentage the
-account will be automatically renewed first.
+The credentials will be automatically renewed first.
 
 <a name='ccagso'></a>
 #### [gso](#contents)
 This command generates a console session url, attempts to logout of any current
 session, and opens a browser window to the url.
-If the original session is less than the auto-renew session percentage the
-account will be automatically renewed first.
+The credentials will be automatically renewed first.
 
 Note: There doesn't seem to be any way to access the browser tab with AWS
 running in it, so this process first opens a new tab to issue the logout
@@ -279,8 +277,7 @@ retrieval took 7 seconds.
 <a name='ccaurl'></a>
 #### [url](#contents)
 This command generates a console session url and copies it to the clipboard.
-If the original session is less than the auto-renew session percentage the
-account will be automatically renewed first.
+The credentials will be automatically renewed first.
 
 
 <a name='ccaversion'></a>
