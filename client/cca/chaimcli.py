@@ -236,14 +236,15 @@ def doUrl(account, ifn, browser=False, logout=False):
     renewSection(acct, ifn)
     sect = ifn.getSectionItems(acct)
     url = None
-    if "url" in sect:
-        if sect["url"] != "notset":
-            url = sect["url"]
+    if "gui_url" in sect:
+        if sect["gui_url"] != "notset":
+            url = sect["gui_url"]
         else:
-            raise NoUrl("url == notset")
+            raise NoUrl("gui_url == notset")
     else:
-        raise NoUrl("url not set in credentials")
+        raise NoUrl("gui_url not set in credentials")
     pyperclip.copy(url)
+    msg = cliutils.displayHMS(sect["expires"])
     cmsg = "URL copied to clipboard for account {}\nExpires: {}".format(acct, msg)
     cmd = "open" if sys.platform == "Darwin" else "xdg-open"
     if browser:
