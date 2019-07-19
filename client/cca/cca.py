@@ -151,13 +151,6 @@ def delete(account):
 
 
 @cca.command()
-@click.argument("varpc")
-def setautorenew(varpc):
-    """Sets the percentage of time remaining before account is auto-renewed when requesting a url"""
-    chaim.setVarPC(varpc, config)
-
-
-@cca.command()
 @click.argument("account")
 def park(account):
     """Removes account from credentials and parks it for later use"""

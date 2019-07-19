@@ -352,41 +352,6 @@ def deleteAccount(account, ifn):
         ifn.deleteSection(account)
 
 
-def checkRenewAccount(account, ifn):
-    secti = ifn.getSectionItems(account)
-    varpc = getVarPC(ifn)
-    if "expires" in secti:
-        if "duration" in secti:
-            pc = cliutils.expiresPercentRemaining(int(secti["duration"]), int(secti["expires"]))
-            # auto renew the account if less than varpc% left on the time
-            if pc < varpc:
-                print("{}% remaining, renewing account.".format(pc))
-                renewSection(account, ifn)
-            else:
-                print("{}% remaining for account {}".format(pc, account))
-
-
-def getVarPC(ifn):
-    defsect = getDefaultSection(ifn)
-    varpc = 90
-    if "varpc" in defsect:
-        varpc = int(defsect["varpc"])
-    else:
-        defsect["varpc"] = str(varpc)
-        if ifn.updateSection("default", defsect, True):
-            print("Console time will renew at {}% of session time".format(varpc))
-    return varpc
-
-
-def setVarPC(varpc, ifn):
-    defsect = getDefaultSection(ifn)
-    vpc = int(varpc)
-    if vpc > 0 and vpc < 100:
-        defsect["varpc"] = str(vpc)
-        if ifn.updateSection("default", defsect, True):
-            print("Console time will renew at {}% of session time".format(varpc))
-
-
 def parkAccount(account, ifn, pfn):
     if account in ifn.titles():
         secta = ifn.getSectionItems(account)

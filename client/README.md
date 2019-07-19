@@ -21,7 +21,6 @@ python module.
     * [listpark](#ccalistpark)
     * [park](#ccapark)
     * [renew](#ccarenew)
-    * [setautorenew](#ccaautorenew)
     * [unpark](#ccaunpark)
     * [url](#ccaurl)
     * [version](#ccaversion)
@@ -252,15 +251,6 @@ retrieval took 5 seconds.
 account: chsre-dev, alias: chsre-dev, role: apu, duration: 4
 Updated section chsre-dev with new keys
 retrieval took 6 seconds.
-```
-
-<a name='ccaautorenew'></a>
-#### [setautorenew](#contents)
-Sets the percentage of time remaining before the account is auto-renewed when
-requesting a url. We recommend leaving this at the default of 90%.
-```
-$ cca setautorenew 97
-Console time will renew at 97% of session time
 ```
 
 <a name='ccaunpark'></a>
