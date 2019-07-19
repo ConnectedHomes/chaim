@@ -32,7 +32,8 @@ main chaim account is `111111111111` and any secondary account will be noted as
 
 see the [policy README](policies/README.md) for information.
 
-Create all those policies before attempting to create the Roles below.
+Create the policy set as described in that document, but don't create the
+policies in AWS yet, as some of them will still require editing.
 
 
 ### User
