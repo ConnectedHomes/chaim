@@ -245,7 +245,7 @@ def doUrl(account, ifn, browser=False, logout=False):
         raise NoUrl("gui_url not set in credentials")
     pyperclip.copy(url)
     expires = int(sect["expires"])
-    msg = cliutils.displayHMS()
+    msg = cliutils.displayHMS(expires)
     cmsg = "URL copied to clipboard for account {}\nExpires: {}".format(acct, msg)
     cmd = "open" if sys.platform == "Darwin" else "xdg-open"
     if browser:
