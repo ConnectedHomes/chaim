@@ -106,7 +106,9 @@ def gui(account):
 @click.argument("account", nargs=-1)
 def url(account):
     """Obtains a console session url and copies it to the system clipboard"""
+    print("going to obtain a url")
     chaim.doUrl(account, config)
+    print("chaim.doUrl has completed")
 
 
 @cca.command()

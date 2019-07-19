@@ -198,14 +198,16 @@ def requestUrl(account, ifn):
                 params["username"] = defsect["username"]
                 params["account"] = accountname
                 params["useragent"] = "cca " + ccaversion
+                print("sending to {} data: {}".format(endpoint + "gui", params))
                 r = requests.post(endpoint + "gui", data=params)
                 if 200 == r.status_code:
                     if r.text == "null":
                         print("no response")
                     else:
                         jmm = r.json()
-                        dmm = json.loads(jmm["text"].replace("'", '"'))
-                        ret = dmm["url"]
+                        if jmm["text"]:
+                            dmm = json.loads(jmm["text"].replace("'", '"'))
+                            ret = dmm["url"]
                 else:
                     print("status: {} response: {}".format(r.status_code, r.text))
             else:
@@ -213,7 +215,7 @@ def requestUrl(account, ifn):
         else:
             print("account {} not found".format(account))
     except Exception as e:
-        print("Exception: {}".format(e))
+        print("Exception in requestUrl: {} {}".format(type(e).__name__, e))
     return [ret, duration]
 
 
@@ -227,7 +229,8 @@ def doUrl(account, ifn, browser=False, logout=False):
     if not ifn.sectionExists(acct):
         click.echo("account {} not recognised.".format(acct))
         return
-    checkRenewAccount(acct, ifn)
+    # checkRenewAccount(acct, ifn)
+    renewSection(acct, ifn)
     url, expires = requestUrl(acct, ifn)
     pyperclip.copy(url)
     msg = cliutils.displayHMS(expires)

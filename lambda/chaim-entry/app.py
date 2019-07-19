@@ -187,26 +187,6 @@ def keyinit():
         chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
         verstr = "chaim-slack-" + config["environment"] + " " + version
         return chaim.output(None, "{}\n\nPlease wait".format(verstr))
-
-
-        # reqbody = app.current_request.raw_body.decode()
-        # reqbody += "&stage="
-        # stage = app.current_request.context["stage"]
-        # apiid = app.current_request.context["apiId"]
-        # useragent = "slack"
-        # if stage == "dev":
-        #     log.setLevel(logging.DEBUG)
-        # reqbody += stage
-        # reqbody += "&apiid={}&keyinit=true".format(apiid)
-        # reqbody += "&useragent={}".format(useragent)
-        # log.debug("keyinit starting: {}".format(reqbody))
-        # log.debug("sending to sns: {}".format(reqbody))
-        # epm = EnvParam()
-        # snstopicarn = epm.getParam("SNSTOPIC", decode=True)
-        # snsc = boto3.client('sns')
-        # snsc.publish(TopicArn=snstopicarn, Message=reqbody)
-        # extrav = "-{}".format(stage) if stage in ["beta", "dev"] else ""
-        # return output(None, "{}\n\nPlease wait".format(verstr + extrav))
     except Exception as e:
         msg = "A keyinit error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
