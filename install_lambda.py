@@ -69,6 +69,48 @@ def updateBuild():
     return vstr
 
 
+def gitTag(tag):
+    bits = tag.split(".")
+    cn = len(bits)
+    if cn == 1:
+        majorv = bits[0]
+        minorv = "0"
+        buildv = "0"
+    elif cn == 2:
+        majorv = bits[0]
+        minorv = bits[1]
+        buildv = "0"
+    else:
+        majorv = bits[0]
+        minorv = bits[1]
+        buildv = bits[2]
+    with open(os.path.dirname(__file__) + "/version.py", "w") as vfn:
+        vfn.write("majorv = {}\n".format(majorv))
+        vfn.write("minorv = {}\n".format(minorv))
+        vfn.write("buildv = {}\n".format(buildv))
+        vfn.write("verstr = str(majorv) + '.' + str(minorv) + '.' + str(buildv)")
+    vstr = str(majorv) + '.' + str(minorv) + '.' + str(buildv)
+    cmd = "git add " + os.path.dirname(__file__) + "/version.py"
+    runcmd(cmd)
+    with open("version", "w") as vfn:
+        vfn.write(vstr)
+    cmd = "git add version"
+    runcmd(cmd)
+    cmsg = "updating chaim to {}".format(vstr)
+    print(cmsg)
+    cmd = 'git commit -m "' + cmsg + '"'
+    runcmd(cmd)
+    cmd = 'git push'
+    runcmd(cmd)
+    print("tagging as " + vstr)
+    cmd = 'git tag ' + vstr
+    runcmd(cmd)
+    print("pushing tags")
+    cmd = "git push --tags"
+    runcmd(cmd)
+    return vstr
+
+
 def runcmd(cmd):
     return subprocess.check_call(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
 
@@ -267,6 +309,7 @@ parser.add_argument("-c", "--clean", action="store_true",
                     help="remove the package/ directories (and their contents) and exit.")
 parser.add_argument("-n", "--novpc", action="store_true",
                     help="Do not try and install into a VPC.")
+parser.add_argument("-t", "--tag", help="set version and git tag it.")
 parser.add_argument("environment", default="dev", choices=["dev", "prod", "test"],
                     help="environment to install/update (dev/prod etc).")
 args = parser.parse_args()
@@ -277,6 +320,10 @@ medir = os.getcwd()
 fs = FileSystem()
 
 VPC = INC = True
+
+if args.tag:
+    gitTag(args.tag)
+    sys.exit(0)
 
 if args.clean:
     packd = medir + "/package/"
