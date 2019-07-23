@@ -39,6 +39,10 @@ class UnmanagedAccount(Exception):
     pass
 
 
+class NoUrl(Exception):
+    pass
+
+
 def getDefaultSection(ifn):
     ret = None
     if "default" in ifn.titles():
@@ -80,14 +84,15 @@ def renewSection(section, ifn):
                 default = True if defsect["alias"] == section else False
             if "region" in sect:
                 setregion = sect["region"]
-            return requestKeys(account, role, duration, alias, ifn, setregion, default)
+            terrible = True if "aws_security_token" in sect else False
+            return requestKeys(account, role, duration, alias, ifn, setregion, default, terrible)
         else:
             raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
     else:
         return False
 
 
-def requestKeys(account, role, duration, accountalias, ifn, setregion, default=False):
+def requestKeys(account, role, duration, accountalias, ifn, setregion, default=False, terrible=False):
     ret = False
     defsect = getDefaultSection(ifn)
     if account == "NOT SET":
@@ -112,8 +117,8 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
                 if sc > 399:
                     click.echo("Error: {}: {}".format(sc, d["text"]), err=True)
                 else:
-                    ret = storeKeys(d["text"], duration, role, accountalias, ifn, setregion, default)
-                    click.echo("retrieval took {} seconds.".format(taken))
+                    ret = storeKeys(d["text"], duration, role, accountalias, ifn, setregion, default, terrible)
+                    click.echo("{} retrieval took {} seconds.".format(accountalias,taken))
         else:
             click.echo("d is not a dict", err=True)
     else:
@@ -121,7 +126,7 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
     return ret
 
 
-def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=False):
+def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=False, terrible=False):
     ret = False
     defsect = getDefaultSection(ifn)
     xd = json.loads(text.replace("'", '"'))
@@ -130,6 +135,8 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
         dd["aws_access_key_id"] = xd["accesskeyid"]
         dd["aws_secret_access_key"] = xd["secretkey"]
         dd["aws_session_token"] = xd["sessiontoken"]
+        if terrible:
+            dd["aws_security_token"] = xd["sessiontoken"]
         dd["region"] = defsect["region"]
         dd["expires"] = str(xd["expires"])
         dd["expstr"] = xd["expiresstr"]
@@ -150,6 +157,8 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
                     defsect["aws_access_key_id"] = xd["accesskeyid"]
                     defsect["aws_secret_access_key"] = xd["secretkey"]
                     defsect["aws_session_token"] = xd["sessiontoken"]
+                    if terrible:
+                        defsect["aws_security_token"] = xd["sessiontoken"]
                     defsect["alias"] = accountalias
                     defsect["expires"] = str(xd["expires"])
                     if ifn.updateSection("default", defsect, True):
@@ -159,6 +168,8 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
                 defsect["aws_access_key_id"] = xd["accesskeyid"]
                 defsect["aws_secret_access_key"] = xd["secretkey"]
                 defsect["aws_session_token"] = xd["sessiontoken"]
+                if terrible:
+                    defsect["aws_security_token"] = xd["sessiontoken"]
                 defsect["section"] = xd["sectionname"]
                 defsect["alias"] = accountalias
                 defsect["expires"] = str(xd["expires"])
@@ -191,14 +202,16 @@ def requestUrl(account, ifn):
                 params["username"] = defsect["username"]
                 params["account"] = accountname
                 params["useragent"] = "cca " + ccaversion
+                print("sending to {} data: {}".format(endpoint + "gui", params))
                 r = requests.post(endpoint + "gui", data=params)
                 if 200 == r.status_code:
                     if r.text == "null":
                         print("no response")
                     else:
                         jmm = r.json()
-                        dmm = json.loads(jmm["text"].replace("'", '"'))
-                        ret = dmm["url"]
+                        if jmm["text"]:
+                            dmm = json.loads(jmm["text"].replace("'", '"'))
+                            ret = dmm["url"]
                 else:
                     print("status: {} response: {}".format(r.status_code, r.text))
             else:
@@ -206,7 +219,7 @@ def requestUrl(account, ifn):
         else:
             print("account {} not found".format(account))
     except Exception as e:
-        print("Exception: {}".format(e))
+        print("Exception in requestUrl: {} {}".format(type(e).__name__, e))
     return [ret, duration]
 
 
@@ -220,9 +233,18 @@ def doUrl(account, ifn, browser=False, logout=False):
     if not ifn.sectionExists(acct):
         click.echo("account {} not recognised.".format(acct))
         return
-    checkRenewAccount(acct, ifn)
-    url, expires = requestUrl(acct, ifn)
+    renewSection(acct, ifn)
+    sect = ifn.getSectionItems(acct)
+    url = None
+    if "gui_url" in sect:
+        if sect["gui_url"] != "notset":
+            url = sect["gui_url"]
+        else:
+            raise NoUrl("gui_url == notset")
+    else:
+        raise NoUrl("gui_url not set in credentials")
     pyperclip.copy(url)
+    expires = int(sect["expires"]) - cliutils.getNow()
     msg = cliutils.displayHMS(expires)
     cmsg = "URL copied to clipboard for account {}\nExpires: {}".format(acct, msg)
     cmd = "open" if sys.platform == "Darwin" else "xdg-open"
@@ -284,6 +306,9 @@ def doInit(initstr, ifn):
 
 def displayMyList(ifn):
     defsect = getDefaultSection(ifn)
+    if "tokenexpires" in defsect:
+        if int(defsect["tokenexpires"]) > 0:
+            click.echo("User Token {}".format(cliutils.displayExpires(int(defsect["tokenexpires"]))))
     if 'alias' in defsect:
         defname = defsect['alias']
     elif 'section' in defsect:
@@ -325,41 +350,6 @@ def deleteAccount(account, ifn):
     if account in ifn.titles():
         click.echo("Deleting account {}.".format(account))
         ifn.deleteSection(account)
-
-
-def checkRenewAccount(account, ifn):
-    secti = ifn.getSectionItems(account)
-    varpc = getVarPC(ifn)
-    if "expires" in secti:
-        if "duration" in secti:
-            pc = cliutils.expiresPercentRemaining(int(secti["duration"]), int(secti["expires"]))
-            # auto renew the account if less than varpc% left on the time
-            if pc < varpc:
-                print("{}% remaining, renewing account.".format(pc))
-                renewSection(account, ifn)
-            else:
-                print("{}% remaining for account {}".format(pc, account))
-
-
-def getVarPC(ifn):
-    defsect = getDefaultSection(ifn)
-    varpc = 90
-    if "varpc" in defsect:
-        varpc = int(defsect["varpc"])
-    else:
-        defsect["varpc"] = str(varpc)
-        if ifn.updateSection("default", defsect, True):
-            print("Console time will renew at {}% of session time".format(varpc))
-    return varpc
-
-
-def setVarPC(varpc, ifn):
-    defsect = getDefaultSection(ifn)
-    vpc = int(varpc)
-    if vpc > 0 and vpc < 100:
-        defsect["varpc"] = str(vpc)
-        if ifn.updateSection("default", defsect, True):
-            print("Console time will renew at {}% of session time".format(varpc))
 
 
 def parkAccount(account, ifn, pfn):

@@ -1,4 +1,4 @@
 majorv = 2
-minorv = 0
-buildv = 137
+minorv = 2
+buildv = 1
 verstr = str(majorv) + '.' + str(minorv) + '.' + str(buildv)

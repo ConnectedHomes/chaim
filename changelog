@@ -1,2 +1,16 @@
+2019-05-31
+author: anibal.capotorto@hivehome.com
+Cognito cache
+Parameter Store cache
+both for warm lambdas (no caching when lambda is started from cold, obviously).
+
+2019-05-15
+author: chris.allison@hivehome.com
+added Ansible and Terraform support to the CCA client
+
+2019-01-21
+author: chris.allison@hivehome.com
+Fuzzy time display for credential/user token expiration times
+
 2018-08-14
 repository started

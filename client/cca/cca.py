@@ -24,6 +24,7 @@ Centrica Chaim cli using click module for command line parsing
 import os
 import sys
 import click
+import threading
 import cca.chaimcli as chaim
 from cca.cliinifile import IniFile
 from cca import __version__ as ccaversion
@@ -66,11 +67,13 @@ def cca():
 @click.option("-D", "--default", is_flag=True, default=False,
               help="Optional. Set this account to be the default account profile to use")
 @click.option("-R", "--region", help="Optional. Region, default eu-west-1")
+@click.option("-T", "--terrible", is_flag=True, default=False,
+              help="Add support for Terraform/Ansible to the credentials file")
 @click.argument("account")
-def account(account, role, duration, alias, default, region):
+def account(account, role, duration, alias, default, region, terrible):
     """Configure credentials for AWS account ACCOUNT """
     setregion = False if region is None else region
-    if not chaim.requestKeys(account, role, duration, alias, config, setregion, default):
+    if not chaim.requestKeys(account, role, duration, alias, config, setregion, default, terrible):
         click.echo("Failed to obtain credentials for account " + account, err=True)
 
 
@@ -81,8 +84,9 @@ def renew():
         for section in config.titles():
             if section != "default":
                 try:
-                    if not chaim.renewSection(section, config):
-                        click.echo("Failed to obtain credentials for account " + section, err=True)
+                    threading.Thread(target=chaim.renewSection,args=(section,config)).start()
+                    # if not chaim.renewSection(section, config):
+                    #     click.echo("Failed to obtain credentials for account " + section, err=True)
                 except chaim.UnmanagedAccount as e:
                     click.echo("{}".format(e))
                     pass
@@ -144,13 +148,6 @@ def delete(account):
     if len(account) > 0:
         for acct in account:
             chaim.deleteAccount(acct, config)
-
-
-@cca.command()
-@click.argument("varpc")
-def setautorenew(varpc):
-    """Sets the percentage of time remaining before account is auto-renewed when requesting a url"""
-    chaim.setVarPC(varpc, config)
 
 
 @cca.command()

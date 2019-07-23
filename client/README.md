@@ -21,7 +21,6 @@ python module.
     * [listpark](#ccalistpark)
     * [park](#ccapark)
     * [renew](#ccarenew)
-    * [setautorenew](#ccaautorenew)
     * [unpark](#ccaunpark)
     * [url](#ccaurl)
     * [version](#ccaversion)
@@ -158,8 +157,13 @@ Options:
   -D, --default           optional set this account to be the default account
                           profile to use
   -R, --region TEXT       optional region
+  -T, --terrible          Add support for Terraform/Ansible to the credentials
+                          file
   --help                  Show this message and exit.
 ```
+The `-T|--terrible` switch copies the `aws_session_token` key to the `aws_security_token` key.
+This ensures that products such as Ansible and Terraform which still use the `aws_security_token`
+will continue to work.
 
 <a name='ccadelete'></a>
 #### [delete](#contents)
@@ -168,15 +172,13 @@ Delete credentials for the named account(s).
 <a name='ccagui'></a>
 #### [gui](#contents)
 This command generates a console session url and opens a browser window to it.
-If the original session is less than the auto-renew session percentage the
-account will be automatically renewed first.
+The credentials will be automatically renewed first.
 
 <a name='ccagso'></a>
 #### [gso](#contents)
 This command generates a console session url, attempts to logout of any current
 session, and opens a browser window to the url.
-If the original session is less than the auto-renew session percentage the
-account will be automatically renewed first.
+The credentials will be automatically renewed first.
 
 Note: There doesn't seem to be any way to access the browser tab with AWS
 running in it, so this process first opens a new tab to issue the logout
@@ -251,15 +253,6 @@ Updated section chsre-dev with new keys
 retrieval took 6 seconds.
 ```
 
-<a name='ccaautorenew'></a>
-#### [setautorenew](#contents)
-Sets the percentage of time remaining before the account is auto-renewed when
-requesting a url. We recommend leaving this at the default of 90%.
-```
-$ cca setautorenew 97
-Console time will renew at 97% of session time
-```
-
 <a name='ccaunpark'></a>
 #### [unpark](#contents)
 Re-enable an account and automatically renew its session so that it is
@@ -274,8 +267,7 @@ retrieval took 7 seconds.
 <a name='ccaurl'></a>
 #### [url](#contents)
 This command generates a console session url and copies it to the clipboard.
-If the original session is less than the auto-renew session percentage the
-account will be automatically renewed first.
+The credentials will be automatically renewed first.
 
 
 <a name='ccaversion'></a>
