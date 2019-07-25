@@ -249,6 +249,11 @@ Gateway.  It is easiest to tie them all together using the console.
 * edit the route table association and change it to the route table you
   just created.
 
+You now have a Public subnet (chaim-db-network-a) and 1 or 2 Private
+subnets (chaim-db-network-b/c)
+
+
+
 
 
 
