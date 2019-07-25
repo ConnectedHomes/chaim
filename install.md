@@ -202,6 +202,9 @@ for i in 0 1 2; do
     --cidr-block 10.190.${i}.0/24 --availability-zone eu-west-1${azs[$i]} \
     |tee $opdir/create-subnets-${azs[$i]}.json
     subnetid=$(jq -r '.Subnet.SubnetId' $opdir/create-subnets-${azs[$i]}.json)
+    if [ $1 -eq 0 ]; then
+        subneta=$subnetid
+    fi
     echo $subnetid
     aws ec2 create-tags --resources ${subnetid} --tags Key=role,Value=subnet
     aws ec2 create-tags --resources ${subnetid} --tags Key=owner,Value=SRE
@@ -209,6 +212,12 @@ for i in 0 1 2; do
     aws ec2 create-tags --resources ${subnetid} --tags Key=product,Value=chaim
     aws ec2 create-tags --resources ${subnetid} --tags Key=Name,Value=chaim-subnet-${azs[$i]}
 done
+
+# create an elastic IP for the NAT GW
+allocid=$(aws ec2 allocate-address --domain vpc |jq -r '.AllocationId')
+
+# create the NAT GW
+aws ec2 create-nat-gateway --allocation-id $allocid --subnet-id $subneta
 
 ```
 
