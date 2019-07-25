@@ -15,9 +15,9 @@ Issue `export AWS_PROFILE=<chaim account profile name>` in your shell.
 In your shell create a default set of tags:
 
 ```
-deftags="TagKey=owner,TagValue=SRE"
-deftags="${deftags},TagKey=product,TagValue=chaim"
-deftags="${deftags},TagKey=environment,TagValue=prod"
+deftags="Key=owner,Value=SRE"
+deftags="${deftags},Key=product,Value=chaim"
+deftags="${deftags},Key=environment,Value=prod"
 ```
 
 These will be used later when creating the infrastucture from the command line.
@@ -41,10 +41,10 @@ policies in AWS yet, as some of them will still require editing.
 Chaim requires a 'machine user' IAM account to run as:
 
 ```
-tags="${deftags},TagKey=role,TagValue=Chaim-Master-User"
-tags="${tags},TagKey=Name,TagValue=sre.chaim"
+tags="${deftags},Key=role,Value=Chaim-Master-User"
+tags="${tags},Key=Name,Value=sre.chaim"
 
-aws iam --create-user --user-name sre.chaim --tags "${tags}"
+aws iam create-user --user-name sre.chaim --tags "${tags}"
 ```
 
 ### Encryption Key
@@ -53,8 +53,8 @@ All of Chaim's parameters and secrets are held, encrypted, in the parameter
 store. Create a KMS key to encrypt/decrypt them:
 
 ```
-tags="${deftags},TagKey=role,TagValue=encryptionkey"
-tags="${tags},TagKey=Name,TagValue=sre-chaim"
+tags="${deftags},Key=role,Value=encryptionkey"
+tags="${tags},Key=Name,Value=sre-chaim"
 
 desc="Encrypt secrets for the chaim application"
 
@@ -79,8 +79,8 @@ policies first (see above).
 Change the account number below in the `polarn` line to be the correct one.
 
 ```
-tags="${deftags},TagKey=role,TagValue=chaim-role"
-tags="${tags},TagKey=Name,TagValue=chaim-lambda-rds"
+tags="${deftags},Key=role,Value=chaim-role"
+tags="${tags},Key=Name,Value=chaim-lambda-rds"
 
 desc="chaim access to IAM, Parameter Store, Cognito and RDS"
 
@@ -116,8 +116,8 @@ This role is used by the rotate-access-keys lambda to rotate Chaims long term
 access keys on a cron schedule.
 
 ```
-tags="${deftags},TagKey=role,TagValue=chaim-keyman"
-tags="${tags},TagKey=Name,TagValue=chaim-lambda-keyman"
+tags="${deftags},Key=role,Value=chaim-keyman"
+tags="${tags},Key=Name,Value=chaim-lambda-keyman"
 
 desc="Allows the chaim key manager lambda to access the parameter store \
 read-write only certain keys and rotate access keys."
