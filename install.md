@@ -121,7 +121,8 @@ aws kms create-key --policy file://policies/${accountname}/chaim-kms.json \
 Record the KeyId of the created key and use it to create a key alias:
 
 ```
-aws kms --create-alias --alias-name sre-chaim \
+keyid=0e3f5f92-XXXX-ZZZZ-YYYY-1f5xxxx33d05
+aws kms create-alias --alias-name alias/sre-chaim \
 --target-key-id ${keyid} |tee $opdir/create-key-alias.json
 ```
 
@@ -142,7 +143,7 @@ read-write only certain keys and rotate access keys."
 polnames=(chaim-manage-access-key chaim-paramstore-write)
 
 for poln in ${polnames[@]}; do
-    polarn=arn:aws:iam::111111111111:policy/${poln}
+    polarn=arn:aws:iam::${acctnum}:policy/${poln}
     polarns=(${polarns[@]} ${polarn})
 done
 
@@ -151,15 +152,15 @@ lambdaexe=arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 aws iam create-role --role-name chaim-lambda-keyman \
 --description "${desc}" \
 --assume-role-policy-document file://policies/lambda-role-policy.json \
---tags "${tags}"
+--tags "${tags}" |tee $opdir/create-rotate-role.json
 
 # give AWS time to update with the new Role
 sleep 5
 
-aws iam attach-role-policy --role-name chaim-lambda-keyman --policy-arn ${lambdaexe}
+aws iam attach-role-policy --role-name chaim-lambda-keyman --policy-arn ${lambdaexe} |tee -a $opdir/attach-policies.json
 
 for polarn in ${polarns[@]}; do
-    aws iam attach-role-policy --role-name chaim-lambda-keyman --policy-arn ${polarn}
+    aws iam attach-role-policy --role-name chaim-lambda-keyman --policy-arn ${polarn} |tee -a $opdir/attach-policies.json
 done
 ```
 
