@@ -54,33 +54,8 @@ Chaim requires a 'machine user' IAM account to run as:
 tags="${deftags},Key=role,Value=Chaim-Master-User"
 tags="${tags},Key=Name,Value=sre.chaim"
 
-aws iam create-user --user-name sre.chaim --tags "${tags}" >$opdir/create-user.json
+aws iam create-user --user-name sre.chaim --tags "${tags}" | tee $opdir/create-user.json
 ```
-
-### Encryption Key
-
-All of Chaim's parameters and secrets are held, encrypted, in the parameter
-store. Create a KMS key to encrypt/decrypt them:
-
-```
-tags="${deftags},Key=role,Value=encryptionkey"
-tags="${tags},Key=Name,Value=sre-chaim"
-
-desc="Encrypt secrets for the chaim application"
-
-aws kms create-key --policy file://policies/${accountname}/chaim-kms.json \
---description "${desc}" \
---tags "${tags}" >$opdir/create-kms-key.json
-```
-
-Record the KeyId of the created key and use it to create a key alias:
-
-```
-aws kms --create-alias --alias-name sre-chaim \
---target-key-id ${keyid} >$opdir/create-key-alias.json
-```
-
-The alias cannot be tagged.
 
 ### Role: chaim-lambda-rds
 
@@ -99,7 +74,7 @@ polnames=(param-store-read sts-assume-role cognito-get-user-status)
 polnames=(${polnames[@]} cognito-manage-user-pool chaim-publish-to-sns)
 
 for poln in ${polnames[@]}; do
-    polarn=arn:aws:iam::111111111111:policy/${poln}
+    polarn=arn:aws:iam::${acctnum}:policy/${poln}
     polarns=(${polarns[@]} ${polarn})
 done
 
@@ -109,17 +84,48 @@ vpcexe=arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
 aws iam create-role --role-name chaim-lambda-rds \
 --description "${desc}" \
 --assume-role-policy-document file://policies/lambda-role-policy.json \
---tags "${tags}"
+--tags "${tags}" |tee $opdir/create-role.json
 
 # give AWS time to update with the new Role
 sleep 5
 
-aws iam attach-role-policy --role-name chaim-lambda-rds --policy-arn ${vpcexe}
+aws iam attach-role-policy --role-name chaim-lambda-rds \
+--policy-arn ${vpcexe} |tee $opdir/attach-policies.json
 
 for polarn in ${polarns[@]}; do
-    aws iam attach-role-policy --role-name chaim-lambda-rds --policy-arn ${polarn}
+    aws iam attach-role-policy --role-name chaim-lambda-rds \
+    --policy-arn ${polarn} |tee -a $opdir/attach-policies.json
 done
 ```
+
+### Encryption Key
+
+All of Chaim's parameters and secrets are held, encrypted, in the parameter
+store. Create a KMS key to encrypt/decrypt them:
+
+```
+tags="${deftags},Key=role,Value=encryptionkey"
+tags="${tags},Key=Name,Value=sre-chaim"
+
+# for some reason known only to the AWS CLI devs the tags for
+# the create-key command have to be 'TagKey=keyname,TagValue=value'
+ttags="$(echo $tags |sed 's/Key/TagKey/g; s/Value/TagValue/g')"
+
+desc="Encrypt secrets for the chaim application"
+
+aws kms create-key --policy file://policies/${accountname}/chaim-kms.json \
+--description "${desc}" \
+--tags "${ttags}" |tee $opdir/create-kms-key.json
+```
+
+Record the KeyId of the created key and use it to create a key alias:
+
+```
+aws kms --create-alias --alias-name sre-chaim \
+--target-key-id ${keyid} |tee $opdir/create-key-alias.json
+```
+
+The alias cannot be tagged.
 
 ### Role: chaim-lambda-keyman
 
