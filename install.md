@@ -166,10 +166,51 @@ done
 
 ### SNS Topic
 
+Create an SNS topic, record the ARN for later use.
+
 ```
 tags="${deftags},Key=role,Value=sns-topic"
 tags="${tags},Key=Name,Value=chaim-entry-dev"
 
 aws sns create-topic --name chaim-entry-dev --tags "${tags}" |tee $opdir/create-sns-topic.json
 ```
+
+## Infrastructure
+
+### VPC
+
+Create a VPC, 2 subnets, one public, one private, and a NAT Gateway
+
+```
+tags="${deftags},Key=role,Value=VPC"
+tags="${tags},Key=Name,Value=chaim-db-network"
+
+aws ec2 create-vpc --cidr-block 10.190.0.0/16 |tee $opdir/create-vpc.json
+vpcid=$(jq -r '.Vpc.VpcId' $opdir/create-vpc.json)
+# for some unknown reason this only sets the last tag
+#  aws ec2 create-tags --resources ${vpcid} --tags "${tags}"
+# so create them individually
+aws ec2 create-tags --resources ${vpcid} --tags Key=role,Value=VPC
+aws ec2 create-tags --resources ${vpcid} --tags Key=owner,Value=SRE
+aws ec2 create-tags --resources ${vpcid} --tags Key=environment,Value=dev
+aws ec2 create-tags --resources ${vpcid} --tags Key=product,Value=chaim
+
+# subnets (create one in AZc as well for prod)
+azs=(a b c)
+for i in 0 1 2; do
+    aws ec2 create-subnet --vpc-id ${vpcid} \
+    --cidr-block 10.190.${i}.0/24 --availability-zone eu-west-1${azs[$i]} \
+    |tee $opdir/create-subnets-${azs[$i]}.json
+    subnetid=$(jq -r '.Subnets.SubnetId' $opdir/create-subnets-${azs[$i]}.json)
+    echo $subnetid
+    aws ec2 create-tags --resources ${subnetid} --tags Key=role,Value=subnet
+    aws ec2 create-tags --resources ${subnetid} --tags Key=owner,Value=SRE
+    aws ec2 create-tags --resources ${subnetid} --tags Key=environment,Value=dev
+    aws ec2 create-tags --resources ${subnetid} --tags Key=product,Value=chaim
+    aws ec2 create-tags --resources ${subnetid} --tags Key=Name,Value=chaim-subnet-${azs[$i]}
+done
+
+```
+
+
 [modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )
