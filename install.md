@@ -201,7 +201,7 @@ for i in 0 1 2; do
     aws ec2 create-subnet --vpc-id ${vpcid} \
     --cidr-block 10.190.${i}.0/24 --availability-zone eu-west-1${azs[$i]} \
     |tee $opdir/create-subnets-${azs[$i]}.json
-    subnetid=$(jq -r '.Subnets.SubnetId' $opdir/create-subnets-${azs[$i]}.json)
+    subnetid=$(jq -r '.Subnet.SubnetId' $opdir/create-subnets-${azs[$i]}.json)
     echo $subnetid
     aws ec2 create-tags --resources ${subnetid} --tags Key=role,Value=subnet
     aws ec2 create-tags --resources ${subnetid} --tags Key=owner,Value=SRE
