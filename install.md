@@ -58,7 +58,7 @@ tags="${tags},Key=Name,Value=sre-chaim"
 
 desc="Encrypt secrets for the chaim application"
 
-aws kms --create-key --policy file://policies/chaim-kms.json \
+aws kms create-key --policy file://policies/sredev/chaim-kms.json \
 --description "${desc}" \
 --tags "${tags}"
 ```

@@ -49,9 +49,14 @@ acctnum=627886280200
 cd policies
 mkdir <accountname>
 for fn in *json; do
+    sed "s/1\{8,10\}/$acctnum/" $fn >$accountname/$fn
+done
+cd $accountname
+for fn in *json; do
     if [ "$fn" != "lambda-role-policy.json" ]; then
         if [ "$fn" != "chaim-kms.json" ]; then
-            sed "s/1\{8,10\}/$acctnum/" $fn >$accountname/$fn
+            aws iam create-policy --policy-name ${fn%%.json} \
+            --policy-document file://$fn
         fi
     fi
 done

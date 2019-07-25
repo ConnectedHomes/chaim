@@ -16,8 +16,7 @@
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::111111111111:role/chaim-lambda-rds",
-                    "arn:aws:iam::222222222222:root"
+                    "arn:aws:iam::111111111111:role/chaim-lambda-rds"
                 ]
             },
             "Action": [
@@ -34,8 +33,7 @@
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::111111111111:role/chaim-lambda-rds",
-                    "arn:aws:iam::222222222222:root"
+                    "arn:aws:iam::111111111111:role/chaim-lambda-rds"
                 ]
             },
             "Action": [
