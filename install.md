@@ -219,7 +219,38 @@ allocid=$(aws ec2 allocate-address --domain vpc |jq -r '.AllocationId')
 # create the NAT GW
 aws ec2 create-nat-gateway --allocation-id $allocid --subnet-id $subneta
 
+# create an internet gateway
+aws ec2 create-internet-gateway |tee $opdir/create-igw.json
+igwid=$(jq -r '.InternetGateway.InternetGatewayId' $opdir/create-igw.json)
+aws ec2 attach-internet-gateway --internet-gateway-id $igwid --vpc-id $vpcid |tee $opdir/attach-igw.json
+
 ```
+Now you have a VPC, 2 (or 3) subnets, an Internet Gateway and a NAT
+Gateway.  It is easiest to tie them all together using the console.
+
+* go to the VPC console and select Subnets.
+* select the `chaim-db-network-a` subnet
+* select the Route Table tab and click the link to the route table
+* select the Routes tab
+* select Edit Routes
+* select Add Route
+* in the destination box type `0.0.0.0/0`
+* select Internet Gateway in the target box, and from the list select the
+  new one you created above
+* select Route Tables from the left hand menu
+* select Create route table
+* name it `chaim-db-network-private`
+* select the correct VPC
+* select the route table you just created
+* edit the routes to add a route via the NAT GW
+* select Subnets from the left hand menu again
+* select `chaim-db-network-b` subnet
+* select Route Table tab
+* edit the route table association and change it to the route table you
+  just created.
+
+
+
 
 
 [modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )
