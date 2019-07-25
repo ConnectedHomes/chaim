@@ -46,6 +46,8 @@ name here, adjust for your situation).
 ```
 accountname=sredev
 acctnum=627886280200
+opdir=~/tmp/chaim-${accountname}-output
+mkdir -p ${opdir}
 cd policies
 mkdir <accountname>
 for fn in *json; do
@@ -56,7 +58,7 @@ for fn in *json; do
     if [ "$fn" != "lambda-role-policy.json" ]; then
         if [ "$fn" != "chaim-kms.json" ]; then
             aws iam create-policy --policy-name ${fn%%.json} \
-            --policy-document file://$fn
+            --policy-document file://$fn >>${opdir}/create-policies.json
         fi
     fi
 done

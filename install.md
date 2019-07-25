@@ -20,7 +20,16 @@ deftags="${deftags},Key=product,Value=chaim"
 deftags="${deftags},Key=environment,Value=prod"
 ```
 
-These will be used later when creating the infrastucture from the command line.
+These will be used later when creating the infrastructure from the command line.
+
+And a directory for output
+
+```
+accountname=sredev
+opdir=~/tmp/chaim-${accountname}-output
+mkdir -p ${opdir}
+```
+
 
 ### Permission Policies
 
@@ -33,7 +42,8 @@ main chaim account is `111111111111` and any secondary account will be noted as
 see the [policy README](policies/README.md) for information.
 
 Create the policy set as described in that document, but don't create the
-policies in AWS yet, as some of them will still require editing.
+policies marked as special, as they are created when creating the
+functions.
 
 
 ### User
@@ -44,7 +54,7 @@ Chaim requires a 'machine user' IAM account to run as:
 tags="${deftags},Key=role,Value=Chaim-Master-User"
 tags="${tags},Key=Name,Value=sre.chaim"
 
-aws iam create-user --user-name sre.chaim --tags "${tags}"
+aws iam create-user --user-name sre.chaim --tags "${tags}" >$opdir/create-user.json
 ```
 
 ### Encryption Key
@@ -58,15 +68,16 @@ tags="${tags},Key=Name,Value=sre-chaim"
 
 desc="Encrypt secrets for the chaim application"
 
-aws kms create-key --policy file://policies/sredev/chaim-kms.json \
+aws kms create-key --policy file://policies/${accountname}/chaim-kms.json \
 --description "${desc}" \
---tags "${tags}"
+--tags "${tags}" >$opdir/create-kms-key.json
 ```
 
 Record the KeyId of the created key and use it to create a key alias:
 
 ```
-aws kms --create-alias --alias-name sre-chaim --target-key-id ${keyid}
+aws kms --create-alias --alias-name sre-chaim \
+--target-key-id ${keyid} >$opdir/create-key-alias.json
 ```
 
 The alias cannot be tagged.
