@@ -166,4 +166,10 @@ done
 
 ### SNS Topic
 
+```
+tags="${deftags},Key=role,Value=sns-topic"
+tags="${tags},Key=Name,Value=chaim-entry-dev"
+
+aws sns create-topic --name chaim-entry-dev --tags "${tags}" |tee $opdir/create-sns-topic.json
+```
 [modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )
