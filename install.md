@@ -253,6 +253,61 @@ You now have a Public subnet (chaim-db-network-a) and 1 or 2 Private
 subnets (chaim-db-network-b/c)
 
 
+## Database and Security Group
+
+### Security Group
+
+Create a security group for database access
+
+```
+grpname=chaim-db-access-sg
+tags="${deftags},Key=role,Value=security-group"
+tags="${tags},Key=Name,Value=${grpname}"
+
+desc="Security group for access to the chaim database"
+
+aws ec2 create-security-group --description "${desc}" \
+--group-name ${grpname} --vpc-id ${vpcid} |tee $opdir/create-db-sg.json
+
+sgid=$(jq -r '.GroupId' $opdir/create-db-sg.json)
+echo $sgid
+aws ec2 create-tags --resources ${sgid} --tags Key=role,Value=security-group
+aws ec2 create-tags --resources ${sgid} --tags Key=owner,Value=SRE
+aws ec2 create-tags --resources ${sgid} --tags Key=environment,Value=dev
+aws ec2 create-tags --resources ${sgid} --tags Key=product,Value=chaim
+aws ec2 create-tags --resources ${sgid} --tags Key=Name,Value=${grpname}
+```
+
+### Database
+
+* At the RDS console, select Create Database
+* Select MariaDB
+* Select Dev/Test as the use case
+* Select the latest version of MariaDB
+* Select db.t3.micro as the instance size
+* Leave the other options as default
+* Scroll down to Settings
+* DB Instance Identifier: `chaim-db-dev`
+* Create a Master Password and store it in the parameter store:
+
+```
+aws ssm put-parameter --type SecureString --key-id alias/sre-chaim \
+--name /sre/chaim/dev/db-master-password --value 'password' \
+--description "the master password for the chaim-db-dev instance"
+
+aws ssm put-parameter --type SecureString --key-id alias/sre-chaim \
+--description "the master username for the chaim-db-dev instance" \
+--name /sre/chaim/dev/db-master-user --value 'master-user-name'
+```
+
+* Click Next
+* Select the `chaim-db-network` VPC
+* Set AZ to be `eu-west-1b`
+* Set the default db name to be `srechaim`
+* Set the backup retention period to be 0 days
+* Select the 4 log exports
+* Select Create Database
+
 
 
 
