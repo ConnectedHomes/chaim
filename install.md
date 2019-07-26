@@ -324,6 +324,19 @@ aws ssm put-parameter --type SecureString --key-id alias/sre-chaim \
 --description "The endpoint address of the chaim database"
 ```
 
+* You are going to need a temporary EC2 instance run up in the public
+  subnet `chaim-db-network-a` with the `chaim-db-access-sg` security group
+  attached.  You will then be able to SSH to this host setting up a local
+  tunnel to the database:
+
+```
+ssh -L 3306:chaim-db-endpoint-address:3306 temp-ec2-instance-address
+mysql -h 127.0.0.1 -u master-user-name -p srechaim
+```
+
+* Create 2 usernames and passwords, one for read-only use, the other for
+  read-write use.  Store them in the parameter store.
+* Grant the users the relevant permissions
 
 
 
