@@ -307,7 +307,22 @@ aws ssm put-parameter --type SecureString --key-id alias/sre-chaim \
 * Set the backup retention period to be 0 days
 * Select the 4 log exports
 * Select Create Database
+* Click the button to view your new DB instance
+* while it is still creating, scroll down and find the newly created
+  Security Group, right click it to open it in a new tab
+* Edit the Ingress rule change your IP address to be the security group id
+  of the `chaim-db-access-sg` security group you created earlier.
+* Go back to the Databases page and wait until your new DB becomes
+  available.
+* Select the DB and record the endpoint address. Save it to the parameter
+  store.
 
+```
+endpoint="endpoint from console"
+aws ssm put-parameter --type SecureString --key-id alias/sre-chaim \
+--name /sre/chaim/dev/dbhost --value ${endpoint} \
+--description "The endpoint address of the chaim database"
+```
 
 
 
