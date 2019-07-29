@@ -18,7 +18,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 else
 	mkdir -p vendor
 	cp ../../version vendor/
-	chalice deploy --stage=dev
+	AWS_PROFILE=sdev chalice deploy --stage=dev
 	touch $@
 endif
 
@@ -29,7 +29,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 else
 	mkdir -p vendor
 	cp ../../version vendor/
-	chalice deploy --stage=dev
+	AWS_PROFILE=sdev chalice deploy --stage=dev
 endif
 
 
@@ -37,5 +37,5 @@ prod:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	chalice deploy --stage=prod
+	AWS_PROFILE=sadmin chalice deploy --stage=prod
 endif
