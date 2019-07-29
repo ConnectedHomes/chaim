@@ -3,8 +3,9 @@
     "app_name": "chaim-entry",
     "manage_iam_role": false,
     "tags": {
+        "Name": "chaim-entry",
         "product": "chaim",
-        "role": "chaim-entry"
+        "role": "chaim-entry-lambda"
     },
     "environment_variables": {
         "WAVEFRONT_URL": "https://connectedhome.wavefront.com",
@@ -22,8 +23,7 @@
                 "environment": "dev"
             },
             "tags": {
-                "environment": "dev",
-                "Name": "chaim-entry"
+                "environment": "dev"
             }
         },
         "prod": {
@@ -36,8 +36,7 @@
                 "environment": "prod"
             },
             "tags": {
-                "environment": "prod",
-                "Name": "chaim-entry"
+                "environment": "prod"
             }
         }
     }
