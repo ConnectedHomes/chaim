@@ -2,9 +2,6 @@
     "version": "2.0",
     "app_name": "chaim-entry",
     "manage_iam_role": false,
-    "iam_role_arn":"arn:aws:iam::499223386158:role/chaim-lambda-rds",
-    "subnet_ids": ["subnet-c74d4ca0", "subnet-026b2959"],
-    "security_group_ids": ["sg-dfb2eda4"],
     "tags": {
         "product": "chaim",
         "role": "chaim-entry"
@@ -17,8 +14,11 @@
     "stages": {
         "dev": {
             "api_gateway_stage": "dev",
+            "iam_role_arn":"arn:aws:iam::627886280200:role/chaim-lambda-rds",
+            "subnet_ids": ["subnet-0ef1b24426fde542f", "subnet-026211987a4c9f104"],
+            "security_group_ids": ["sg-04fe3660875af1ba1"],
             "environment_variables": {
-                "SNSTOPIC": "arn:aws:sns:eu-west-1:499223386158:chaim-slack-helper",
+                "SNSTOPIC": "arn:aws:sns:eu-west-1:627886280200:chaim-entry-dev",
                 "environment": "dev"
             },
             "tags": {
@@ -28,6 +28,9 @@
         },
         "prod": {
             "api_gateway_stage": "prod",
+            "iam_role_arn":"arn:aws:iam::499223386158:role/chaim-lambda-rds",
+            "subnet_ids": ["subnet-c74d4ca0", "subnet-026b2959"],
+            "security_group_ids": ["sg-dfb2eda4"],
             "environment_variables": {
                 "SNSTOPIC": "arn:aws:sns:eu-west-1:499223386158:chaim-entry-prod",
                 "environment": "prod"
