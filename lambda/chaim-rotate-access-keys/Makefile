@@ -35,9 +35,9 @@ dev: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	../../install_lambda.py --novpc dev
-	aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(38 4 ? * 5 *)" --state DISABLED
-	aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
+	AWS_PROFILE=sdev ../../install_lambda.py --novpc dev
+	AWS_PROFILE=sdev aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(38 4 ? * 5 *)" --state DISABLED
+	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
 	touch $@
 endif
 
@@ -46,9 +46,9 @@ force:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	../../install_lambda.py --novpc dev
-	aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(38 4 ? * 5 *)" --state DISABLED
-	aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
+	AWS_PROFILE=sdev ../../install_lambda.py --novpc dev
+	AWS_PROFILE=sdev aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(38 4 ? * 5 *)" --state DISABLED
+	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
 endif
 
 
@@ -56,9 +56,9 @@ prod: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	../../install_lambda.py --novpc prod
-	aws events put-rule --name $(LAMBDANAME)-prod --schedule-expression "cron(38 4 ? * 5 *)"
-	aws events put-targets --rule $(LAMBDANAME)-prod --targets "Id"=1,"Arn"="$(LARN)-prod"
+	AWS_PROFILE=sadmin ../../install_lambda.py --novpc prod
+	AWS_PROFILE=sadmin aws events put-rule --name $(LAMBDANAME)-prod --schedule-expression "cron(38 4 ? * 5 *)"
+	AWS_PROFILE=sadmin aws events put-targets --rule $(LAMBDANAME)-prod --targets "Id"=1,"Arn"="$(LARN)-prod"
 endif
 
 

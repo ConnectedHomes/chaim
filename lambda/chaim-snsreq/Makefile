@@ -30,7 +30,7 @@ dev: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	../../install_lambda.py dev
+	AWS_PROFILE=sdev ../../install_lambda.py dev
 	touch $@
 endif
 
@@ -39,7 +39,7 @@ force:
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	../../install_lambda.py dev
+	AWS_PROFILE=sdev ../../install_lambda.py dev
 endif
 
 
@@ -47,7 +47,7 @@ prod: $(SRC)
 ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
-	../../install_lambda.py prod
+	AWS_PROFILE=sadmin ../../install_lambda.py prod
 endif
 
 
