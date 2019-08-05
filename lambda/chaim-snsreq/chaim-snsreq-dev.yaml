@@ -1,0 +1,44 @@
+---
+handler: chaim-snsreq.snsreq
+role: arn:aws:iam::627886280200:role/chaim-lambda-rds
+runtime: python3.6
+description: "Slack helper function to generate chaim credentials for a slack user."
+timeout: 30
+memory: 128
+
+codeenv:
+    - SECRETPATH: /sre/chaim/
+    - WAVEFRONT_URL: https://connectedhome.wavefront.com
+    - REPORT_STANDARD_METRICS: "True"
+    - APIID: "3wwwh0f4ml"
+
+tags:
+    - Name: chaim-snsreq
+    - product: chaim
+    - role: snsreq
+    - owner: SRE
+
+vpc:
+    - vpcid: vpc-020123a3964ea2177
+    - subnets: [subnet-0ef1b24426fde542f, subnet-026211987a4c9f104]
+    - securitygroup: sg-04fe3660875af1ba1
+
+files:
+    - README.md
+    - chaim-snsreq.py
+    - chalicelib/assumedrole.py
+    - chalicelib/botosession.py
+    - chalicelib/chaim.py
+    - chalicelib/cognitoclient.py
+    - chalicelib/commandparse.py
+    - chalicelib/envparams.py
+    - chalicelib/glue.py
+    - chalicelib/kmsclient.py
+    - chalicelib/paramstore.py
+    - chalicelib/permissions.py
+    - chalicelib/slackiamdb.py
+    - chalicelib/stsclient.py
+    - chalicelib/utils.py
+    - chalicelib/wflambda.py
+    - chalicelib/snsclient.py
+    - version

@@ -346,7 +346,8 @@ if args.build:
     sys.exit(0)
 
 me = os.path.basename(medir)
-yamlfn = medir + "/" + me + ".yaml"
+supp = "-dev" if env == "dev" else ""
+yamlfn = medir + "/" + me + supp + ".yaml"
 reqsfn = medir + "/requirements.txt"
 if os.path.exists(yamlfn):
     with open(yamlfn, "r") as yfs:
