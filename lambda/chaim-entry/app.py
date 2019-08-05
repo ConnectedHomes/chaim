@@ -76,6 +76,7 @@ def doStart(reqbody, context, env, version):
             kdict = {"accountlist": pms.accountList()}
         else:
             rdict = cp.requestDict()
+            rdict["username"] = pms.userNameFromSlackId(rdict["slackid"])
             msg = "incoming CLI request: user agent"
             msg += " unknown!" if rdict["useragent"] is None else " {}".format(rdict["useragent"])
             log.info(msg)

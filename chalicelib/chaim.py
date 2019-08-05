@@ -191,6 +191,7 @@ def doCommand(cp, pms, verstr):
     :param rdict: dictionary of user details from the incomming request
     """
     rdict = cp.requestDict()
+    rdict["username"] = pms.userNameFromSlackId(rdict["slackid"])
     if cp.dolist:
         log.debug("account list requested")
         alist = pms.accountList()
