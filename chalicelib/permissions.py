@@ -91,7 +91,13 @@ class Permissions():
 
     def userNameFromSlackId(self, slackid):
         """returns the chaim username for the slackid"""
-        return self.singleField("awsusers","name","slackid","SlackID",slackid)
+        try:
+            username = self.singleField("awsusers","name","slackid","SlackID",slackid)
+        except DataNotFound as e:
+            emsg = "failed to obtain username from slackid: {}".format(slackid)
+            log.error(emsg)
+            raise DataNotFound(emsg)
+        return username
 
 
     def userActive(self, username):
