@@ -170,6 +170,7 @@ class CommandParse():
 
     def requestDict(self):
         rdict = {"username": self.username}
+        rdict["slackusername"] = rdict["username"]
         rdict["incomingtoken"] = self.incomingtoken
         rdict["responseurl"] = self.responseurl
         rdict["stage"] = self.stage

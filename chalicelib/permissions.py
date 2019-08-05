@@ -89,6 +89,11 @@ class Permissions():
                 raise DataNotFound(e)
         return param
 
+    def userNameFromSlackId(self, slackid):
+        """returns the chaim username for the slackid"""
+        return self.singleField("awsusers","name","slackid","SlackID",slackid)
+
+
     def userActive(self, username):
         ret = None
         msg = "User not found in Cognito DB: /{}\\".format(username)
