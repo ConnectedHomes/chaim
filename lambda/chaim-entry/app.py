@@ -211,8 +211,10 @@ def identify():
         config["environment"] = ep.getParam("environment")
         config["useragent"] = "slack"
         config["apiid"] = app.current_request.context["apiId"]
+        log.debug("identify: config: {}".format(config))
         rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
         rbody = glue.addToReqBody(rbody, "identify", "true")
+        log.debug("publishing req body: {}".format(rbody))
         chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
         verstr = "chaim-slack-" + config["environment"] + " " + version
         return chaim.output(None, "{}\n\nPlease wait".format(verstr))
