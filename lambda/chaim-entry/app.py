@@ -204,6 +204,7 @@ def identify():
     the entry point to display the users identity from slack
     """
     try:
+        log.debug("Identify entry")
         with open("version", "r") as vfn:
             version = vfn.read()
         config = {}
