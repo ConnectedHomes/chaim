@@ -29,6 +29,7 @@ import chalicelib.glue as glue
 
 
 log = glue.log
+glue.setDebug()
 
 
 app = Chalice(app_name='chaim-entry')
@@ -40,6 +41,7 @@ def slackreq():
     This is the entry point for Slack
     """
     try:
+        log.debug("slackreq entry")
         with open("version", "r") as vfn:
             version = vfn.read()
         config = {}
@@ -64,6 +66,7 @@ def slackreq():
 @wfwrapper
 def doStart(reqbody, context, env, version):
     try:
+        log.debug("dostart entry")
         verstr = "chaim-cli-{}".format(env) + " " + version
         log.debug("{} doStart entered: {}".format(verstr, reqbody))
         ep = EnvParam()
@@ -103,6 +106,7 @@ def start():
     The entry point for the CLI
     """
     try:
+        log.debug("start entry")
         config = {}
         ep = EnvParam()
         config["environment"] = ep.getParam("environment")
@@ -120,6 +124,7 @@ def start():
 @wfwrapper
 def doStartGui(rbody, context, env, version):
     try:
+        log.debug("dostartgui entry")
         verstr = "chaim-cligui-{}".format(env) + " " + version
         log.debug("{} doStartGui entered: {}".format(verstr, rbody))
         parsed = parse_qs(rbody)
@@ -160,6 +165,7 @@ def startgui():
     The entry point for the CLI to obtain a gui url
     """
     try:
+        log.debug("gui entry")
         config = {}
         ep = EnvParam()
         config["environment"] = ep.getParam("environment")
@@ -180,6 +186,7 @@ def keyinit():
     the entry point to request a user key (from slack /initchaim)
     """
     try:
+        log.debug("keyinit entry")
         with open("version", "r") as vfn:
             version = vfn.read()
         config = {}
@@ -204,7 +211,7 @@ def identify():
     the entry point to display the users identity from slack
     """
     try:
-        log.debug("Identify entry")
+        log.debug("identify entry")
         with open("version", "r") as vfn:
             version = vfn.read()
         config = {}
