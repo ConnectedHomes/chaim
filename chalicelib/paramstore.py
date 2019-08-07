@@ -161,6 +161,7 @@ class ParamStore(BotoSession):
         return self.putParam(pname, pnum, pkeyid=pkeyid, pattern='^d+$')
 
     def getParams(self, names, environment="prod", path="/sre/chaim/"):
+        log.debug("getParams entry")
         if not path.endswith("/"):
             path += "/"
         if not environment.endswith("/"):
@@ -186,4 +187,5 @@ class ParamStore(BotoSession):
                 name = param["Name"].replace(xpath, '')
                 oparams[name] = param["Value"]
         self.FETCHED_PATHS[xpath] = oparams
+        log.debug("getParams returning")
         return oparams
