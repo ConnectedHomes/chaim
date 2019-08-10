@@ -505,3 +505,10 @@ def slackTimeStamp(msg, start, rdict, ut):
 def snsPublish(topic, msg):
     sns = SnsClient()
     sns.publishToSns(topic, msg)
+
+
+def testVPCInternetAccess():
+    log.info("Sending a request to icanhazip.com")
+    r = requests.get("http://icanhazip.com")
+    log.info("Status code: {}".format(r.status_code))
+    log.info("reply: {}".format(r.text))

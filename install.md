@@ -338,6 +338,13 @@ mysql -h 127.0.0.1 -u master-user-name -p srechaim
   read-write use.  Store them in the parameter store.
 * Grant the users the relevant permissions
 
+```
+create user 'chaimro'@'%' identified by '[ro-user password]';
+create user 'chaimrw'@'%' identified by '[rw-user password]';
+grant select on srechaim.* to 'chaimro'@'%';
+grant select, update, insert, delete on srechaim.* to 'chaimrw'@'%';
+```
+
 
 
 
