@@ -106,8 +106,9 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
     params["response_url"] = "ignoreme"
     params["useragent"] = "cca " + ccaversion
     if "slackid" in defsect:
-        params["slackid"] = defsect["slackid"]
+        params["user_id"] = defsect["slackid"]
     endpoint = getEndpoint(ifn)
+    click.echo("params: {}".format(params))
     now = int(time.time())
     r = requests.post(endpoint, data=params)
     taken = int(time.time()) - now
