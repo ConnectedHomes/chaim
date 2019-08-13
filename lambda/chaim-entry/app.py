@@ -66,7 +66,7 @@ def slackreq():
 @wfwrapper
 def doStart(reqbody, context, env, version):
     try:
-        log.debug("dostart entry: reqbody: {}".format(reqbody))
+        log.debug("dostart entry")
         verstr = "chaim-cli-{}".format(env) + " " + version
         log.debug("{} doStart entered: {}".format(verstr, reqbody))
         ep = EnvParam()
