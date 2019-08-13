@@ -30,7 +30,7 @@ $prolog describe-db-snapshots \
     jq '.DBSnapshots[].Status'
 ```
 
-* re-encrypt the copy with the shared kms key
+* re-encrypt the copy with the shared KMS key
 ```
 $prolog copy-db-snapshot \
     --source-db-snapshot-identifier $snapshotname \
@@ -66,7 +66,7 @@ prolog="aws --profile sdev rds"
 ```
 
 * copy from secadmin-prod to sredev, removing the dependency of the
-  secadmin-prod kms key
+  secadmin-prod KMS key
 ```
 $prolog copy-db-snapshot \
     --source-db-snapshot-identifier $snaparn \
@@ -81,7 +81,7 @@ $prolog describe-db-snapshots \
     jq '.DBSnapshots[].Status'
 ```
 
-* it is easiest now to go to the rds console to restore the database from
+* it is easiest now to go to the RDS console to restore the database from
   the snapshot
 * Once restored, though the users will still exist their grants will have
   mysteriously disappeared, so fire up a mysql console and
@@ -92,5 +92,40 @@ grant select, update, insert, delete on srechaim.* to 'chaimrw'@'%';
 
 You now have a chaim database running in sredev that is a copy of the
 production database.
+
+
+## Cross Account Roles Update
+In the accounts that you will allow the dev infrastructure to access you
+will need to alter the trust relationship on the chaim roles to also
+include the dev account.
+
+* Create the below json as `update-trust-policy.json`
+```
+{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Effect": "Allow",
+        "Principal": {"AWS": [
+            "arn:aws:iam::499223386158:root",
+            "arn:aws:iam::627886280200:root"
+        ]},
+        "Action": "sts:AssumeRole"
+    }
+}
+
+```
+
+* update the trust policy for the CrossAccountReadOnly and
+  CrossAccountPowerUser roles in the target account(s)
+```
+for account in sdev; do
+    for role in ReadOnly PowerUser; do
+        aws --profile ${account} iam update-assume-role-policy \
+            --role-name CrossAccount${role} \
+            --policy-document file://update-trust-policy.json
+    done
+done
+```
+
 
 [modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )
