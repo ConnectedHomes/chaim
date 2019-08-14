@@ -4,7 +4,8 @@
 # the prod lambda will always update when `make prod` is called
 
 LAMBDANAME = chaim-cleanup
-LARN = arn:aws:lambda:eu-west-1:627886280200:function:chaim-cleanup
+DEVLARN = arn:aws:lambda:eu-west-1:627886280200:function:chaim-cleanup
+LARN = arn:aws:lambda:eu-west-1:499223386158:function:chaim-cleanup
 SRC = $(LAMBDANAME).yaml
 
 .PHONY: tags clean prod force depends
@@ -35,7 +36,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 else
 	AWS_PROFILE=sdev ../../install_lambda.py dev
 	AWS_PROFILE=sdev aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(13 3 ? * * *)" --state DISABLED
-	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
+	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(DEVLARN)-dev"
 	touch $@
 endif
 
@@ -46,7 +47,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 else
 	AWS_PROFILE=sdev ../../install_lambda.py dev
 	AWS_PROFILE=sdev aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(13 3 ? * * *)" --state DISABLED
-	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
+	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(DEVLARN)-dev"
 endif
 
 
