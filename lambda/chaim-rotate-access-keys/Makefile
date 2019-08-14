@@ -4,6 +4,7 @@
 # the prod lambda will always update when `make prod` is called
 
 LAMBDANAME = chaim-rotate-access-keys
+DEVLARN = arn:aws:lambda:eu-west-1:627886280200:function:chaim-rotate-access-keys
 LARN = arn:aws:lambda:eu-west-1:499223386158:function:chaim-rotate-access-keys
 SRC = $(LAMBDANAME).yaml
 
@@ -37,7 +38,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 else
 	AWS_PROFILE=sdev ../../install_lambda.py --novpc dev
 	AWS_PROFILE=sdev aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(38 4 ? * 5 *)" --state DISABLED
-	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
+	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(DEVLARN)-dev"
 	touch $@
 endif
 
@@ -48,7 +49,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 else
 	AWS_PROFILE=sdev ../../install_lambda.py --novpc dev
 	AWS_PROFILE=sdev aws events put-rule --name $(LAMBDANAME)-dev --schedule-expression "cron(38 4 ? * 5 *)" --state DISABLED
-	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(LARN)-dev"
+	AWS_PROFILE=sdev aws events put-targets --rule $(LAMBDANAME)-dev --targets "Id"=1,"Arn"="$(DEVLARN)-dev"
 endif
 
 

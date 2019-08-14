@@ -4,7 +4,7 @@
 # the prod lambda will always update when `make prod` is called
 
 LAMBDANAME = chaim-cleanup
-LARN = arn:aws:lambda:eu-west-1:499223386158:function:chaim-cleanup
+LARN = arn:aws:lambda:eu-west-1:627886280200:function:chaim-cleanup
 SRC = $(LAMBDANAME).yaml
 
 .PHONY: tags clean prod force depends
