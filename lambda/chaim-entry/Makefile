@@ -17,6 +17,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	mkdir -p vendor
+	pip install -r vendor-requirements.txt -t vendor/
 	cp ../../version vendor/
 	AWS_PROFILE=sdev chalice deploy --stage=dev
 	touch $@
@@ -28,6 +29,7 @@ ifeq ($(strip $(VIRTUAL_ENV)),)
 	@echo "You need to be in a virtual environment"
 else
 	mkdir -p vendor
+	pip install -r vendor-requirements.txt -t vendor/
 	cp ../../version vendor/
 	AWS_PROFILE=sdev chalice deploy --stage=dev
 endif
