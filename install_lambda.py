@@ -351,7 +351,7 @@ yamlfn = medir + "/" + me + supp + ".yaml"
 reqsfn = medir + "/requirements.txt"
 if os.path.exists(yamlfn):
     with open(yamlfn, "r") as yfs:
-        config = yaml.load(yfs)
+        config = yaml.load(yfs, Loader=yaml.SafeLoader)
     config["tags"][0]["environment"] = env
     config["codeenv"][0]["environment"] = env
     lambdaname = config["tags"][0]["Name"] + "-" + env
