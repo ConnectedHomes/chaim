@@ -241,7 +241,7 @@ def doCommand(cp, pms, verstr):
         sendToSlack(rdict["responseurl"], "```{}```".format(msg))
         incMetric("countusers")
     elif cp.doidentify:
-        msg = "Slack User: {} Slack UID: {}".format(cp.username, cp.slackid)
+        msg = "Slack User: {} Slack Workspace ID: {} Slack UID: {}".format(cp.username, cp.teamid, cp.slackid)
         sendToSlack(rdict["responseurl"], msg)
         incMetric("slack.identify")
 
