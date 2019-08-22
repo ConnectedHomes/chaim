@@ -5,18 +5,35 @@ change those identifiers (I have no idea why, ask the Microsoft team).
 Apparently the slack user ids will not change, however, so we need to
 switch to using those as identifiers.
 
+It has been discovered that Slack user ids are workspace specific,
+therefore the workspace id will also have to be collected and utilised.
+
+We will require a mapping table in the database of chaim user ids, slack
+user ids and workspace id.  See the [slackmap.sql](slackmap.sql) in this
+repo. The [o365-alter-awsusers-table.sql](o365-alter-awsusers-table.sql)
+file is no longer required.
+
+1. Go to the admin page for slack: [manage
+   members](img/slack-manage-members.png "manage members")
+2. Download a CSV format file of all Slack Users:
+   [download](img/slack-download-users.png "download user list")
+3. Obtain the current chaim user list:
+```
+mcu listusers >~/tmp/chaim-user-list
+```
+
 ## Initial Steps
 The following steps will be required initially.
-1. Obtain a map of slack userids to slack display names
+1. Obtain a map of slack user ids to slack display names
 2. Update the `awsusers` table in the chaim db adding a `slackid` column
-3. Add the slack userid to the `awsusers` table for the appropriate user.
-4. Should a map of slack userids not be available then the alternative of
-   inserting the slack userids into the `awsusers` table as they become
+3. Add the slack user id to the `awsusers` table for the appropriate user.
+4. Should a map of slack user ids not be available then the alternative of
+   inserting the slack user ids into the `awsusers` table as they become
    available by usage (of the `/chaim` and `/initchaim` slack commands) will
    have to utilised.  This process will take 5 weeks, anyone on holiday
    will be missed - tread carefully.
-5. Once we have all slack display names mapped to slack userids then the
-   applications can be switched to using the slack userids rather than the
+5. Once we have all slack display names mapped to slack user ids then the
+   applications can be switched to using the slack user ids rather than the
    display names as identifiers.
 6. Testing of the new code will have to take place using the slack commands
    `/zzchaim-dev` and `/zzinitchaim-dev`.
