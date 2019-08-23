@@ -19,7 +19,20 @@ file is no longer required.
    [download](img/slack-download-users.png "download user list")
 3. Obtain the current chaim user list:
 ```
-mcu listusers >~/tmp/chaim-user-list
+$ workon man-chaim
+$ mcu start
+$ muser=$(aws --profile sdev ssm get-parameter \
+    --with-decryption --name /sre/chaim/dev/db-master-user | \
+    jq -r '.Parameter.Value')
+$ mpass=$(aws --profile sdev ssm get-parameter \
+    --with-decryption --name /sre/chaim/dev/db-master-password | \
+    jq -r '.Parameter.Value')
+$ chaimfn=~/tmp/chaim-users.tsv
+$ mysql -h 127.0.0.1 -P 3306 -u ${muser} -p${mpass} srechaim  \
+    -e "select id,name from awsusers" |tee $chaimfn
+$ slackfn=~/Downloads/slack-centricaconnectedhome-members.csv
+$
+
 ```
 
 ## Initial Steps
