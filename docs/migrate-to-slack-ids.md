@@ -34,9 +34,10 @@ $ chaimfn=~/tmp/chaim-users.tsv
 $ mysql -h 127.0.0.1 -P 3306 -u ${muser} -p${mpass} srechaim  \
     -e "select id,name from awsusers" |tee $chaimfn
 ```
-4. See jira SRE-1102 for a script to merge the user list from slack and
-   the list of chaim users from above.  This script creates a
-   `slackmap-inserts.sql` file that can be inserted thus:
+4. See [jira SRE-1102](https://jira.bgchtest.info/browse/SRE-1102) for a
+   script to merge the user list from slack and the list of chaim users
+   from above.  This script creates a `slackmap-inserts.sql` file that can
+   be inserted thus:
 ```
 $ muser=$(aws --profile sdev ssm get-parameter \
     --with-decryption --name /sre/chaim/dev/dbrwuser | \
@@ -50,22 +51,6 @@ $ mysql -h 127.0.0.1 -P 3306 -u ${muser} -p${mpass} srechaim <slackmap-inserts.s
 
 
 
-
-## Initial Steps
-The following steps will be required initially.
-1. Obtain a map of slack user ids to slack display names
-2. Update the `awsusers` table in the chaim db adding a `slackid` column
-3. Add the slack user id to the `awsusers` table for the appropriate user.
-4. Should a map of slack user ids not be available then the alternative of
-   inserting the slack user ids into the `awsusers` table as they become
-   available by usage (of the `/chaim` and `/initchaim` slack commands) will
-   have to utilised.  This process will take 5 weeks, anyone on holiday
-   will be missed - tread carefully.
-5. Once we have all slack display names mapped to slack user ids then the
-   applications can be switched to using the slack user ids rather than the
-   display names as identifiers.
-6. Testing of the new code will have to take place using the slack commands
-   `/zzchaim-dev` and `/zzinitchaim-dev`.
 
 
 ## Code Changes.
