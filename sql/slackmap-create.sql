@@ -7,3 +7,4 @@ CREATE TABLE if not exists `slackmap` (
   CONSTRAINT `sfk_awsuser` FOREIGN KEY (`userid`) REFERENCES `awsusers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+alter table awsusers drop slackid;
