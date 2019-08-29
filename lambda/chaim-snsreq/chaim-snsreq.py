@@ -44,7 +44,7 @@ def doSnsReq(rbody, context, verstr, ep, env):
         chaim.doCommand(cp, pms, verstr)
     else:
         rdict = cp.requestDict()
-        rdict["username"] = pms.userNameFromSlackId(rdict["slackid"])
+        rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
         try:
             log.debug("incoming sns request")
             kdict, rdict = chaim.buildCredentials(pms, rdict)

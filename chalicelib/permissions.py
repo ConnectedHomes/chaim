@@ -89,6 +89,31 @@ class Permissions():
                 raise DataNotFound(e)
         return param
 
+    def userNameFromSlackIds(self, workspaceid, slackid):
+        """
+        returns the chaim username for the user with the
+        given workspace and slack ids
+        """
+        try:
+            if self.sid is not None:
+                sql = "select a.username from awsusers a, slackmap b where a.id = b.userid "
+                sql += "and b.workspaceid={} and b.slackid={}".format(workspaceid, slackid)
+                rows = self.sid.query(sql)
+                if rows is not None and len(rows) > 0:
+                    log.debug("username from workspace/slackid query: {} returned: {}".format(sql, rows))
+                    username = rows[0][0]
+                else:
+                    raise(DataNotFound("Failed to obtain username from workspace and slack ids"))
+            else:
+                raise DBNotConnected("no connection to Database")
+        except Exception as e:
+            emsg = "Failed to obtain username from slackid {} and workspaceid {}".format(slackid, workspaceid)
+            emsg += "Exception: {}: {}".format(type(e).__name__, e)
+            log.error(emsg)
+            raise
+        return username
+
+
     def userNameFromSlackId(self, slackid):
         """returns the chaim username for the slackid"""
         try:
