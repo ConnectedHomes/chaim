@@ -160,7 +160,7 @@ class Permissions():
         path = self.spath + "/" + workspaceid + "/slacktoken"
         log.debug("asking for {}".format(path))
         slacktoken = self.ps.getParam(path, True)
-        slacktoken = self.params["slacktoken"]
+        # slacktoken = self.params["slacktoken"]
         if slacktoken == token:
             self.fromslack = True
             return True
