@@ -79,7 +79,7 @@ class WavefrontMissing(Exception):
 
 
 def begin(rbody, environment="dev", useragent="unknown", apiid=""):
-    log.debug("begin entry")
+    log.debug("begin entry: {}, {}, {}, {}".format(rbody, environment, useragent, apiid))
     stage = environment
     apiid = apiid
     if stage == "dev":

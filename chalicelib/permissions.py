@@ -44,8 +44,10 @@ class Permissions():
             stagepath = "prod"
         # self.ps = ParamStore(env=stagepath)
         self.ps = ParamStore()
+        # plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
+        #          "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
         plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
-                 "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
+                 "dbropass", "dbrwuser", "dbrwpass", "poolid"]
         self.params = self.ps.getParams(plist, environment=stagepath)
         if len(self.params) is 0:
             raise IncorrectCredentials("failed to retrieve my parameters")
@@ -152,9 +154,11 @@ class Permissions():
             raise DataNotFound(msg)
         return ret
 
-    def checkToken(self, token, username):
+    def checkToken(self, token, username, workspaceid):
         log.debug("token: {}, username: {}".format(token, username))
         ut = Utils()
+        path = self.spath + "/" + workspaceid + "/slacktoken"
+        slacktoken = self.ps.getParam(path, True)
         slacktoken = self.params["slacktoken"]
         if slacktoken == token:
             self.fromslack = True
