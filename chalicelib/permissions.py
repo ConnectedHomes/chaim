@@ -99,7 +99,7 @@ class Permissions():
         try:
             if self.sid is not None:
                 sql = "select a.name from awsusers a, slackmap b where a.id = b.userid "
-                sql += "and b.workspaceid={} and b.slackid={}".format(workspaceid, slackid)
+                sql += "and b.workspaceid='{}' and b.slackid='{}'".format(workspaceid, slackid)
                 rows = self.sid.query(sql)
                 if rows is not None and len(rows) > 0:
                     log.debug("username from workspace/slackid query: {} returned: {}".format(sql, rows))
