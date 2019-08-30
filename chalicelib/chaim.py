@@ -290,7 +290,7 @@ def doKeyInit(rdict, pms):
             raise InactiveUser("{} is not an active user.".format(rdict["username"]))
         log.debug("doKeyInit User {} is ACTIVE".format(rdict["username"]))
         log.debug("doKeyInit checking token")
-        if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["workspaceid"]):
+        if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["teamid"]):
             raise InvalidToken("slack access token is invalid")
         log.debug("doKeyInit slack token check passed ok")
         expiredays = 30 if rdict["stage"] != "dev" else 1
@@ -316,7 +316,7 @@ def readKeyInit(rdict, pms):
         if not pms.userActive(rdict["username"]):
             raise InactiveUser("{} is not an active user.".format(rdict["username"]))
         log.debug("checking user token {}, {}".format(rdict["incomingtoken"], rdict["username"]))
-        if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["workspaceid"]):
+        if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["teamid"]):
             raise InvalidToken("slack access token is invalid")
         log.debug("asking for previous token")
         token, expires = pms.readUserToken(rdict["username"])
@@ -482,7 +482,7 @@ def checkUserAndToken(pms, rdict):
         log.error(emsg)
         raise(IncorrectCredentials(emsg))
     log.debug("user {}/{} exists".format(rdict["username"], userid))
-    if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["workspaceid"]):
+    if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["teamid"]):
         emsg = "user {} supplied an invalid token".format(rdict["username"])
         log.error(emsg)
         raise(IncorrectCredentials(emsg))
