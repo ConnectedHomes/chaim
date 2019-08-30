@@ -166,7 +166,7 @@ class ParamStore(BotoSession):
             path += "/"
         if not environment.endswith("/"):
             environment += "/"
-        xpath = path + environment
+        xpath = path if environment == "/" else path + environment
         log.debug("param path: {}".format(xpath))
         if xpath in self.FETCHED_PATHS:
             log.debug("Returning cached path {}".format(xpath))
