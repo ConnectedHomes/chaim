@@ -40,15 +40,13 @@ class Permissions():
         log.debug("Permissions Entry")
         self.missing = missing
         self.spath = secretpath
-        if len(stagepath) == 0:
-            stagepath = "prod"
-        # self.ps = ParamStore(env=stagepath)
+        self.env = stagepath if len(stagepath) > 0 else "prod"
         self.ps = ParamStore()
         # plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
         #          "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
         plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
                  "dbropass", "dbrwuser", "dbrwpass", "poolid"]
-        self.params = self.ps.getParams(plist, environment=stagepath)
+        self.params = self.ps.getParams(plist, environment=self.env)
         if len(self.params) is 0:
             raise IncorrectCredentials("failed to retrieve my parameters")
         self.topicarn = self.params["snstopicarn"]
@@ -157,7 +155,7 @@ class Permissions():
     def checkToken(self, token, username, workspaceid):
         log.debug("token: {}, username: {}".format(token, username))
         ut = Utils()
-        path = self.spath + workspaceid + "/slacktoken"
+        path = self.spath + workspaceid + "/" + self.env + "/slacktoken"
         log.debug("asking for {}".format(path))
         slacktoken = self.ps.getParam(path, True)
         # slacktoken = self.params["slacktoken"]
