@@ -10,7 +10,7 @@ codeenv:
     - SECRETPATH: /sre/chaim/
     - WAVEFRONT_URL: https://connectedhome.wavefront.com
     - REPORT_STANDARD_METRICS: "True"
-    - APIID: "3wwwh0f4ml"
+    - APIID: "04vreh5m4c"
 
 tags:
     - Name: chaim-snsreq
