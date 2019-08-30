@@ -53,7 +53,7 @@ class Permissions():
         if not quick:
             self.fromslack = False
             self.connectDB(testdb)
-            self.slackapitoken = self.params["slackapitoken"]
+            # self.slackapitoken = self.params["slackapitoken"]
 
     def connectDB(self, testdb=False):
         if testdb:
@@ -161,6 +161,9 @@ class Permissions():
         # slacktoken = self.params["slacktoken"]
         if slacktoken == token:
             self.fromslack = True
+            path = self.spath + workspaceid + "/" + self.env + "slackapitoken"
+            log.debug("asking for {}".format(path))
+            self.slackapitoken = self.ps.getParam(path, True)
             return True
         else:
             clitoken, expires = self.readUserToken(username)
