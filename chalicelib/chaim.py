@@ -78,6 +78,17 @@ class WavefrontMissing(Exception):
     pass
 
 
+def paramsToDict(rbody):
+    params = {}
+    if "&" in rbody:
+        prams = rbody.split("&")
+        for pram in prams:
+            if "=" in pram:
+                p = pram.split("=")
+                params[p[0]] = p[1]
+    return params
+
+
 def begin(rbody, environment="dev", useragent="unknown", apiid=""):
     log.debug("begin entry: {}, {}, {}, {}".format(rbody, environment, useragent, apiid))
     stage = environment
