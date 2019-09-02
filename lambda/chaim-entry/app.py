@@ -231,7 +231,7 @@ def identify():
         # log.debug("publishing req body: {}".format(rbody))
         # chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
         verstr = "chaim-slack-" + config["environment"] + " " + version
-        return chaim.output(None, "{}\n\nPlease wait".format(verstr), op)
+        return chaim.output(None, "{}\n\n".format(verstr), op)
     except Exception as e:
         msg = "An identify error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
