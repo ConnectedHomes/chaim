@@ -48,7 +48,19 @@ $ mpass=$(aws --profile sdev ssm get-parameter \
 
 $ mysql -h 127.0.0.1 -P 3306 -u ${muser} -p${mpass} srechaim <slackmap-inserts.sql
 ```
-
+5. Obtain the Slack API OAuth token for the chaim application [Slack
+   Apps](https://api.slack.com/apps/) and select the chaim application,
+   click on the 'Install App' link and the OAuth token is shown to you.
+6. Put the OAuth token in the parameter store (set YyYyYyYyY to be the
+   workspace id):
+```
+aws --profile sadmin ssm put-parameter \
+--type SecureString \
+--key-id alias/sre-chaim \
+--description "centricaconnectedhome workspace id slackbot token" \
+--name /sre/chaim/YyYyYyYyY/prod/slackapitoken \
+--value xoxp-xx415280562-76xxxxxx745-294xxxxxx28-cd6d2e664e1abb5f7e1fc7a752xxxxxx
+```
 
 
 
