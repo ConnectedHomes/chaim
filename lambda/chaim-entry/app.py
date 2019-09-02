@@ -220,12 +220,18 @@ def identify():
         config["useragent"] = "slack"
         config["apiid"] = app.current_request.context["apiId"]
         log.debug("identify: config: {}".format(config))
-        rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
-        rbody = glue.addToReqBody(rbody, "identify", "true")
-        log.debug("publishing req body: {}".format(rbody))
-        chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
+        params = chaim.paramsToDict(app.current_request.raw_body.decode())
+        # rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
+        op = "```\n"
+        op += "Name: {}\n".format(params["user_name"])
+        op += "Slack Id: {}\n".format(params["user_id"])
+        op += "Workspace Id: {}\n".format(params["team_id"])
+        op += "```\n"
+        # rbody = glue.addToReqBody(rbody, "identify", "true")
+        # log.debug("publishing req body: {}".format(rbody))
+        # chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
         verstr = "chaim-slack-" + config["environment"] + " " + version
-        return chaim.output(None, "{}\n\nPlease wait".format(verstr))
+        return chaim.output(None, "{}\n\nPlease wait".format(verstr), op)
     except Exception as e:
         msg = "An identify error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
