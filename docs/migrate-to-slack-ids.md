@@ -51,6 +51,7 @@ $ mysql -h 127.0.0.1 -P 3306 -u ${muser} -p${mpass} srechaim <slackmap-inserts.s
 5. Obtain the Slack API OAuth token for the chaim application [Slack
    Apps](https://api.slack.com/apps/) and select the chaim application,
    click on the 'Install App' link and the OAuth token is shown to you.
+6. Set the OAuth token to have `chat:write:bot` scope.
 6. Put the OAuth token in the parameter store (set YyYyYyYyY to be the
    workspace id):
 ```
