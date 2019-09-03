@@ -107,6 +107,8 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
     params["useragent"] = "cca " + ccaversion
     if "slackid" in defsect:
         params["user_id"] = defsect["slackid"]
+    if "workspaceid" in defsect:
+        params["team_id"] = defsect["workspaceid"]
     endpoint = getEndpoint(ifn)
     # click.echo("params: {}".format(params))
     now = int(time.time())
