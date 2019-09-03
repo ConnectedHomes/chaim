@@ -166,17 +166,20 @@ def output(err, res=None, attachments=None):
     :param res: the message to send, will be bound up in a json formatted object
     :param attachments: any message attachments
     """
-    ret = {
-        'response_type': 'ephemeral',
-        'statusCode': '400' if err else '200',
-        'text': "{}".format(err) if err else "{}".format(res),
-        'headers': {
-            'Content-Type': 'application/json',
-        },
-    }
-    if attachments is not None:
-        ret["attachments"] = makeAttachments(attachments)
-    return ret
+    try:
+        ret = {
+            'response_type': 'ephemeral',
+            'statusCode': '400' if err else '200',
+            'text': "{}".format(err) if err else "{}".format(res),
+            'headers': {
+                'Content-Type': 'application/json',
+            },
+        }
+        if attachments is not None:
+            ret["attachments"] = makeAttachments(attachments)
+        return ret
+    except Exception as e:
+        log.error("output exception {}: {}".format(type(e).__name__, e))
 
 
 def makeAttachments(attachments, pretext=None):
