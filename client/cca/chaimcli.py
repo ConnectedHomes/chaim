@@ -274,7 +274,7 @@ def doUrl(account, ifn, browser=False, logout=False):
 
 
 def askInit(ifn):
-    reqkeys = ["api", "username", "usertoken", "tokenexpires", "stage", "region"]
+    reqkeys = ["api", "username", "usertoken", "tokenexpires", "stage", "region", "slackid", "workspaceid"]
     defsect = getDefaultSection(ifn)
     for key in reqkeys:
         if key in ["usertoken", "tokenexpires"]:
