@@ -353,6 +353,8 @@ def buildInitOutputStr(token, expires, rdict):
     bstr = glue.addToReqBody(bstr, "api", rdict["apiid"])
     xstr = glue.addToOutStr(xstr, "slackid", rdict["slackid"])
     bstr = glue.addToReqBody(bstr, "slackid", rdict["slackid"])
+    xstr = glue.addToOutStr(xstr, "workspaceid", rdict["teamid"])
+    bstr = glue.addToReqBody(bstr, "workspaceid", rdict["teamid"])
     xstr = glue.addToOutStr(xstr, "username", rdict["username"])
     bstr = glue.addToReqBody(bstr, "username", rdict["username"])
     xstr = glue.addToOutStr(xstr, "usertoken", token)
