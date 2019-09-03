@@ -50,6 +50,7 @@ class CommandParse():
         log.debug("parsed: {}".format(self.parsed))
         self.blankbody = blankbody
         self.username = self.extractField('user_name')
+        self.slackname = self.username
         self.slackid = self.extractField('user_id')
         self.teamid = self.extractField('team_id')
         self.incomingtoken = self.extractField('token')
@@ -172,7 +173,7 @@ class CommandParse():
 
     def requestDict(self):
         rdict = {"username": self.username}
-        rdict["slackusername"] = rdict["username"]
+        rdict["slackusername"] = self.slackname
         rdict["incomingtoken"] = self.incomingtoken
         rdict["responseurl"] = self.responseurl
         rdict["stage"] = self.stage

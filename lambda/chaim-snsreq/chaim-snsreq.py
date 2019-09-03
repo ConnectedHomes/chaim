@@ -63,7 +63,7 @@ def doSnsReq(rbody, context, verstr, ep, env):
                 umsg += "Session Token: {}\n".format(kdict["sessiontoken"])
             umsg += "\nLink {}\n".format(rdict["expiresstr"].lower())
             chaim.incMetric("key.sns")
-            res = chaim.sendSlackBot(pms.slackapitoken, rdict["username"], umsg, kdict["url"],
+            res = chaim.sendSlackBot(pms.slackapitoken, rdict["slackusername"], umsg, kdict["url"],
                                      "{} {}".format(rdict["accountname"].upper(), rdict["role"]))
             if res['ok'] is False:
                 emsg = "Sending login url to users private Slack Channel failed"
