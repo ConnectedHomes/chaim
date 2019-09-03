@@ -62,6 +62,7 @@ aws --profile sadmin ssm put-parameter \
 --name /sre/chaim/YyYyYyYyY/prod/slackapitoken \
 --value xoxp-xx415280562-76xxxxxx745-294xxxxxx28-cd6d2e664e1abb5f7e1fc7a752xxxxxx
 ```
+7.
 
 
 
