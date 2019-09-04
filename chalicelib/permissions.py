@@ -162,7 +162,7 @@ class Permissions():
     def checkToken(self, token, username, workspaceid):
         log.debug("token: {}, username: {}".format(token, username))
         ut = Utils()
-        pargs = (self.spath, workspaceid, self.env, slacktoken)
+        pargs = (self.spath, workspaceid, self.env, "slacktoken")
         path = self.buildPath(pargs)
         # path = self.spath + workspaceid + "/" + self.env + "/slacktoken"
         log.debug("asking for {}".format(path))
@@ -170,7 +170,9 @@ class Permissions():
         # slacktoken = self.params["slacktoken"]
         if slacktoken == token:
             self.fromslack = True
-            path = self.spath + workspaceid + "/" + self.env + "/slackapitoken"
+            pargs = (self.spath, workspaceid, self.env, "slackapitoken")
+            path = self.buildPath(pargs)
+            # path = self.spath + workspaceid + "/" + self.env + "/slackapitoken"
             log.debug("asking for {}".format(path))
             self.slackapitoken = self.ps.getParam(path, True)
             return True
