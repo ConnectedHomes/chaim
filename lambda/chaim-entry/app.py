@@ -92,8 +92,7 @@ def doStart(reqbody, context, env, version):
                 emsg = "Failed to build credentials"
             else:
                 chaim.incMetric("key.cli")
-                if "slackapitoken" in kdict:
-                    delete(kdict["slackapitoken"])
+                kdict.pop("slackapitoken", None)
         return [emsg, kdict]
     except Exception as e:
         emsg = "doStart: Error {}: {}".format(type(e).__name__, e)
