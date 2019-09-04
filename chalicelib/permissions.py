@@ -44,7 +44,9 @@ class Permissions():
         self.ps = ParamStore()
         # plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
         #          "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
-        plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
+        # plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
+        #          "dbropass", "dbrwuser", "dbrwpass", "poolid"]
+        plist = ["snstopicarn", "dbhost", "dbrouser", "dbdb",
                  "dbropass", "dbrwuser", "dbrwpass", "poolid"]
         self.params = self.ps.getParams(plist, environment=self.env)
         if len(self.params) is 0:
