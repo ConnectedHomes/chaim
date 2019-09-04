@@ -177,6 +177,7 @@ def output(err, res=None, attachments=None):
         }
         if attachments is not None:
             ret["attachments"] = makeAttachments(attachments)
+        log.debug("output: {}".format(ret))
         return ret
     except Exception as e:
         log.error("output exception {}: {}".format(type(e).__name__, e))
