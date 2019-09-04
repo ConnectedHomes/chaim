@@ -52,6 +52,7 @@ class Permissions():
         if len(self.params) is 0:
             raise IncorrectCredentials("failed to retrieve my parameters")
         self.topicarn = self.params["snstopicarn"]
+        self.slackapitoken = None
         if not quick:
             self.fromslack = False
             self.connectDB(testdb)
