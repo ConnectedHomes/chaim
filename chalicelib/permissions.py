@@ -156,11 +156,12 @@ class Permissions():
         path = ""
         for arg in args:
             path = glue.addToSeperatedString(path, arg, seperator=seperator)
+            log.debug("path: {}".format(path))
         return path
 
 
     def checkToken(self, token, username, workspaceid):
-        log.debug("token: {}, username: {}".format(token, username))
+        log.debug("token: {}, username: {}, workspaceid: {}".format(token, username, workspaceid))
         ut = Utils()
         pargs = (self.spath, workspaceid, self.env, "slacktoken")
         path = self.buildPath(pargs)
