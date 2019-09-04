@@ -4,6 +4,11 @@ This is the code for the command line utility `cca`.
 cca is a re-imagining of the chaim cli using the click parameter parsing
 python module.
 
+<a name='version></a>
+### Changelog
+v2.4.0 Allow receiving and passing the Slack Workspace Id in the chaim
+credentials requests.
+
 <a name='contents'></a>
 * [Install](#install)
     * [Linux](#linux)
