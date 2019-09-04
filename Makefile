@@ -18,9 +18,11 @@ build:
 
 
 dev: build $(SUBDIRS)
+	git add lambda/*/version && git commit -m "updating chaim version files" && git push
 
 
 force: build $(SUBDIRS)
+	git add lambda/*/version && git commit -m "updating chaim version files" && git push
 
 
 prod: $(SUBDIRS)
