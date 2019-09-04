@@ -152,7 +152,7 @@ class Permissions():
             raise DataNotFound(msg)
         return ret
 
-    def buildPath(args, seperator="/"):
+    def buildPath(self, args, seperator="/"):
         path = ""
         for arg in args:
             path = glue.addToSeperatedString(path, arg, seperator=seperator)
