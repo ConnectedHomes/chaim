@@ -96,7 +96,7 @@ def gitTag(tag):
         vfn.write(vstr)
     cmd = "git add version"
     runcmd(cmd)
-    cmsg = "updating chaim to {}".format(vstr)
+    cmsg = "tagging chaim at {}".format(vstr)
     print(cmsg)
     cmd = 'git commit -m "' + cmsg + '"'
     runcmd(cmd)

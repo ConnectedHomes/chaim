@@ -152,10 +152,19 @@ class Permissions():
             raise DataNotFound(msg)
         return ret
 
+    def buildPath(args, seperator="/"):
+        path = ""
+        for arg in args:
+            path = glue.addToSeperatedString(path, arg, seperator=seperator)
+        return path
+
+
     def checkToken(self, token, username, workspaceid):
         log.debug("token: {}, username: {}".format(token, username))
         ut = Utils()
-        path = self.spath + workspaceid + "/" + self.env + "/slacktoken"
+        pargs = (self.spath, workspaceid, self.env, slacktoken)
+        path = self.buildPath(pargs)
+        # path = self.spath + workspaceid + "/" + self.env + "/slacktoken"
         log.debug("asking for {}".format(path))
         slacktoken = self.ps.getParam(path, True)
         # slacktoken = self.params["slacktoken"]
