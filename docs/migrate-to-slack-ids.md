@@ -15,6 +15,7 @@ file is no longer required and has been removed.
 
 1. Go to the admin page for slack: [manage
    members](img/slack-manage-members.png "manage members")
+   <img align="center" src="img/slack-manage-members.png">
 2. Download a CSV format file of all Slack Users:
    [download](img/slack-download-users.png "download user list")
 3. Obtain the current chaim user list:

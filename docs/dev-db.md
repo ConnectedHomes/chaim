@@ -1,5 +1,9 @@
 # Chaim dev database setup
 
+See (scripts/copy-chaim-to-dev.sh)[copy-chaim-to-dev.sh] for a script that
+follows this procedure.
+
+
 * prod account: secadmin-prod 499223386158 alias `sadmin`
 * dev account: sredev 627886280200 alias `sdev`
 * obtain chaim credentials for both accounts
