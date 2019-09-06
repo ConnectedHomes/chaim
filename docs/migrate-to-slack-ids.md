@@ -13,11 +13,10 @@ user ids and workspace id.  See the [slackmap-create.sql](slackmap-create.sql) i
 repo. The [o365-alter-awsusers-table.sql](o365-alter-awsusers-table.sql)
 file is no longer required and has been removed.
 
-1. Go to the admin page for slack: [manage
-   members](img/slack-manage-members.png "manage members")
+1. Go to the admin page for slack:
    <img align="center" src="img/slack-manage-members.png">
 2. Download a CSV format file of all Slack Users:
-   [download](img/slack-download-users.png "download user list")
+   <img align="center" src="img/slack-download-users.png">
 3. Obtain the current chaim user list:
 ```
 $ workon chaim-dev-manager
