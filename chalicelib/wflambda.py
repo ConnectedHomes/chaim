@@ -167,6 +167,7 @@ def getWFKey(stage="prod"):
     and populates the environment with it
     """
     try:
+        log.debug("getWFKey entry")
         ep = EnvParam()
         secretpath = ep.getParam("SECRETPATH", decode=True)
         pms = Permissions(secretpath, stagepath=stage + "/", missing=False, quick=True)

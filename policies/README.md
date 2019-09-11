@@ -38,6 +38,33 @@ aws iam create-policy --policy-name ${policyname} \
 --policy-document file://policies/${policyfile}
 ```
 
+## Make The Policy Set
+
+To make a set of policies for your account (I use `sredev` as the account
+name here, adjust for your situation).
+
+```
+accountname=sredev
+acctnum=627886280200
+opdir=~/tmp/chaim-${accountname}-output
+mkdir -p ${opdir}
+cd policies
+mkdir <accountname>
+for fn in *json; do
+    sed "s/1\{8,10\}/$acctnum/" $fn >$accountname/$fn
+done
+cd $accountname
+for fn in *json; do
+    if [ "$fn" != "lambda-role-policy.json" ]; then
+        if [ "$fn" != "chaim-kms.json" ]; then
+            aws iam create-policy --policy-name ${fn%%.json} \
+            --policy-document file://$fn >>${opdir}/create-policies.json
+        fi
+    fi
+done
+
+```
+
 ### chaim-manage-access-key
 
 [chaim-manage-access-key.json](chaim-manage-access-key.json) is used to allow
@@ -81,3 +108,5 @@ encrypted parameters from the Parameter Store.
 
 [sts-assume-role.json](sts-assume-role.json) allows the chaim user to assume
 the requested role.
+
+[modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )

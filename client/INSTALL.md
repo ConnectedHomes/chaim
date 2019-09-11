@@ -31,3 +31,5 @@ pip install chaim-cli --user
 ```
 pip uninstall chaim-cli
 ```
+
+[modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )

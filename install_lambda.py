@@ -96,7 +96,7 @@ def gitTag(tag):
         vfn.write(vstr)
     cmd = "git add version"
     runcmd(cmd)
-    cmsg = "updating chaim to {}".format(vstr)
+    cmsg = "tagging chaim at {}".format(vstr)
     print(cmsg)
     cmd = 'git commit -m "' + cmsg + '"'
     runcmd(cmd)
@@ -346,11 +346,12 @@ if args.build:
     sys.exit(0)
 
 me = os.path.basename(medir)
-yamlfn = medir + "/" + me + ".yaml"
+supp = "-dev" if env == "dev" else ""
+yamlfn = medir + "/" + me + supp + ".yaml"
 reqsfn = medir + "/requirements.txt"
 if os.path.exists(yamlfn):
     with open(yamlfn, "r") as yfs:
-        config = yaml.load(yfs)
+        config = yaml.load(yfs, Loader=yaml.SafeLoader)
     config["tags"][0]["environment"] = env
     config["codeenv"][0]["environment"] = env
     lambdaname = config["tags"][0]["Name"] + "-" + env

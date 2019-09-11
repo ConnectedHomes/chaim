@@ -1,0 +1,38 @@
+---
+handler: chaim-cleanup.cleanup
+role: arn:aws:iam::627886280200:role/chaim-lambda-rds
+runtime: python3.6
+description: "Function to periodically clean the chaim db of expired access key records"
+timeout: 60
+memory: 128
+
+codeenv:
+    - SECRETPATH: /sre/chaim/
+    - WAVEFRONT_URL: https://connectedhome.wavefront.com
+    - REPORT_STANDARD_METRICS: "True"
+
+tags:
+    - Name: chaim-cleanup
+    - product: chaim
+    - role: cleanup
+    - owner: SRE
+
+vpc:
+    - vpcid: vpc-020123a3964ea2177
+    - subnets: [subnet-0ef1b24426fde542f, subnet-026211987a4c9f104]
+    - securitygroup: sg-04fe3660875af1ba1
+
+files:
+    - chaim-cleanup.py
+    - README.md
+    - chalicelib/botosession.py
+    - chalicelib/cognitoclient.py
+    - chalicelib/slackiamdb.py
+    - chalicelib/kmsclient.py
+    - chalicelib/glue.py
+    - chalicelib/envparams.py
+    - chalicelib/paramstore.py
+    - chalicelib/permissions.py
+    - chalicelib/wflambda.py
+    - chalicelib/utils.py
+    - version

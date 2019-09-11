@@ -40,20 +40,23 @@ class Permissions():
         log.debug("Permissions Entry")
         self.missing = missing
         self.spath = secretpath
-        if len(stagepath) == 0:
-            stagepath = "prod"
-        # self.ps = ParamStore(env=stagepath)
+        self.env = stagepath if len(stagepath) > 0 else "prod"
         self.ps = ParamStore()
-        plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
-                 "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
-        self.params = self.ps.getParams(plist, environment=stagepath)
+        # plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
+        #          "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
+        # plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
+        #          "dbropass", "dbrwuser", "dbrwpass", "poolid"]
+        plist = ["snstopicarn", "dbhost", "dbrouser", "dbdb",
+                 "dbropass", "dbrwuser", "dbrwpass", "poolid"]
+        self.params = self.ps.getParams(plist, environment=self.env)
         if len(self.params) is 0:
             raise IncorrectCredentials("failed to retrieve my parameters")
         self.topicarn = self.params["snstopicarn"]
+        self.slackapitoken = None
         if not quick:
             self.fromslack = False
             self.connectDB(testdb)
-            self.slackapitoken = self.params["slackapitoken"]
+            # self.slackapitoken = self.params["slackapitoken"]
 
     def connectDB(self, testdb=False):
         if testdb:
@@ -89,6 +92,42 @@ class Permissions():
                 raise DataNotFound(e)
         return param
 
+    def userNameFromSlackIds(self, workspaceid, slackid):
+        """
+        returns the chaim username for the user with the
+        given workspace and slack ids
+        """
+        try:
+            if self.sid is not None:
+                sql = "select a.name from awsusers a, slackmap b where a.id = b.userid "
+                sql += "and b.workspaceid='{}' and b.slackid='{}'".format(workspaceid, slackid)
+                rows = self.sid.query(sql)
+                if rows is not None and len(rows) > 0:
+                    log.debug("username from workspace/slackid query: {} returned: {}".format(sql, rows))
+                    username = rows[0][0]
+                else:
+                    raise(DataNotFound("Failed to obtain username from workspace and slack ids"))
+            else:
+                raise DBNotConnected("no connection to Database")
+        except Exception as e:
+            emsg = "Failed to obtain username from slackid {} and workspaceid {}".format(slackid, workspaceid)
+            emsg += "Exception: {}: {}".format(type(e).__name__, e)
+            log.error(emsg)
+            raise
+        return username
+
+
+    def userNameFromSlackId(self, slackid):
+        """returns the chaim username for the slackid"""
+        try:
+            username = self.singleField("awsusers","name","slackid","SlackID",slackid)
+        except DataNotFound as e:
+            emsg = "failed to obtain username from slackid: {}".format(slackid)
+            log.error(emsg)
+            raise DataNotFound(emsg)
+        return username
+
+
     def userActive(self, username):
         ret = None
         msg = "User not found in Cognito DB: /{}\\".format(username)
@@ -116,12 +155,30 @@ class Permissions():
             raise DataNotFound(msg)
         return ret
 
-    def checkToken(self, token, username):
-        log.debug("token: {}, username: {}".format(token, username))
+    def buildPath(self, args, seperator="/"):
+        path = ""
+        for arg in args:
+            path = glue.addToSeperatedString(path, arg, seperator=seperator)
+            log.debug("path: {}".format(path))
+        return path
+
+
+    def checkToken(self, token, username, workspaceid):
+        log.debug("token: {}, username: {}, workspaceid: {}".format(token, username, workspaceid))
         ut = Utils()
-        slacktoken = self.params["slacktoken"]
+        pargs = (self.spath, workspaceid, self.env, "slacktoken")
+        path = self.buildPath(pargs)
+        # path = self.spath + workspaceid + "/" + self.env + "/slacktoken"
+        log.debug("asking for {}".format(path))
+        slacktoken = self.ps.getParam(path, True)
+        # slacktoken = self.params["slacktoken"]
         if slacktoken == token:
             self.fromslack = True
+            pargs = (self.spath, workspaceid, self.env, "slackapitoken")
+            path = self.buildPath(pargs)
+            # path = self.spath + workspaceid + "/" + self.env + "/slackapitoken"
+            log.debug("asking for {}".format(path))
+            self.slackapitoken = self.ps.getParam(path, True)
             return True
         else:
             clitoken, expires = self.readUserToken(username)
@@ -159,6 +216,13 @@ class Permissions():
 
     def createDataNotFoundMessage(self, dataname, data):
         return "{} not found: {}".format(dataname, data)
+
+    def addUpdateSlackUserId(self, username, slackuserid):
+        if self.sid is not None:
+            userid = self.checkIDs("awsusers", "name", "User", username)
+        else:
+            raise DBNotConnected("No connection to database")
+
 
     def userAllowed(self, username, account, role):
         log.debug("userAllowed test: {} {} {}".format(username, account, role))

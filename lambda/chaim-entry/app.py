@@ -16,19 +16,20 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
+from chalice import Chalice
+from urllib.parse import parse_qs
 from chalicelib.assumedrole import AssumedRole
 from chalicelib.commandparse import CommandParse
 from chalicelib.envparams import EnvParam
 from chalicelib.permissions import DataNotFound
 from chalicelib.permissions import Permissions
 from chalicelib.wflambda import wfwrapper
-from chalice import Chalice
-from urllib.parse import parse_qs
 import chalicelib.chaim as chaim
 import chalicelib.glue as glue
 
 
 log = glue.log
+glue.setDebug()
 
 
 app = Chalice(app_name='chaim-entry')
@@ -40,6 +41,7 @@ def slackreq():
     This is the entry point for Slack
     """
     try:
+        log.debug("slackreq entry")
         with open("version", "r") as vfn:
             version = vfn.read()
         config = {}
@@ -47,9 +49,13 @@ def slackreq():
         config["environment"] = ep.getParam("environment")
         config["useragent"] = "slack"
         config["apiid"] = app.current_request.context["apiId"]
-        chaim.snsPublish(ep.getParam("SNSTOPIC"),
-                         chaim.begin(app.current_request.raw_body.decode(), **config))
-        verstr = "chaim-slack-" + config["environment"] + " " + version
+        rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
+        chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
+        verstr = "chaim-slack"
+        if config["environment"] == "prod":
+            verstr += " " + version
+        else:
+            verstr += "-" + config["environment"] + " " + version
         return chaim.output(None, "{}\n\nPlease wait".format(verstr))
     except Exception as e:
         emsg = "slackreq: {}: {}".format(type(e).__name__, e)
@@ -60,6 +66,7 @@ def slackreq():
 @wfwrapper
 def doStart(reqbody, context, env, version):
     try:
+        log.debug("dostart entry")
         verstr = "chaim-cli-{}".format(env) + " " + version
         log.debug("{} doStart entered: {}".format(verstr, reqbody))
         ep = EnvParam()
@@ -72,6 +79,7 @@ def doStart(reqbody, context, env, version):
             kdict = {"accountlist": pms.accountList()}
         else:
             rdict = cp.requestDict()
+            rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
             msg = "incoming CLI request: user agent"
             msg += " unknown!" if rdict["useragent"] is None else " {}".format(rdict["useragent"])
             log.info(msg)
@@ -84,6 +92,7 @@ def doStart(reqbody, context, env, version):
                 emsg = "Failed to build credentials"
             else:
                 chaim.incMetric("key.cli")
+                kdict.pop("slackapitoken", None)
         return [emsg, kdict]
     except Exception as e:
         emsg = "doStart: Error {}: {}".format(type(e).__name__, e)
@@ -98,6 +107,7 @@ def start():
     The entry point for the CLI
     """
     try:
+        log.debug("start entry")
         config = {}
         ep = EnvParam()
         config["environment"] = ep.getParam("environment")
@@ -115,6 +125,7 @@ def start():
 @wfwrapper
 def doStartGui(rbody, context, env, version):
     try:
+        log.debug("dostartgui entry")
         verstr = "chaim-cligui-{}".format(env) + " " + version
         log.debug("{} doStartGui entered: {}".format(verstr, rbody))
         parsed = parse_qs(rbody)
@@ -155,6 +166,7 @@ def startgui():
     The entry point for the CLI to obtain a gui url
     """
     try:
+        log.debug("gui entry")
         config = {}
         ep = EnvParam()
         config["environment"] = ep.getParam("environment")
@@ -175,6 +187,7 @@ def keyinit():
     the entry point to request a user key (from slack /initchaim)
     """
     try:
+        log.debug("keyinit entry")
         with open("version", "r") as vfn:
             version = vfn.read()
         config = {}
@@ -190,4 +203,38 @@ def keyinit():
     except Exception as e:
         msg = "A keyinit error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
-        return output(msg)
+        return chaim.output(msg)
+
+
+@app.route('/identify', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+def identify():
+    """
+    the entry point to display the users identity from slack
+    """
+    try:
+        log.debug("identify entry")
+        with open("version", "r") as vfn:
+            version = vfn.read()
+        config = {}
+        ep = EnvParam()
+        config["environment"] = ep.getParam("environment")
+        config["useragent"] = "slack"
+        config["apiid"] = app.current_request.context["apiId"]
+        log.debug("identify: config: {}".format(config))
+        params = chaim.paramsToDict(app.current_request.raw_body.decode())
+        # rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
+        op = "```\n"
+        op += "Name: {}\n".format(params["user_name"])
+        op += "Slack Id: {}\n".format(params["user_id"])
+        op += "Workspace Id: {}\n".format(params["team_id"])
+        op += "```\n"
+        # rbody = glue.addToReqBody(rbody, "identify", "true")
+        # log.debug("publishing req body: {}".format(rbody))
+        # chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
+        verstr = "chaim-slack-" + config["environment"] + " " + version
+        log.debug("identify: {}".format(op))
+        return chaim.output(None, "{}\n\n{}".format(verstr, op))
+    except Exception as e:
+        msg = "An identify error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        return chaim.output(msg)

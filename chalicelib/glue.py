@@ -43,6 +43,14 @@ def addToReqBody(rbody, key, val):
     return ret
 
 
+def addToSeperatedString(istr, astr, seperator="/"):
+    if len(istr):
+        ostr = istr + astr if istr.endswith(seperator) else istr + seperator + astr
+    else:
+        ostr = astr
+    return ostr
+
+
 def addToOutStr(ostr, key, val, newline=True):
     log.debug("in addToOutString")
     log.debug("{} {} {} {}".format(ostr, key, val, newline))

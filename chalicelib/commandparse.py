@@ -38,15 +38,21 @@ class CommandParse():
         self.keyinit = False
         self.doshowroles = False
         self.docountusers = False
+        self.doidentify = False
         self.docommand = False
         self.roledict = roledict
         self.apiid = None
+        self.slackid = None
+        self.teamid = None
         log.debug("Command parse entry")
         log.debug("rawbody: {}".format(rawbody))
         self.parsed = parse_qs(rawbody)
         log.debug("parsed: {}".format(self.parsed))
         self.blankbody = blankbody
         self.username = self.extractField('user_name')
+        self.slackname = self.username
+        self.slackid = self.extractField('user_id')
+        self.teamid = self.extractField('team_id')
         self.incomingtoken = self.extractField('token')
         log.debug("token: {}".format(self.incomingtoken))
         self.responseurl = self.extractField('response_url')
@@ -56,6 +62,12 @@ class CommandParse():
         if "keyinit" in self.parsed:
             self.duration = 900
             self.keyinit = True
+            self.blankbody = True
+            self.apiid = self.extractField("apiid")
+            self.docommand = True
+        elif "identify" in self.parsed:
+            self.duration = 900
+            self.doidentify = True
             self.blankbody = True
             self.apiid = self.extractField("apiid")
             self.docommand = True
@@ -161,10 +173,13 @@ class CommandParse():
 
     def requestDict(self):
         rdict = {"username": self.username}
+        rdict["slackusername"] = self.slackname
         rdict["incomingtoken"] = self.incomingtoken
         rdict["responseurl"] = self.responseurl
         rdict["stage"] = self.stage
         rdict["useragent"] = self.useragent
+        rdict["slackid"] = self.slackid
+        rdict["teamid"] = self.teamid
         if self.apiid is not None:
             rdict["apiid"] = self.apiid
         if not self.blankbody:

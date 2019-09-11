@@ -44,6 +44,7 @@ def doSnsReq(rbody, context, verstr, ep, env):
         chaim.doCommand(cp, pms, verstr)
     else:
         rdict = cp.requestDict()
+        rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
         try:
             log.debug("incoming sns request")
             kdict, rdict = chaim.buildCredentials(pms, rdict)
@@ -62,7 +63,7 @@ def doSnsReq(rbody, context, verstr, ep, env):
                 umsg += "Session Token: {}\n".format(kdict["sessiontoken"])
             umsg += "\nLink {}\n".format(rdict["expiresstr"].lower())
             chaim.incMetric("key.sns")
-            res = chaim.sendSlackBot(pms.slackapitoken, rdict["username"], umsg, kdict["url"],
+            res = chaim.sendSlackBot(pms.slackapitoken, rdict["slackusername"], umsg, kdict["url"],
                                      "{} {}".format(rdict["accountname"].upper(), rdict["role"]))
             if res['ok'] is False:
                 emsg = "Sending login url to users private Slack Channel failed"
@@ -82,13 +83,16 @@ def snsreq(event, context):
     :param event: the AWS lambda event that triggered this
     :param context: the AWS lambda context for this
     """
-    log.info("context: {}".format(context))
     ep = EnvParam()
     environment = ep.getParam("environment", True)
+    if environment is not "prod":
+        glue.setDebug()
     apiid = ep.getParam("APIID", True)
+    log.debug("apiid from environment: {}".format(apiid))
     with open("version", "r") as vfn:
         version = vfn.read()
     body = event['Records'][0]['Sns']['Message']
+    log.debug("incoming body: {}".format(body))
     rbody = chaim.begin(body, environment, "slack", apiid)
     verstr = "chaim-snsreq-" + environment + " " + version
     log.info(verstr + " entered.")

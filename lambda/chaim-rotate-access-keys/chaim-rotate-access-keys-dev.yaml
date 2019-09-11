@@ -1,0 +1,31 @@
+---
+handler: chaim-rotate-access-keys.rotate
+role: arn:aws:iam::627886280200:role/chaim-lambda-keyman
+runtime: python3.6
+description: "Funtion to periodically rotate the long term access keys that chaim uses."
+timeout: 30
+memory: 128
+
+codeenv:
+    - SECRETPATH: /sre/chaim/
+    - WAVEFRONT_URL: https://connectedhome.wavefront.com
+    - REPORT_STANDARD_METRICS: "True"
+    - KEYNAME: sre-chaim
+    - CHAIMUSER: sre.chaim
+
+tags:
+    - Name: chaim-rotate-access-keys
+    - product: chaim
+    - role: rotate-keys
+    - owner: SRE
+
+files:
+    - README.md
+    - chaim-rotate-access-keys.py
+    - chalicelib/botosession.py
+    - chalicelib/envparams.py
+    - chalicelib/glue.py
+    - chalicelib/iamclient.py
+    - chalicelib/paramstore.py
+    - chalicelib/kmsclient.py
+    - version

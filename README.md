@@ -55,3 +55,5 @@ The Makefiles have the following targets:
 The Makefiles can be run individually or all together as a package.  To make
 everything, issue `make <target>` from the root of the repository.  To make an
 individual lambda cd to the corresponding directory and issue `make <target>`
+
+[modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )

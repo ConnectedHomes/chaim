@@ -78,7 +78,19 @@ class WavefrontMissing(Exception):
     pass
 
 
+def paramsToDict(rbody):
+    params = {}
+    if "&" in rbody:
+        prams = rbody.split("&")
+        for pram in prams:
+            if "=" in pram:
+                p = pram.split("=")
+                params[p[0]] = p[1]
+    return params
+
+
 def begin(rbody, environment="dev", useragent="unknown", apiid=""):
+    log.debug("begin entry: {}, {}, {}, {}".format(rbody, environment, useragent, apiid))
     stage = environment
     apiid = apiid
     if stage == "dev":
@@ -154,17 +166,21 @@ def output(err, res=None, attachments=None):
     :param res: the message to send, will be bound up in a json formatted object
     :param attachments: any message attachments
     """
-    ret = {
-        'response_type': 'ephemeral',
-        'statusCode': '400' if err else '200',
-        'text': "{}".format(err) if err else "{}".format(res),
-        'headers': {
-            'Content-Type': 'application/json',
-        },
-    }
-    if attachments is not None:
-        ret["attachments"] = makeAttachments(attachments)
-    return ret
+    try:
+        ret = {
+            'response_type': 'ephemeral',
+            'statusCode': '400' if err else '200',
+            'text': "{}".format(err) if err else "{}".format(res),
+            'headers': {
+                'Content-Type': 'application/json',
+            },
+        }
+        if attachments is not None:
+            ret["attachments"] = makeAttachments(attachments)
+        log.debug("output: {}".format(ret))
+        return ret
+    except Exception as e:
+        log.error("output exception {}: {}".format(type(e).__name__, e))
 
 
 def makeAttachments(attachments, pretext=None):
@@ -191,6 +207,7 @@ def doCommand(cp, pms, verstr):
     :param rdict: dictionary of user details from the incomming request
     """
     rdict = cp.requestDict()
+    rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
     if cp.dolist:
         log.debug("account list requested")
         alist = pms.accountList()
@@ -238,6 +255,10 @@ def doCommand(cp, pms, verstr):
         msg = pms.countLastSince(2)
         sendToSlack(rdict["responseurl"], "```{}```".format(msg))
         incMetric("countusers")
+    elif cp.doidentify:
+        msg = "Slack User: {} Slack Workspace ID: {} Slack UID: {}".format(cp.username, cp.teamid, cp.slackid)
+        sendToSlack(rdict["responseurl"], msg)
+        incMetric("slack.identify")
 
 
 def whosKey(pms, key):
@@ -284,7 +305,7 @@ def doKeyInit(rdict, pms):
             raise InactiveUser("{} is not an active user.".format(rdict["username"]))
         log.debug("doKeyInit User {} is ACTIVE".format(rdict["username"]))
         log.debug("doKeyInit checking token")
-        if not pms.checkToken(rdict["incomingtoken"], rdict["username"]):
+        if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["teamid"]):
             raise InvalidToken("slack access token is invalid")
         log.debug("doKeyInit slack token check passed ok")
         expiredays = 30 if rdict["stage"] != "dev" else 1
@@ -310,7 +331,7 @@ def readKeyInit(rdict, pms):
         if not pms.userActive(rdict["username"]):
             raise InactiveUser("{} is not an active user.".format(rdict["username"]))
         log.debug("checking user token {}, {}".format(rdict["incomingtoken"], rdict["username"]))
-        if not pms.checkToken(rdict["incomingtoken"], rdict["username"]):
+        if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["teamid"]):
             raise InvalidToken("slack access token is invalid")
         log.debug("asking for previous token")
         token, expires = pms.readUserToken(rdict["username"])
@@ -329,9 +350,12 @@ def buildInitOutputStr(token, expires, rdict):
     expa = ut.expiresAt(expires)
     bstr = ""
     xstr = "```"
-    log.debug("calling first addToOutStr: {}, {}, {}".format(xstr, "api", rdict["apiid"]))
     xstr = glue.addToOutStr(xstr, "api", rdict["apiid"])
     bstr = glue.addToReqBody(bstr, "api", rdict["apiid"])
+    xstr = glue.addToOutStr(xstr, "slackid", rdict["slackid"])
+    bstr = glue.addToReqBody(bstr, "slackid", rdict["slackid"])
+    xstr = glue.addToOutStr(xstr, "workspaceid", rdict["teamid"])
+    bstr = glue.addToReqBody(bstr, "workspaceid", rdict["teamid"])
     xstr = glue.addToOutStr(xstr, "username", rdict["username"])
     bstr = glue.addToReqBody(bstr, "username", rdict["username"])
     xstr = glue.addToOutStr(xstr, "usertoken", token)
@@ -475,7 +499,7 @@ def checkUserAndToken(pms, rdict):
         log.error(emsg)
         raise(IncorrectCredentials(emsg))
     log.debug("user {}/{} exists".format(rdict["username"], userid))
-    if not pms.checkToken(rdict["incomingtoken"], rdict["username"]):
+    if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["teamid"]):
         emsg = "user {} supplied an invalid token".format(rdict["username"])
         log.error(emsg)
         raise(IncorrectCredentials(emsg))
@@ -498,3 +522,10 @@ def slackTimeStamp(msg, start, rdict, ut):
 def snsPublish(topic, msg):
     sns = SnsClient()
     sns.publishToSns(topic, msg)
+
+
+def testVPCInternetAccess():
+    log.info("Sending a request to icanhazip.com")
+    r = requests.get("http://icanhazip.com")
+    log.info("Status code: {}".format(r.status_code))
+    log.info("reply: {}".format(r.text))

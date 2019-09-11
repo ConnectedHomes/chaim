@@ -9,3 +9,5 @@ The chaim api records issued keys to aid event tracing.
 
 ## configuration
 edit the chaim-cleanup.yaml file
+
+[modeline]: # ( vim: set ft=markdown tw=74 fenc=utf-8 spell spl=en_gb mousemodel=popup: )

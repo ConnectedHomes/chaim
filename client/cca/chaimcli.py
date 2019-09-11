@@ -105,7 +105,12 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
     params["token"] = defsect["usertoken"]
     params["response_url"] = "ignoreme"
     params["useragent"] = "cca " + ccaversion
+    if "slackid" in defsect:
+        params["user_id"] = defsect["slackid"]
+    if "workspaceid" in defsect:
+        params["team_id"] = defsect["workspaceid"]
     endpoint = getEndpoint(ifn)
+    # click.echo("params: {}".format(params))
     now = int(time.time())
     r = requests.post(endpoint, data=params)
     taken = int(time.time()) - now
@@ -269,7 +274,7 @@ def doUrl(account, ifn, browser=False, logout=False):
 
 
 def askInit(ifn):
-    reqkeys = ["api", "username", "usertoken", "tokenexpires", "stage", "region"]
+    reqkeys = ["api", "username", "usertoken", "tokenexpires", "stage", "region", "slackid", "workspaceid"]
     defsect = getDefaultSection(ifn)
     for key in reqkeys:
         if key in ["usertoken", "tokenexpires"]:
