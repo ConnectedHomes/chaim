@@ -208,6 +208,7 @@ def doCommand(cp, pms, verstr):
     """
     rdict = cp.requestDict()
     rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
+    pms.setSlackApiToken(rdict["teamid"])
     if cp.dolist:
         log.debug("account list requested")
         alist = pms.accountList()
