@@ -163,7 +163,7 @@ class Permissions():
         return path
 
 
-    def setSlackApiToken(workspaceid):
+    def setSlackApiToken(self, workspaceid):
         pargs = (self.spath, workspaceid, self.env, "slackapitoken")
         path = self.buildPath(pargs)
         log.debug("asking for {}".format(path))
