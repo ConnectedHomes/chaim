@@ -1,3 +1,31 @@
+11-10-19 v2.4 pre-release
+author: chris.allison@hivehome.com
+Framework for user identify command
+Additional database mapping table 'slackmap'
+Pin wavefront_pyformance to v0.9.2
+Output of slackid and workspaceid when showing/generating init credentials
+Re-factor permissions for better memeory usage
+Update documentation
+Split across accounts for dev/prod
+Ensure Make uses correct AWS profile
+Policy documentation
+Adjust config files for seperate dev and prod AWS accounts
+Ensure that username is set from slackid
+Use yaml.safeloader for config files
+Decode and add workspaceid into the output
+Document slackmap table usage
+Retire generic slack token and use a 'proper' auth token this will now show the app name as 'chaim' rather than 'slack API
+Tester'
+Slack API tokens are now stored under the environment path as well as under the workspaceid
+'identify' command now returns to slack quickly without any other checks
+Ensure data is returned to the 'slack' user name not the 'chaim' user name
+Chaim now has limited OAuth Scope in Slack
+Client uses workspaceid if it is present
+Add questions for slackid and workspaceid when initialising the client
+Slack api token is now only obtained just before it is required - this fixes the client being unable to decode the output from
+chaim.
+Further documentation updates.
+
 2019-08-13
 author: chris.allison@hivehome.com
 Use slackid as identifier rather than slack display name
