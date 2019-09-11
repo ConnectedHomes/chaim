@@ -163,6 +163,12 @@ class Permissions():
         return path
 
 
+    def setSlackApiToken(workspaceid):
+        pargs = (self.spath, workspaceid, self.env, "slackapitoken")
+        path = self.buildPath(pargs)
+        log.debug("asking for {}".format(path))
+        self.slackapitoken = self.ps.getParam(path, True)
+
     def checkToken(self, token, username, workspaceid):
         log.debug("token: {}, username: {}, workspaceid: {}".format(token, username, workspaceid))
         ut = Utils()
@@ -174,11 +180,7 @@ class Permissions():
         # slacktoken = self.params["slacktoken"]
         if slacktoken == token:
             self.fromslack = True
-            pargs = (self.spath, workspaceid, self.env, "slackapitoken")
-            path = self.buildPath(pargs)
-            # path = self.spath + workspaceid + "/" + self.env + "/slackapitoken"
-            log.debug("asking for {}".format(path))
-            self.slackapitoken = self.ps.getParam(path, True)
+            self.setSlackApiToken(workspaceid)
             return True
         else:
             clitoken, expires = self.readUserToken(username)
