@@ -371,6 +371,7 @@ def buildInitOutputStr(token, expires, rdict):
     butf8 = bstr.encode('utf8')
     benc = base64.urlsafe_b64encode(butf8)
     bstr = "```chaim -j " + benc.decode('utf8') + "```"
+    bstr += "\n```cca init " + benc.decode('utf8') + "```"
     return expa, xstr, bstr
 
 
