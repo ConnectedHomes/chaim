@@ -85,7 +85,7 @@ def snsreq(event, context):
     """
     ep = EnvParam()
     environment = ep.getParam("environment", True)
-    if environment is not "prod":
+    if environment != "prod":
         glue.setDebug()
     apiid = ep.getParam("APIID", True)
     log.debug("apiid from environment: {}".format(apiid))

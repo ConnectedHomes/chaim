@@ -29,7 +29,6 @@ import chalicelib.glue as glue
 
 
 log = glue.log
-glue.setDebug()
 
 
 app = Chalice(app_name='chaim-entry')
