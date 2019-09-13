@@ -79,7 +79,7 @@ class CommandParse():
             self.blankbody = True
             self.apiid = self.extractField("apiid")
             self.emailaddress = self.extractField("text")
-            if not UT.checkIsEmailAddress(self.emailaddress):
+            if not Utils.checkIsEmailAddress(self.emailaddress):
                 raise BadCommandStr("invalid email address {}".format(self.emailaddress))
             self.docommand = True
         else:
