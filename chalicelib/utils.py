@@ -128,3 +128,14 @@ class Utils():
 
     def getNow(self):
         return int(time.time())
+
+    def checkIsEmailAddress(self, email):
+        """
+        checks that the supplied email address looks like an email address
+        currently that there are no space characters and there is an @ sign
+        """
+        ret = False
+        if " " not in email:
+            if "@" in email:
+                ret = True
+        return ret
