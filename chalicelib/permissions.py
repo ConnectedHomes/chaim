@@ -353,14 +353,35 @@ class Permissions():
             log.error("error executing check usertoken query")
             raise DataNotFound(e)
 
+    def slackMapInsert(self, chaimid, slackid, workspaceid):
+        scid = self.sid.sqlInt(chaimid)
+        ssid = self.sid.sqlStr(slackid)
+        swid = self.sid.sqlStr(workspaceid)
+        sql = "insert into slackmap (userid, slackid, workspaceid) values "
+        sql += "("
+        sql += ",".join([scid, ssid, swid])
+        sql += ")"
+        return sql
+
     def createNewUser(self, slackname, slackid, workspaceid, email):
         try:
             if " " in slackname:
                 raise IncorrectCredentials("Invalid chaim name {}".format(slackname))
+            if self.rwsid is None:
+                raise DBNotConnected("no connection to db for createNewUser")
             chaimuserid = self.checkIDs("awsusers", "name", "User", username, True)
             cid = self.createUser(slackname) if chaimuserid is None else chaimuserid
+            if cid is not None:
+                cc = CognitoClient()
+                if cc.adminCreateUser(self.params["poolid"], slackname, email):
+                    sql = self.slackMapInsert(cid, slackid, workspaceid)
+                    naf = self.rwsid.insertQuery(sql)
+                    if naf == 1:
+                        return True
+            return False
         except Exception as e:
-            pass
+            log.warning("Failed to create new user {}, Exception {}: {}".format(slackname, type(e).__name__, e))
+            raise
 
 
     def createUser(self, username):
