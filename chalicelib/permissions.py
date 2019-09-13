@@ -353,6 +353,16 @@ class Permissions():
             log.error("error executing check usertoken query")
             raise DataNotFound(e)
 
+    def createNewUser(self, slackname, slackid, workspaceid, email):
+        try:
+            if " " in slackname:
+                raise IncorrectCredentials("Invalid chaim name {}".format(slackname))
+            chaimuserid = self.checkIDs("awsusers", "name", "User", username, True)
+            cid = self.createUser(slackname) if chaimuserid is None else chaimuserid
+        except Exception as e:
+            pass
+
+
     def createUser(self, username):
         userid = 0
         sql = "insert into awsusers set name='{}'".format(username)
