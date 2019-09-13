@@ -238,3 +238,28 @@ def identify():
         msg = "An identify error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
         return chaim.output(msg)
+
+@app.route('/newchaimuser', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+def newchaimuser():
+    """
+    the entry point to create a new chaim user
+    """
+    try:
+        log.debug("identify entry")
+        with open("version", "r") as vfn:
+            version = vfn.read()
+        config = {}
+        ep = EnvParam()
+        config["environment"] = ep.getParam("environment")
+        config["useragent"] = "slack"
+        config["apiid"] = app.current_request.context["apiId"]
+        log.debug("identify: config: {}".format(config))
+        params = chaim.paramsToDict(app.current_request.raw_body.decode())
+        rbody = glue.addToReqBody(rbody, "newchaimuser", "true")
+        chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
+        verstr = "chaim-slack-" + config["environment"] + " " + version
+        return chaim.output(None, "{}\n\nPlease wait".format(verstr))
+    except Exception as e:
+        msg = "An identify error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        return chaim.output(msg)
