@@ -245,7 +245,7 @@ def newchaimuser():
     the entry point to create a new chaim user
     """
     try:
-        log.debug("identify entry")
+        log.debug("newchaimuser entry")
         with open("version", "r") as vfn:
             version = vfn.read()
         config = {}
@@ -254,7 +254,8 @@ def newchaimuser():
         config["useragent"] = "slack"
         config["apiid"] = app.current_request.context["apiId"]
         log.debug("identify: config: {}".format(config))
-        params = chaim.paramsToDict(app.current_request.raw_body.decode())
+        # params = chaim.paramsToDict(app.current_request.raw_body.decode())
+        rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
         rbody = glue.addToReqBody(rbody, "newchaimuser", "true")
         chaim.snsPublish(ep.getParam("SNSTOPIC"), rbody)
         verstr = "chaim-slack-" + config["environment"] + " " + version
