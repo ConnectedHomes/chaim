@@ -95,3 +95,9 @@ class SlackIamDB():
         self.query(sql)
         self.con.commit()
         return self.affectedrows
+
+    def sqlStr(self, xstr):
+        return "'" + xstr + "'"
+
+    def sqlInt(self, xint):
+        return str(xint)
