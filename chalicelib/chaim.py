@@ -260,6 +260,19 @@ def doCommand(cp, pms, verstr):
         msg = "Slack User: {} Slack Workspace ID: {} Slack UID: {}".format(cp.username, cp.teamid, cp.slackid)
         sendToSlack(rdict["responseurl"], msg)
         incMetric("slack.identify")
+    elif cp.docreatenewuser:
+        if pms.createNewUser(rdict["username"], rdict["slackid"], rdict["teamid"], rdict["emailaddress"]):
+            msg = "New chaim user created.\n"
+            msg += "```\n"
+            msg += "Username: {}\n".format(rdict["username"])
+            msg += "SlackId: {}\n".format(rdict["slackid"])
+            msg += "WorkspaceId: {}\n".format(rdict["teamid"])
+            msg += "```\n"
+            sendToSlack(rdict["responseurl"], msg)
+        else:
+            msg = "Failed to create a new chaim user for {}".format(rdict["username"])
+        sendToSlack(rdict["responseurl"], msg)
+        incMetric("chaim.newuser")
 
 
 def whosKey(pms, key):
