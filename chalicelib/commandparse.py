@@ -39,11 +39,13 @@ class CommandParse():
         self.doshowroles = False
         self.docountusers = False
         self.doidentify = False
+        self.docreatenewuser = False
         self.docommand = False
         self.roledict = roledict
         self.apiid = None
         self.slackid = None
         self.teamid = None
+        self.emailaddress = None
         log.debug("Command parse entry")
         log.debug("rawbody: {}".format(rawbody))
         self.parsed = parse_qs(rawbody)
@@ -70,6 +72,13 @@ class CommandParse():
             self.doidentify = True
             self.blankbody = True
             self.apiid = self.extractField("apiid")
+            self.docommand = True
+        elif "createnewuser" in self.parsed:
+            self.duration = 900
+            self.docreatenewuser = True
+            self.blankbody = True
+            self.apiid = self.extractField("apiid")
+            self.emailaddress = self.extractField("text")
             self.docommand = True
         else:
             if not self.blankbody:
@@ -182,6 +191,8 @@ class CommandParse():
         rdict["teamid"] = self.teamid
         if self.apiid is not None:
             rdict["apiid"] = self.apiid
+        if self.emailaddress is not None:
+            rdict["emailaddress"] = self.emailaddress
         if not self.blankbody:
             rdict["duration"] = self.duration
             rdict["rolealias"] = self.rolealias
