@@ -388,8 +388,8 @@ class Permissions():
     def createNewUser(self, slackname, slackid, workspaceid, email):
         try:
             ut = Utils()
-            if not ut.checkIsEmailAddress(self.emailaddress):
-                raise InvalidEmailAddress("invalid email address {}".format(self.emailaddress))
+            if not ut.checkIsEmailAddress(email):
+                raise InvalidEmailAddress("invalid email address {}".format(email))
             cid = None
             if " " in slackname:
                 raise IncorrectCredentials("Invalid chaim name {}".format(slackname))
