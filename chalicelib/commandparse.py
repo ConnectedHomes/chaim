@@ -79,9 +79,6 @@ class CommandParse():
             self.blankbody = True
             self.apiid = self.extractField("apiid")
             self.emailaddress = self.extractField("text")
-            ut = Utils()
-            if not ut.checkIsEmailAddress(self.emailaddress):
-                raise BadCommandStr("invalid email address {}".format(self.emailaddress))
             self.docommand = True
         else:
             if not self.blankbody:

@@ -38,6 +38,10 @@ class ChaimUserExists(Exception):
     pass
 
 
+class InvalidEmailAddress(Exception):
+    pass
+
+
 class Permissions():
     def __init__(self, secretpath="", testdb=False, quick=False,
                  stagepath="", missing=False):
@@ -383,6 +387,9 @@ class Permissions():
 
     def createNewUser(self, slackname, slackid, workspaceid, email):
         try:
+            ut = Utils()
+            if not ut.checkIsEmailAddress(self.emailaddress):
+                raise InvalidEmailAddress("invalid email address {}".format(self.emailaddress))
             cid = None
             if " " in slackname:
                 raise IncorrectCredentials("Invalid chaim name {}".format(slackname))
