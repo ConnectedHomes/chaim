@@ -388,7 +388,7 @@ class Permissions():
                 raise IncorrectCredentials("Invalid chaim name {}".format(slackname))
             if self.rwsid is None:
                 raise DBNotConnected("no connection to db for createNewUser")
-            chaimuserid = self.checkIDs("awsusers", "name", "User", username, True)
+            chaimuserid = self.checkIDs("awsusers", "name", "User", slackname, True)
             if chaimuserid is not None:
                 if self.checkSlackMap(chaimuserid, slackid, workspaceid):
                     raise ChaimUserExists("Chaim user already exists {}".format(slackname))
