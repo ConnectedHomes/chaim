@@ -34,6 +34,10 @@ class DataNotFound(Exception):
     pass
 
 
+class ChaimUserExists(Exception):
+    pass
+
+
 class Permissions():
     def __init__(self, secretpath="", testdb=False, quick=False,
                  stagepath="", missing=False):
@@ -353,6 +357,20 @@ class Permissions():
             log.error("error executing check usertoken query")
             raise DataNotFound(e)
 
+    def checkSlackMap(self, chaimid, slackid, workspaceid):
+        ret = False
+        scid = self.sid.sqlInt(chaimid)
+        ssid = self.sid.sqlStr(slackid)
+        swid = self.sid.sqlStr(workspaceid)
+        sql = "select * from slackmap where userid={} and slackid={} and workspaceid={}".format(scid, ssid, swid)
+        if self.sid is None:
+            raise DBNotConnected("no connection to db to check slack map for {}".format(chaimid))
+        res = self.sid.query(sql)
+        log.debug("check map query returned: {}".format(res))
+        if len(res) > 0:
+            ret = True
+        return ret
+
     def slackMapInsert(self, chaimid, slackid, workspaceid):
         scid = self.sid.sqlInt(chaimid)
         ssid = self.sid.sqlStr(slackid)
@@ -365,12 +383,19 @@ class Permissions():
 
     def createNewUser(self, slackname, slackid, workspaceid, email):
         try:
+            cid = None
             if " " in slackname:
                 raise IncorrectCredentials("Invalid chaim name {}".format(slackname))
             if self.rwsid is None:
                 raise DBNotConnected("no connection to db for createNewUser")
             chaimuserid = self.checkIDs("awsusers", "name", "User", username, True)
-            cid = self.createUser(slackname) if chaimuserid is None else chaimuserid
+            if chaimuserid is not None:
+                if self.checkSlackMap(chaimuserid, slackid, workspaceid):
+                    raise ChaimUserExists("Chaim user already exists {}".format(slackname))
+                else:
+                    cid = chaimuserid
+            else:
+                cid = self.createNewUser(slackname)
             if cid is not None:
                 cc = CognitoClient()
                 if cc.adminCreateUser(self.params["poolid"], slackname, email):
