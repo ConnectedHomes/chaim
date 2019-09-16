@@ -253,7 +253,7 @@ def newchaimuser():
         config["environment"] = ep.getParam("environment")
         config["useragent"] = "slack"
         config["apiid"] = app.current_request.context["apiId"]
-        log.debug("identify: config: {}".format(config))
+        log.debug("newchaimuser: config: {}".format(config))
         # params = chaim.paramsToDict(app.current_request.raw_body.decode())
         rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
         rbody = glue.addToReqBody(rbody, "newchaimuser", "true")

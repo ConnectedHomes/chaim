@@ -73,7 +73,7 @@ class CommandParse():
             self.blankbody = True
             self.apiid = self.extractField("apiid")
             self.docommand = True
-        elif "createnewuser" in self.parsed:
+        elif "newchaimuser" in self.parsed:
             self.duration = 900
             self.docreatenewuser = True
             self.blankbody = True
