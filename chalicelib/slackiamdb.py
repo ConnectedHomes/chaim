@@ -34,6 +34,7 @@ class SlackIamDB():
         self.dbdb = dbdb
         self.connected = False
         self.affectedrows = 0
+        self.lastinsertid = 0
         self.connect()
 
     def connect(self):
@@ -55,6 +56,7 @@ class SlackIamDB():
                 with self.con.cursor() as cur:
                     log.debug("query: {}".format(sql))
                     self.affectedrows = cur.execute(sql)
+                    self.lastinsertid = cur.lastrowid
                     for row in cur:
                         rows.append(row)
             except Exception as e:

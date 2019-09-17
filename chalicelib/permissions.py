@@ -421,6 +421,7 @@ class Permissions():
         sql = "insert into awsusers set name='{}'".format(username)
         af = self.rwsid.insertQuery(sql)
         log.debug("create user: affected rows {}".format(af))
+        log.debug("create user: last insert id: {}".format(self.rwsid.lastinsertid))
         if af == 1:
             userid = self.checkIDs("awsusers", "name", "User", username)
         return userid
