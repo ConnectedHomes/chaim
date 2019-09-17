@@ -207,9 +207,23 @@ def doCommand(cp, pms, verstr):
     :param rdict: dictionary of user details from the incomming request
     """
     rdict = cp.requestDict()
-    rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
     pms.setSlackApiToken(rdict["teamid"])
     try:
+        if cp.docreatenewuser:
+            if pms.createNewUser(rdict["username"], rdict["slackid"], rdict["teamid"], rdict["emailaddress"]):
+                msg = "New chaim user created.\n"
+                msg += "```\n"
+                msg += "Username: {}\n".format(rdict["username"])
+                msg += "SlackId: {}\n".format(rdict["slackid"])
+                msg += "WorkspaceId: {}\n".format(rdict["teamid"])
+                msg += "```\n"
+                sendToSlack(rdict["responseurl"], msg)
+            else:
+                msg = "Failed to create a new chaim user for {}".format(rdict["username"])
+            sendToSlack(rdict["responseurl"], msg)
+            incMetric("chaim.newuser")
+        else:
+            rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
         if cp.dolist:
             log.debug("account list requested")
             alist = pms.accountList()
@@ -261,19 +275,6 @@ def doCommand(cp, pms, verstr):
             msg = "Slack User: {} Slack Workspace ID: {} Slack UID: {}".format(cp.username, cp.teamid, cp.slackid)
             sendToSlack(rdict["responseurl"], msg)
             incMetric("slack.identify")
-        elif cp.docreatenewuser:
-            if pms.createNewUser(rdict["username"], rdict["slackid"], rdict["teamid"], rdict["emailaddress"]):
-                msg = "New chaim user created.\n"
-                msg += "```\n"
-                msg += "Username: {}\n".format(rdict["username"])
-                msg += "SlackId: {}\n".format(rdict["slackid"])
-                msg += "WorkspaceId: {}\n".format(rdict["teamid"])
-                msg += "```\n"
-                sendToSlack(rdict["responseurl"], msg)
-            else:
-                msg = "Failed to create a new chaim user for {}".format(rdict["username"])
-            sendToSlack(rdict["responseurl"], msg)
-            incMetric("chaim.newuser")
     except Exception as e:
         msg = "{} exception: {}".format(type(e).__name__, e)
         log.error(msg)
