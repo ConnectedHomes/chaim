@@ -417,13 +417,13 @@ class Permissions():
 
 
     def createUser(self, username):
-        userid = 0
         sql = "insert into awsusers set name='{}'".format(username)
         af = self.rwsid.insertQuery(sql)
         log.debug("create user: affected rows {}".format(af))
-        log.debug("create user: last insert id: {}".format(self.rwsid.lastinsertid))
-        if af == 1:
-            userid = self.checkIDs("awsusers", "name", "User", username)
+        userid = self.rwsid.lastinsertid
+        log.debug("create user: last insert id: {}".format(userid))
+        if af != 1:
+            userid = 0
         return userid
 
     def findCognitoUser(self, username):
