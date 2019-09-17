@@ -402,7 +402,7 @@ class Permissions():
                 else:
                     cid = chaimuserid
             else:
-                cid = self.createNewUser(slackname)
+                cid = self.createUser(slackname)
             if cid is not None:
                 cc = CognitoClient()
                 if cc.adminCreateUser(self.params["poolid"], slackname, email):
