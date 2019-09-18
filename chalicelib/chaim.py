@@ -217,7 +217,6 @@ def doCommand(cp, pms, verstr):
                 msg += "SlackId: {}\n".format(rdict["slackid"])
                 msg += "WorkspaceId: {}\n".format(rdict["teamid"])
                 msg += "```\n"
-                sendToSlack(rdict["responseurl"], msg)
             else:
                 msg = "Failed to create a new chaim user for {}".format(rdict["username"])
             sendToSlack(rdict["responseurl"], msg)
