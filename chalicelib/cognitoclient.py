@@ -83,6 +83,22 @@ class CognitoClient(BotoSession):
             log.warning("Exception when retrieving user details for user {} in pool {}: {}".format(username, poolid, e))  # nopep8
         return resp
 
+    def adminCreateUser(self, poolid, username, email):
+        emaild = {"Name": "email", "Value": email}
+        emailv = {"Name": "email_verified", "Value": "True"}
+        ua = [emaild, emailv]
+        try:
+            resp = self.client.admin_create_user(
+                    UserPoolId=poolid,
+                    Username=username,
+                    UserAttributes=ua,
+                    MessageAction="SUPPRESS")
+            if "User" in resp and "Enabled" in resp["User"]:
+                return True
+            return False
+        except Exception as e:
+            log.warning("Exception when creating user {} in pool {}: {}".format(username, poolid, e))
+
     def findUserByEmail(self, poolid, emailaddr):
         """
         pass in an emailaddress or just the username

@@ -34,6 +34,14 @@ class DataNotFound(Exception):
     pass
 
 
+class ChaimUserExists(Exception):
+    pass
+
+
+class InvalidEmailAddress(Exception):
+    pass
+
+
 class Permissions():
     def __init__(self, secretpath="", testdb=False, quick=False,
                  stagepath="", missing=False):
@@ -353,12 +361,69 @@ class Permissions():
             log.error("error executing check usertoken query")
             raise DataNotFound(e)
 
+    def checkSlackMap(self, chaimid, slackid, workspaceid):
+        ret = False
+        scid = self.sid.sqlInt(chaimid)
+        ssid = self.sid.sqlStr(slackid)
+        swid = self.sid.sqlStr(workspaceid)
+        sql = "select * from slackmap where userid={} and slackid={} and workspaceid={}".format(scid, ssid, swid)
+        if self.sid is None:
+            raise DBNotConnected("no connection to db to check slack map for {}".format(chaimid))
+        res = self.sid.query(sql)
+        log.debug("check map query returned: {}".format(res))
+        if len(res) > 0:
+            ret = True
+        return ret
+
+    def slackMapInsert(self, chaimid, slackid, workspaceid):
+        scid = self.sid.sqlInt(chaimid)
+        ssid = self.sid.sqlStr(slackid)
+        swid = self.sid.sqlStr(workspaceid)
+        sql = "insert into slackmap (userid, slackid, workspaceid) values "
+        sql += "("
+        sql += ",".join([scid, ssid, swid])
+        sql += ")"
+        return sql
+
+    def createNewUser(self, slackname, slackid, workspaceid, email):
+        try:
+            ut = Utils()
+            if not ut.checkIsEmailAddress(email):
+                raise InvalidEmailAddress("invalid email address: {}".format(email))
+            cid = None
+            if " " in slackname:
+                raise IncorrectCredentials("Invalid chaim name: {}".format(slackname))
+            if self.rwsid is None:
+                raise DBNotConnected("no connection to db for createNewUser")
+            chaimuserid = self.checkIDs("awsusers", "name", "User", slackname, True)
+            if chaimuserid is not None:
+                if self.checkSlackMap(chaimuserid, slackid, workspaceid):
+                    raise ChaimUserExists("Chaim user already exists: {}".format(slackname))
+                else:
+                    cid = chaimuserid
+            else:
+                cid = self.createUser(slackname)
+            if cid is not None:
+                cc = CognitoClient()
+                if cc.adminCreateUser(self.params["poolid"], slackname, email):
+                    sql = self.slackMapInsert(cid, slackid, workspaceid)
+                    naf = self.rwsid.insertQuery(sql)
+                    if naf == 1:
+                        return True
+            return False
+        except Exception as e:
+            log.warning("Failed to create new user {}, Exception {}: {}".format(slackname, type(e).__name__, e))
+            raise
+
+
     def createUser(self, username):
-        userid = 0
         sql = "insert into awsusers set name='{}'".format(username)
         af = self.rwsid.insertQuery(sql)
-        if af == 1:
-            userid = self.checkIDs("awsusers", "name", "User", username)
+        log.debug("create user: affected rows {}".format(af))
+        userid = self.rwsid.lastinsertid
+        log.debug("create user: last insert id: {}".format(userid))
+        if af != 1:
+            userid = 0
         return userid
 
     def findCognitoUser(self, username):
