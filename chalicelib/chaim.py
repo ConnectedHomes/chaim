@@ -207,59 +207,77 @@ def doCommand(cp, pms, verstr):
     :param rdict: dictionary of user details from the incomming request
     """
     rdict = cp.requestDict()
-    rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
     pms.setSlackApiToken(rdict["teamid"])
-    if cp.dolist:
-        log.debug("account list requested")
-        alist = pms.accountList()
-        msg = "\n\n"
-        for row in alist:
-            msg += "{} {}\n".format(row[0], row[1])
-        sendSlackBot(pms.slackapitoken, rdict["username"], msg)
-        sendToSlack(rdict["responseurl"], "The SlackBot will send you the accounts list.")
-        incMetric("slack.list")
-    elif cp.dohelp:
-        log.debug("help requested")
-        sendSlackBot(pms.slackapitoken, rdict["username"], glue.usage())
-        sendToSlack(rdict["responseurl"], "The SlackBot will help.")
-        incMetric("slack.help")
-    elif cp.doversion:
-        log.debug("version request")
-        sendToSlack(rdict["responseurl"], verstr)
-        incMetric("slack.version")
-    elif cp.dowhoskey:
-        log.debug("whos key requested")
-        msg = whosKey(pms, cp.whoskey)
+    try:
+        if cp.docreatenewuser:
+            if pms.createNewUser(rdict["username"], rdict["slackid"], rdict["teamid"], rdict["emailaddress"]):
+                msg = "New chaim user created.\n"
+                msg += "```\n"
+                msg += "Username: {}\n".format(rdict["username"])
+                msg += "SlackId: {}\n".format(rdict["slackid"])
+                msg += "WorkspaceId: {}\n".format(rdict["teamid"])
+                msg += "```\n"
+            else:
+                msg = "Failed to create a new chaim user for {}".format(rdict["username"])
+            sendToSlack(rdict["responseurl"], msg)
+            incMetric("chaim.newuser")
+        else:
+            rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
+        if cp.dolist:
+            log.debug("account list requested")
+            alist = pms.accountList()
+            msg = "\n\n"
+            for row in alist:
+                msg += "{} {}\n".format(row[0], row[1])
+            sendSlackBot(pms.slackapitoken, rdict["username"], msg)
+            sendToSlack(rdict["responseurl"], "The SlackBot will send you the accounts list.")
+            incMetric("slack.list")
+        elif cp.dohelp:
+            log.debug("help requested")
+            sendSlackBot(pms.slackapitoken, rdict["username"], glue.usage())
+            sendToSlack(rdict["responseurl"], "The SlackBot will help.")
+            incMetric("slack.help")
+        elif cp.doversion:
+            log.debug("version request")
+            sendToSlack(rdict["responseurl"], verstr)
+            incMetric("slack.version")
+        elif cp.dowhoskey:
+            log.debug("whos key requested")
+            msg = whosKey(pms, cp.whoskey)
+            sendToSlack(rdict["responseurl"], msg)
+            incMetric("slack.whoskey")
+        elif cp.keyinit:
+            log.debug("keyinit requested")
+            rdict["apiid"] = cp.apiid
+            msg = doKeyInit(rdict, pms)
+            sendToSlack(rdict["responseurl"], msg)
+            incMetric("keyinit")
+        elif cp.doinitshow:
+            log.debug("initshow requested")
+            rdict["apiid"] = cp.apiid
+            msg = readKeyInit(rdict, pms)
+            sendToSlack(rdict["responseurl"], msg)
+            incMetric("initshow")
+        elif cp.doshowroles:
+            log.debug("show roles requested")
+            roledict = pms.roleAliasDict()
+            msg = ""
+            for ra in roledict:
+                msg += "\n{}:\t{}".format(ra, roledict[ra])
+            sendToSlack(rdict["responseurl"], "```{}```".format(msg))
+            incMetric("showroles")
+        elif cp.docountusers:
+            msg = pms.countLastSince(2)
+            sendToSlack(rdict["responseurl"], "```{}```".format(msg))
+            incMetric("countusers")
+        elif cp.doidentify:
+            msg = "Slack User: {} Slack Workspace ID: {} Slack UID: {}".format(cp.username, cp.teamid, cp.slackid)
+            sendToSlack(rdict["responseurl"], msg)
+            incMetric("slack.identify")
+    except Exception as e:
+        msg = "{} exception: {}".format(type(e).__name__, e)
+        log.error(msg)
         sendToSlack(rdict["responseurl"], msg)
-        incMetric("slack.whoskey")
-    elif cp.keyinit:
-        log.debug("keyinit requested")
-        rdict["apiid"] = cp.apiid
-        msg = doKeyInit(rdict, pms)
-        sendToSlack(rdict["responseurl"], msg)
-        incMetric("keyinit")
-    elif cp.doinitshow:
-        log.debug("initshow requested")
-        rdict["apiid"] = cp.apiid
-        msg = readKeyInit(rdict, pms)
-        sendToSlack(rdict["responseurl"], msg)
-        incMetric("initshow")
-    elif cp.doshowroles:
-        log.debug("show roles requested")
-        roledict = pms.roleAliasDict()
-        msg = ""
-        for ra in roledict:
-            msg += "\n{}:\t{}".format(ra, roledict[ra])
-        sendToSlack(rdict["responseurl"], "```{}```".format(msg))
-        incMetric("showroles")
-    elif cp.docountusers:
-        msg = pms.countLastSince(2)
-        sendToSlack(rdict["responseurl"], "```{}```".format(msg))
-        incMetric("countusers")
-    elif cp.doidentify:
-        msg = "Slack User: {} Slack Workspace ID: {} Slack UID: {}".format(cp.username, cp.teamid, cp.slackid)
-        sendToSlack(rdict["responseurl"], msg)
-        incMetric("slack.identify")
 
 
 def whosKey(pms, key):
