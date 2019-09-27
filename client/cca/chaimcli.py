@@ -252,7 +252,7 @@ def doUrl(account, ifn, browser=False, logout=False):
     expires = int(sect["expires"]) - cliutils.getNow()
     msg = cliutils.displayHMS(expires)
     cmsg = "URL copied to clipboard for account {}\nExpires: {}".format(acct, msg)
-    cmd = "open" if sys.platform == "Darwin" else "xdg-open"
+    cmd = "open" if sys.platform == "darwin" else "xdg-open"
     if browser:
         try:
             subprocess.Popen([cmd, url])
