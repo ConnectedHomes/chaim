@@ -327,7 +327,7 @@ def doKeyInit(rdict, pms):
         if not pms.checkToken(rdict["incomingtoken"], rdict["username"], rdict["teamid"]):
             raise InvalidToken("slack access token is invalid")
         log.debug("doKeyInit slack token check passed ok")
-        expiredays = 30 if rdict["stage"] != "dev" else 1
+        expiredays = 6 if rdict["stage"] != "dev" else 1
         ut = Utils()
         uuid, expires = ut.newUserToken(expiredays)
         if pms.updateUserToken(rdict["username"], uuid, expires):
