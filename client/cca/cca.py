@@ -75,6 +75,7 @@ def account(account, role, duration, alias, default, region, terrible):
     setregion = False if region is None else region
     if not chaim.requestKeys(account, role, duration, alias, config, setregion, default, terrible):
         click.echo("Failed to obtain credentials for account " + account, err=True)
+        sys.exit(1)
 
 
 @cca.command()
@@ -93,6 +94,7 @@ def renew():
     except Exception as e:
         msg = "An error occurred: {}: {}".format(type(e).__name__, e)
         click.echo(msg, err=True)
+        sys.exit(1)
 
 
 @cca.command()
