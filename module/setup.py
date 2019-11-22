@@ -18,34 +18,32 @@
 #
 from setuptools import setup
 from setuptools import find_packages
-from cca import __version__ as v
+from chaim import __version__ as v
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='chaim-cli',
+    name='chaim',
     version=v,
     author="Chris Allison",
     author_email="chris.allison@hivehome.com",
-    url="https://github.com/ConnectedHomes/chaim/client",
-    description="Centrica Chaim AWS Accounts",
+    url="https://github.com/ConnectedHomes/chaim/module",
+    description="Centrica Chaim AWS Accounts - Python Module",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=['docs', 'tests*']),
     install_requires=[
-        'click',
         'requests',
-        'pyperclip',
         'chardet',
         'certifi',
         ],
     python_requires='>=3',
-    entry_points={
-        'console_scripts': [
-            'cca=cca.cca:cca',
-        ]
-    },
+    # entry_points={
+    #     'console_scripts': [
+    #         'cca=cca.cca:cca',
+    #     ]
+    # },
     classifiers=(
         'Development Status :: 4 - Beta',
         "Programming Language :: Python :: 3",
