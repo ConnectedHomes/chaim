@@ -15,3 +15,4 @@ vendor/
 dist/
 chaim_cli.egg-info/
 policies/sredev
+chaim.egg-info
