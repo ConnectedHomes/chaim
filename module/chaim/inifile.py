@@ -23,11 +23,10 @@ import configparser
 import time
 from shutil import copyfile
 import errno
-import logging
 import threading
+import chaim.logging as LOG
 
-log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
+log = LOG.log
 
 
 class IniFile(configparser.ConfigParser):
