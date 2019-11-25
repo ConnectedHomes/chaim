@@ -16,7 +16,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""Module for reading/writing ini style files"""
+"""Class for reading/writing ini style files"""
 # vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=indent:
 import os
 import configparser
