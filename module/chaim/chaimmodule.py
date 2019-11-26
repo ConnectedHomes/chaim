@@ -17,23 +17,29 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-chaim module for click based chaim cli (cca)
+chaim module for python scripting with chaim
 
 This is the module that does all the work
 """
 
+import ast
 import sys
 import subprocess
-import click
 import time
 import requests
 import json
 import base64
 import pyperclip
-import cca.cliutils as cliutils
-import ast
-from cca import __version__ as ccaversion
+import chaim.logging as LOG
+import chaim.utils as utils
+from chaim.errors import errorRaise
+from chaim.errors import errorNotify
+from chaim.errors import errorExit
+from chaim import __version__ as version
 
+log = LOG.log
+LOG.setConsoleOut()
+LOG.setInfo()
 
 class UnmanagedAccount(Exception):
     pass
@@ -99,12 +105,12 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
         return ret
     if len(accountalias) == 0:
         accountalias = account
-    click.echo("account: {}, alias: {}, role: {}, duration: {}".format(account, accountalias, role, duration))
+    log.info("account: {}, alias: {}, role: {}, duration: {}".format(account, accountalias, role, duration))
     params = {"text": "{},{},{}".format(account, role, duration)}
     params["user_name"] = defsect["username"]
     params["token"] = defsect["usertoken"]
     params["response_url"] = "ignoreme"
-    params["useragent"] = "cca " + ccaversion
+    params["useragent"] = "cca " + version
     if "slackid" in defsect:
         params["user_id"] = defsect["slackid"]
     if "workspaceid" in defsect:
@@ -120,14 +126,14 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
             if "statusCode" in d:
                 sc = int(d["statusCode"])
                 if sc > 399:
-                    click.echo("Error: {}: {}".format(sc, d["text"]), err=True)
+                    log.error("Error: {}: {}".format(sc, d["text"]), err=True)
                 else:
                     ret = storeKeys(d["text"], duration, role, accountalias, ifn, setregion, default, terrible)
-                    click.echo("{} retrieval took {} seconds.".format(accountalias,taken))
+                    log.info("{} retrieval took {} seconds.".format(accountalias,taken))
         else:
-            click.echo("d is not a dict", err=True)
+            log.error("d is not a dict", err=True)
     else:
-        click.echo("status: {} response: {}".format(r.status_code, r.text), err=True)
+        log.info("status: {} response: {}".format(r.status_code, r.text), err=True)
     return ret
 
 
@@ -155,7 +161,7 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
             # log.debug("adding account: {}".format(accountalias))
             ifn.add_section(accountalias)
         if ifn.updateSection(accountalias, dd, True):
-            click.echo("Updated section {} with new keys".format(xd["sectionname"]))
+            log.info("Updated section {} with new keys".format(xd["sectionname"]))
             ret = True
             if "section" in defsect:
                 if defsect["section"] == xd["sectionname"]:
@@ -167,7 +173,7 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
                     defsect["alias"] = accountalias
                     defsect["expires"] = str(xd["expires"])
                     if ifn.updateSection("default", defsect, True):
-                        click.echo("updated default account")
+                        log.info("updated default account")
                         default = False
             if default:
                 defsect["aws_access_key_id"] = xd["accesskeyid"]
@@ -179,11 +185,11 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
                 defsect["alias"] = accountalias
                 defsect["expires"] = str(xd["expires"])
                 if ifn.updateSection("default", defsect, True):
-                    click.echo("updated default account")
+                    log.info("updated default account")
         else:
-            click.echo("Failed to update section {}".format(xd["sectionname"]), err=True)
+            log.error("Failed to update section {}".format(xd["sectionname"]), err=True)
     else:
-        click.echo("xd is not a dict: {}: {}".format(type(xd), xd), err=True)
+        log.error("xd is not a dict: {}: {}".format(type(xd), xd), err=True)
     return ret
 
 
@@ -206,7 +212,7 @@ def requestUrl(account, ifn):
                 params["duration"] = duration
                 params["username"] = defsect["username"]
                 params["account"] = accountname
-                params["useragent"] = "cca " + ccaversion
+                params["useragent"] = "cca " + version
                 print("sending to {} data: {}".format(endpoint + "gui", params))
                 r = requests.post(endpoint + "gui", data=params)
                 if 200 == r.status_code:
@@ -232,11 +238,11 @@ def doUrl(account, ifn, browser=False, logout=False):
     if len(account) == 0:
         account = [getDefaultAccount(ifn)]
     if account is None:
-        click.echo("account name required or no default account set.")
+        log.error("account name required or no default account set.")
         return
     acct = account[0]
     if not ifn.sectionExists(acct):
-        click.echo("account {} not recognised.".format(acct))
+        log.error("account {} not recognised.".format(acct))
         return
     renewSection(acct, ifn)
     sect = ifn.getSectionItems(acct)
@@ -249,28 +255,28 @@ def doUrl(account, ifn, browser=False, logout=False):
     else:
         raise NoUrl("gui_url not set in credentials")
     pyperclip.copy(url)
-    expires = int(sect["expires"]) - cliutils.getNow()
-    msg = cliutils.displayHMS(expires)
+    expires = int(sect["expires"]) - utils.getNow()
+    msg = utils.displayHMS(expires)
     cmsg = "URL copied to clipboard for account {}\nExpires: {}".format(acct, msg)
     cmd = "open" if sys.platform == "darwin" else "xdg-open"
     if browser:
         try:
             subprocess.Popen([cmd, url])
-            click.echo("GUI session opened for account {}\nExpires: {}".format(acct, msg))
+            log.info("GUI session opened for account {}\nExpires: {}".format(acct, msg))
         except OSError:
-            click.echo(cmsg)
+            log.info(cmsg)
     elif logout:
         try:
             logouturl = "https://signin.aws.amazon.com/oauth?Action=logout"
             subprocess.Popen([cmd, logouturl])
-            click.echo("Loging out of current session (if any)")
+            log.info("Loging out of current session (if any)")
             time.sleep(1)
             subprocess.Popen([cmd, url])
-            click.echo("GUI session opened for account {}\nExpires: {}".format(acct, msg))
+            log.info("GUI session opened for account {}\nExpires: {}".format(acct, msg))
         except OSError:
-            click.echo(cmsg)
+            log.info(cmsg)
     else:
-        click.echo(cmsg)
+        log.info(cmsg)
 
 
 def askInit(ifn):
@@ -287,8 +293,8 @@ def askInit(ifn):
             else:
                 defsect[key] = input("{}: ".format(key))
     ifn.updateSection("default", defsect, True)
-    estr = cliutils.displayHMS(int(defsect["tokenexpires"]) - int(time.time()), True)
-    click.echo("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
+    estr = utils.displayHMS(int(defsect["tokenexpires"]) - int(time.time()), True)
+    log.info("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
 
 
 def doInit(initstr, ifn):
@@ -303,8 +309,8 @@ def doInit(initstr, ifn):
             else:
                 defsect[pl[0]] = pl[1]
         ifn.updateSection("default", defsect, True)
-        estr = cliutils.displayHMS(int(defsect["tokenexpires"]) - int(time.time()), True)
-        click.echo("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
+        estr = utils.displayHMS(int(defsect["tokenexpires"]) - int(time.time()), True)
+        log.info("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
     else:
         askInit(ifn)
 
@@ -313,7 +319,7 @@ def displayMyList(ifn):
     defsect = getDefaultSection(ifn)
     if "tokenexpires" in defsect:
         if int(defsect["tokenexpires"]) > 0:
-            click.echo("User Token {}".format(cliutils.displayExpires(int(defsect["tokenexpires"]))))
+            log.info("User Token {}".format(utils.displayExpires(int(defsect["tokenexpires"]))))
     if 'alias' in defsect:
         defname = defsect['alias']
     elif 'section' in defsect:
@@ -325,8 +331,8 @@ def displayMyList(ifn):
             defstr = "(DEFAULT)" if section == defname else ""
             tsectd = ifn.getSectionItems(section)
             if "expires" in tsectd:
-                expstr = cliutils.displayExpires(int(tsectd["expires"]), int(tsectd["duration"]))
-                click.echo("{} {} {}".format(section, expstr, defstr))
+                expstr = utils.displayExpires(int(tsectd["expires"]), int(tsectd["duration"]))
+                log.info("{} {} {}".format(section, expstr, defstr))
 
 
 def requestList(ifn):
@@ -336,7 +342,7 @@ def requestList(ifn):
     params["user_name"] = defsect["username"]
     params["token"] = defsect["usertoken"]
     params["response_url"] = "ignoreme"
-    params["useragent"] = "cca " + ccaversion
+    params["useragent"] = "cca " + version
     r = requests.post(endpoint, data=params)
     if 200 == r.status_code:
         if r.text == 'null':
@@ -353,7 +359,7 @@ def requestList(ifn):
 
 def deleteAccount(account, ifn):
     if account in ifn.titles():
-        click.echo("Deleting account {}.".format(account))
+        log.info("Deleting account {}.".format(account))
         ifn.deleteSection(account)
 
 
