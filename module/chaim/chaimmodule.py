@@ -32,7 +32,7 @@ import json
 import base64
 import chaim.logging as LOG
 import chaim.utils as utils
-import chaim.inifile as inifile
+from chaim.inifile import IniFile
 from chaim.errors import errorRaise
 from chaim.errors import errorNotify
 from chaim.errors import errorExit
@@ -72,8 +72,8 @@ class Chaim(object):
         self.root = os.path.expanduser("~/.aws")
         self.credsfn = self.root + "/credentials"
         self.parkfn = self.root + "/chaim-parked"
-        self.ifn = inifile(self.credsfn, takebackup=False)
-        self.pfn = inifile(self.parkfn, takebackup=False)
+        self.ifn = IniFile(self.credsfn, takebackup=False)
+        self.pfn = IniFile(self.parkfn, takebackup=False)
         self.account = account
         self.role = role
         self.duration = duration
@@ -84,7 +84,7 @@ class Chaim(object):
     def __enter__(self):
         return self.requestKeys()
 
-    def _exit__(self, xtype, value, traceback):
+    def __exit__(self, xtype, value, traceback):
         self.deleteAccount(self.accountalias)
         return True
 
