@@ -54,8 +54,11 @@ Parameters to set up the Chaim Object
 
 ### Exceptions
 Chaim has 2 unique exceptions
+
   UmanagedAccount
+
   NoUrl
+
 Neither of these should be thrown when using as a context manager.
 
 ### Callable Methods
