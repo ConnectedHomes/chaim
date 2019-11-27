@@ -29,7 +29,7 @@ levels of verboseness:
 
  `>1`: debug messages
 
-verbose defaults to 0
+verbose defaults to `0`
 
 ## API
 ### Parameters
@@ -70,40 +70,40 @@ These Functions have been written to ease future expansion of this module.
 #### `getDefaultSection()`
 returns the default section from the credentials file
 
-#### getDefaultAccount()
+#### `getDefaultAccount()`
 returns the default account name as set in the credentials file
 
-#### getEndpoint()
+#### `getEndpoint()`
 returns the url to access the chaim api gateway
 
-#### renewSection(section)
-requests updated credentails for the account named in 'section'
+#### `renewSection(section)`
+requests updated credentails for the account named in `section`
 
-#### requestKeys()
+#### `requestKeys()`
 Obtains credentials from chaim.  Takes no parameters
 
-#### storeKeys(text)
-Stores the keys contained in 'text' into the credential file format.
+#### `storeKeys(text)`
+Stores the keys contained in `text` into the credential file format.
 
-'text' should be the returned text from a requests object. It should be convertable
+`text` should be the returned text from a requests object. It should be convertable
 into json and then into a python dictionary.
 
-#### displayMyList()
+#### `displayMyList()`
 lists the current chaim credentials you hold, along with their expiration times.
 
-#### requestList()
+#### `requestList()`
 returns a list of all account ids and account names that chaim knows about
 
-#### deleteAccount(account)
-deletes the account credentials 'account' from the credentials file
+#### `deleteAccount(account)`
+deletes the account credentials `account` from the credentials file
 
-#### parkAccount(account)
-removes the account definition from the credentials file and stores it for later use
+#### `parkAccount(account)`
+removes the `account` definition from the credentials file and stores it for later use
 in the chaim-parked accounts file
 
-#### unparkAccount(account)
-removes the account definition from the chaim-parked accounts file, adds it to the
+#### `unparkAccount(account)`
+removes the `account` definition from the chaim-parked accounts file, adds it to the
 credentials file and renews the credentials for it.
 
-#### listParkAccounts()
+#### `listParkAccounts()`
 displays a list of parked accounts
