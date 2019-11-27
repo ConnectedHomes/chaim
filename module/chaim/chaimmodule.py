@@ -52,7 +52,12 @@ class NoUrl(Exception):
 
 
 class Chaim(object):
-    def __init__(self, account, role, duration=1, region="eu-west-1", tempname="tempname", terrible=False):
+    def __init__(self, account, role, duration=1, region="eu-west-1", tempname="tempname", terrible=False, verbose=0):
+        LOG.setWarn()
+        if verbose == 1:
+            LOG.setInfo()
+        elif verbose > 1:
+            LOG.setDebug()
         self.root = os.path.expanduser("~/.aws")
         self.credsfn = self.root + "/credentials"
         self.parkfn = self.root + "/chaim-parked"
