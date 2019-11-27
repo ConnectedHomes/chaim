@@ -52,7 +52,19 @@ class NoUrl(Exception):
 
 
 class Chaim(object):
-    def __init__(self, account, role, duration=1, region="eu-west-1", tempname="tempname", terrible=False, verbose=0):
+    def __init__(
+            self,
+            account,
+            role,
+            duration=1,
+            region="eu-west-1",
+            tempname="tempname",
+            terrible=False,
+            verbose=0,
+            logfile=None
+            ):
+        if logfile is not None:
+            LOG.setLogFile(logfile)
         LOG.setWarn()
         if verbose == 1:
             LOG.setInfo()
@@ -211,6 +223,7 @@ class Chaim(object):
                     log.info("{} {} {}".format(section, expstr, defstr))
 
     def requestList(self):
+        jaccs = None
         endpoint = self.getEndpoint()
         defsect = self.getDefaultSection()
         params = {"text": "--list"}
@@ -226,10 +239,9 @@ class Chaim(object):
                 jmm = r.json()
                 d = ast.literal_eval(jmm["text"])
                 jaccs = d.get("accountlist")
-                for row in jaccs:
-                    log.info("{} {}".format(row[0], row[1]))
         else:
             log.info("status: {} response: {}".format(r.status_code, r.text))
+        return jaccs
 
     def deleteAccount(self, account):
         if account in self.ifn.titles():

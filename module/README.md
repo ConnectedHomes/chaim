@@ -19,3 +19,54 @@ with Chaim("sredev", "mpu", 1) as success:
 # valid and have been deleted.
 print("all done")
 ```
+
+Chaim can be quite 'chatty' and defaults to logging output to stderr.  There are 3
+levels of verboseness:
+  0: only show errors
+  1: show progress
+ >1: debug messages
+verbose defaults to 0
+
+## API
+### Parameters
+Parameters to set up the Chaim Object
+
+  account - the full account name to obtain credentials for.
+  role - the chaim role to access the account as.
+  duration - integer between 1 and 12 for number of hours to hold the credentials for.
+             defaults to 1 hour.
+  region - defaults to 'eu-west-1'.
+  tempname - the alias for the account - defaults to 'tempname'.
+  terrible - set to True for Ansible/Terraform support - defaults to False.
+  verbose - set loglevel, defaults to WARN, 1 = INFO, >1 = DEBUG
+  logfile - log output to a seperate file, defaults to NONE.
+
+### Exceptions
+Chaim has 2 unique exceptions
+  UmanagedAccount
+  NoUrl
+Neither of these should be thrown when using as a context manager.
+
+### Callable Methods
+None of these are intended for basic, context manager, usage, this list is provided
+for completeness.  To use these the Chaim object must be setup first.
+
+These Functions have been written to ease future expansion of this module.
+
+#### getDefaultSection()
+returns the default section from the credentials file
+
+#### getDefaultAccount()
+returns the default account name as set in the credentials file
+
+#### getEndpoint()
+returns the url to access the chaim api gateway
+#### requestKeys()
+Obtains credentials from chaim.  Takes no parameters
+
+#### storeKeys(text)
+Stores the keys contained in 'text' into the credential file format.
+
+'text' should be the returned text from a requests object. It should be convertable
+into json and then into a python dictionary.
+
