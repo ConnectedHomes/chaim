@@ -52,7 +52,7 @@ class NoUrl(Exception):
 
 
 class Chaim(object):
-    def __inti__(self, account, role, duration=1):
+    def __init__(self, account, role, duration=1, region="eu-west-1", tempname="tempname", terrible=False):
         self.root = os.path.expanduser("~/.aws")
         self.credsfn = self.root + "/credentials"
         self.parkfn = self.root + "/chaim-parked"
@@ -61,12 +61,16 @@ class Chaim(object):
         self.account = account
         self.role = role
         self.duration = duration
+        self.region = region
+        self.accountalias = tempname
+        self.terrible = terrible
 
     def __enter__(self):
-        pass
+        return self.requestKeys()
 
-    def _exit__(self):
-        pass
+    def _exit__(self, xtype, value, traceback):
+        self.deleteAccount(self.accountalias)
+        return True
 
     def getDefaultSection(self):
         ret = None
@@ -113,15 +117,15 @@ class Chaim(object):
         else:
             return False
 
-    def requestKeys(self, account, role, duration, accountalias, setregion, default=False, terrible=False):
+    def requestKeys(self):
         ret = False
         defsect = self.getDefaultSection()
-        if account == "NOT SET":
+        if self.account == "NOT SET":
             return ret
-        if len(accountalias) == 0:
-            accountalias = account
-        log.info("account: {}, alias: {}, role: {}, duration: {}".format(account, accountalias, role, duration))
-        params = {"text": "{},{},{}".format(account, role, duration)}
+        if len(self.accountalias) == 0:
+            self.accountalias = self.account
+        log.info("account: {}, alias: {}, role: {}, duration: {}".format(self.account, self.accountalias, self.role, self.duration))
+        params = {"text": "{},{},{}".format(self.account, self.role, self.duration)}
         params["user_name"] = defsect["username"]
         params["token"] = defsect["usertoken"]
         params["response_url"] = "ignoreme"
@@ -143,15 +147,15 @@ class Chaim(object):
                     if sc > 399:
                         log.error("Error: {}: {}".format(sc, d["text"]), err=True)
                     else:
-                        ret = self.storeKeys(d["text"], duration, role, accountalias, setregion, default, terrible)
-                        log.info("{} retrieval took {} seconds.".format(accountalias,taken))
+                        ret = self.storeKeys(d["text"])
+                        log.info("{} retrieval took {} seconds.".format(self.accountalias, taken))
             else:
                 log.error("d is not a dict", err=True)
         else:
             log.info("status: {} response: {}".format(r.status_code, r.text), err=True)
         return ret
 
-    def storeKeys(self, text, duration, role, accountalias, setregion=False, default=False, terrible=False):
+    def storeKeys(self, text):
         ret = False
         defsect = self.getDefaultSection()
         xd = json.loads(text.replace("'", '"'))
@@ -160,7 +164,7 @@ class Chaim(object):
             dd["aws_access_key_id"] = xd["accesskeyid"]
             dd["aws_secret_access_key"] = xd["secretkey"]
             dd["aws_session_token"] = xd["sessiontoken"]
-            if terrible:
+            if self.terrible:
                 dd["aws_security_token"] = xd["sessiontoken"]
             dd["region"] = defsect["region"]
             dd["expires"] = str(xd["expires"])
@@ -169,37 +173,13 @@ class Chaim(object):
             dd["gui_url"] = xd["url"]
             dd["role"] = role
             dd["accountname"] = xd["sectionname"]
-            if setregion:
-                dd["region"] = setregion
-            if accountalias not in self.ifn.titles():
+            dd["region"] = self.region
+            if self.accountalias not in self.ifn.titles():
                 # log.debug("adding account: {}".format(accountalias))
-                self.ifn.add_section(accountalias)
-            if self.ifn.updateSection(accountalias, dd, True):
+                self.ifn.add_section(self.accountalias)
+            if self.ifn.updateSection(self.accountalias, dd, True):
                 log.info("Updated section {} with new keys".format(xd["sectionname"]))
                 ret = True
-                if "section" in defsect:
-                    if defsect["section"] == xd["sectionname"]:
-                        defsect["aws_access_key_id"] = xd["accesskeyid"]
-                        defsect["aws_secret_access_key"] = xd["secretkey"]
-                        defsect["aws_session_token"] = xd["sessiontoken"]
-                        if terrible:
-                            defsect["aws_security_token"] = xd["sessiontoken"]
-                        defsect["alias"] = accountalias
-                        defsect["expires"] = str(xd["expires"])
-                        if self.ifn.updateSection("default", defsect, True):
-                            log.info("updated default account")
-                            default = False
-                if default:
-                    defsect["aws_access_key_id"] = xd["accesskeyid"]
-                    defsect["aws_secret_access_key"] = xd["secretkey"]
-                    defsect["aws_session_token"] = xd["sessiontoken"]
-                    if terrible:
-                        defsect["aws_security_token"] = xd["sessiontoken"]
-                    defsect["section"] = xd["sectionname"]
-                    defsect["alias"] = accountalias
-                    defsect["expires"] = str(xd["expires"])
-                    if self.ifn.updateSection("default", defsect, True):
-                        log.info("updated default account")
             else:
                 log.error("Failed to update section {}".format(xd["sectionname"]), err=True)
         else:
