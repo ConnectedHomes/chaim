@@ -31,6 +31,12 @@ def setDebug():
 def setInfo():
     log.setLevel(logging.INFO)
 
+def setWarn():
+    log.setLevel(logging.WARNING)
+
+def setError():
+    log.setLevel(logging.ERROR)
+
 def setLogFile(fqfn, fformat="%(asctime)s [%(levelname)-5.5s]  %(message)s", datefmt="%d/%m/%Y %H:%M:%S"):
     """
     sets log output to go to a file
