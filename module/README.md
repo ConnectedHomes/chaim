@@ -22,9 +22,11 @@ print("all done")
 
 Chaim can be quite 'chatty' and defaults to logging output to stderr.  There are 3
 levels of verboseness:
-  0: only show errors
-  1: show progress
- >1: debug messages
+
+  '0': only show errors
+  '1': show progress
+ '>1': debug messages
+
 verbose defaults to 0
 
 ## API
