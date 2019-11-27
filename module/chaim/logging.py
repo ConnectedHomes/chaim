@@ -56,4 +56,4 @@ def setConsoleOut(STDOUT=False, cformat="%(asctime)s [%(levelname)-5.5s]  %(mess
     else:
         consH = logging.StreamHandler(sys.stderr)
     consH.setFormatter(cfmt)
-    log.addHandler(consh)
+    log.addHandler(consH)
