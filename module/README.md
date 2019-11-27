@@ -24,7 +24,9 @@ Chaim can be quite 'chatty' and defaults to logging output to stderr.  There are
 levels of verboseness:
 
   '0': only show errors
+
   '1': show progress
+
  '>1': debug messages
 
 verbose defaults to 0
@@ -34,13 +36,20 @@ verbose defaults to 0
 Parameters to set up the Chaim Object
 
   account - the full account name to obtain credentials for.
+
   role - the chaim role to access the account as.
+
   duration - integer between 1 and 12 for number of hours to hold the credentials for.
              defaults to 1 hour.
+
   region - defaults to 'eu-west-1'.
+
   tempname - the alias for the account - defaults to 'tempname'.
+
   terrible - set to True for Ansible/Terraform support - defaults to False.
+
   verbose - set loglevel, defaults to WARN, 1 = INFO, >1 = DEBUG
+
   logfile - log output to a seperate file, defaults to NONE.
 
 ### Exceptions
