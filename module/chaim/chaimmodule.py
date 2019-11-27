@@ -182,12 +182,11 @@ class Chaim(object):
             dd["aws_session_token"] = xd["sessiontoken"]
             if self.terrible:
                 dd["aws_security_token"] = xd["sessiontoken"]
-            dd["region"] = defsect["region"]
             dd["expires"] = str(xd["expires"])
             dd["expstr"] = xd["expiresstr"]
-            dd["duration"] = str(duration)
+            dd["duration"] = str(self.duration)
             dd["gui_url"] = xd["url"]
-            dd["role"] = role
+            dd["role"] = self.role
             dd["accountname"] = xd["sectionname"]
             dd["region"] = self.region
             if self.accountalias not in self.ifn.titles():
