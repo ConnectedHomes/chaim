@@ -67,7 +67,7 @@ for completeness.  To use these the Chaim object must be setup first.
 
 These Functions have been written to ease future expansion of this module.
 
-#### getDefaultSection()
+#### `getDefaultSection()`
 returns the default section from the credentials file
 
 #### getDefaultAccount()
