@@ -30,7 +30,6 @@ import time
 import requests
 import json
 import base64
-import pyperclip
 import chaim.logging as LOG
 import chaim.utils as utils
 import chaim.inifile as inifile
