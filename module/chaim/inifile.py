@@ -24,9 +24,10 @@ import time
 from shutil import copyfile
 import errno
 import threading
-import chaim.logging as LOG
+import ccalogging
+# import chaim.logging as LOG
 
-log = LOG.log
+log = ccalogging.log
 
 
 class IniFile(configparser.ConfigParser):

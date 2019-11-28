@@ -37,6 +37,7 @@ setup(
         'requests',
         'chardet',
         'certifi',
+        'ccalogging',
         ],
     python_requires='>=3',
     # entry_points={

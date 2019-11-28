@@ -30,7 +30,8 @@ import time
 import requests
 import json
 import base64
-import chaim.logging as LOG
+import ccalogging
+# import chaim.logging as LOG
 import chaim.utils as utils
 from chaim.inifile import IniFile
 from chaim.errors import errorRaise
@@ -38,9 +39,9 @@ from chaim.errors import errorNotify
 from chaim.errors import errorExit
 from chaim import __version__ as version
 
-log = LOG.log
-LOG.setConsoleOut()
-LOG.setInfo()
+ccalogging.setConsoleOut()
+ccalogging.setInfo()
+log = ccalogging.log
 
 class UnmanagedAccount(Exception):
     pass
