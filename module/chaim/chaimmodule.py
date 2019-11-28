@@ -88,6 +88,9 @@ class Chaim(object):
         self.deleteAccount(self.accountalias)
         return True
 
+    def __del__(self):
+        self.deleteAccount(self.accountalias)
+
     def getDefaultSection(self):
         ret = None
         if "default" in self.ifn.titles():
