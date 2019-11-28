@@ -64,12 +64,12 @@ class Chaim(object):
             logfile=None
             ):
         if logfile is not None:
-            LOG.setLogFile(logfile)
-        LOG.setWarn()
+            ccalogging.setLogFile(logfile)
+        ccalogging.setWarn()
         if verbose == 1:
-            LOG.setInfo()
+            ccalogging.setInfo()
         elif verbose > 1:
-            LOG.setDebug()
+            ccalogging.setDebug()
         self.root = os.path.expanduser("~/.aws")
         self.credsfn = self.root + "/credentials"
         self.parkfn = self.root + "/chaim-parked"
