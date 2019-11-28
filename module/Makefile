@@ -7,7 +7,7 @@ tags:
 
 clean:
 	rm -rf dist
-	rm -rf chaim_cli.egg-info
+	rm -rf *.egg-info
 
 dev:
 ifeq ($(strip $(VIRTUAL_ENV)),)
