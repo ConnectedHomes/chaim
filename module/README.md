@@ -7,6 +7,8 @@ for an AWS account under the alias 'tempname'.  These credentials are removed wh
 the context goes out of scope.
 
 ```
+from chaim.chaimmodule import Chaim
+
 with Chaim("sredev", "mpu", 1) as success:
     # if success is True we successfully obtained credentials
     if success:
@@ -18,6 +20,25 @@ with Chaim("sredev", "mpu", 1) as success:
 # script continues but we are now 'out of context' so the credentials are no longer
 # valid and have been deleted.
 print("all done")
+```
+
+Chaim can also act as an ordinary python class facilitating access to chaim accounts.  Each object
+only works with one AWS account.  You should set the `tempname` class constructor variable to a
+unique value if you use more than one instance at once.
+
+You will need to call `Chaim.requestKeys()` to actually get keys for the account.
+
+It should be thread safe as there is thread locking code in the ini file write routine.
+
+```
+from chaim.chaimmodule import Chaim
+
+ch = Chaim("sredev", "rro", 1, tempname="uniquename12")
+success = ch.requestKeys()
+...
+# when program ends or object is destroyed Chaim.deleteAccount() is automatically called
+# which will delete the account information from the ini file
+del(ch)
 ```
 
 Chaim can be quite 'chatty' and defaults to logging output to stderr.  There are 3
