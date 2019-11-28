@@ -25,7 +25,6 @@ from shutil import copyfile
 import errno
 import threading
 import ccalogging
-# import chaim.logging as LOG
 
 log = ccalogging.log
 

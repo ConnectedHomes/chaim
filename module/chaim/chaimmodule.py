@@ -31,7 +31,6 @@ import requests
 import json
 import base64
 import ccalogging
-# import chaim.logging as LOG
 import chaim.utils as utils
 from chaim.inifile import IniFile
 from chaim.errors import errorRaise
