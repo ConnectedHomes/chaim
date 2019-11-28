@@ -17,7 +17,7 @@
 #     along with chaim.  If not, see <http://www.gnu.org/licenses/>.
 #
 majorv = 0
-minorv = 0
-buildv = 1
+minorv = 5
+buildv = 0
 __version__ = str(majorv) + "." + str(minorv) + "." + str(buildv)
 __version_info__ = [majorv, minorv, buildv]
