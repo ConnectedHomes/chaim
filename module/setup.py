@@ -28,7 +28,7 @@ setup(
     version=v,
     author="Chris Allison",
     author_email="chris.allison@hivehome.com",
-    url="https://github.com/ConnectedHomes/chaim/module",
+    url="https://github.com/ConnectedHomes/chaim/tree/master/module",
     description="Centrica Chaim AWS Accounts - Python Module",
     long_description=long_description,
     long_description_content_type="text/markdown",
