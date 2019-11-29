@@ -80,6 +80,7 @@ class Chaim(object):
         self.region = region
         self.accountalias = tempname
         self.terrible = terrible
+        self.holdaccount = None
 
     def __enter__(self):
         return self.requestKeys()
@@ -120,6 +121,8 @@ class Chaim(object):
         if section in self.ifn.titles():
             sect = self.ifn.getSectionItems(section)
             if "accountname" in sect:
+                if self.account != account:
+                    self.holdaccount = self.account
                 self.account = sect["accountname"]
                 self.duration = sect["duration"]
                 self.role = sect["role"]
@@ -128,6 +131,9 @@ class Chaim(object):
                 if "region" in sect:
                     self.region = sect["region"]
                 self.terrible = True if "aws_security_token" in sect else False
+                if self.holdaccount is not None:
+                    self.account = self.holdaccount
+                    self.holdaccount = None
                 return self.requestKeys()
             else:
                 raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
