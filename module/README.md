@@ -109,22 +109,31 @@ Stores the keys contained in `text` into the credential file format.
 `text` should be the returned text from a requests object. It should be convertable
 into json and then into a python dictionary.
 
+#### `myAccountList()`
+Returns a list of tuples describing your current chaim accounts
+
+`[(account, expire timestamp, expire string, default account),(...)]`
+
 #### `displayMyList()`
-lists the current chaim credentials you hold, along with their expiration times.
+Logs the current chaim credentials you hold, along with their expiration times.
 
 #### `requestList()`
-returns a list of all account ids and account names that chaim knows about
+Returns a list of tuples of all account ids and account names that chaim knows about
+
+`[(account number, account name),(...)]`
 
 #### `deleteAccount(account)`
-deletes the account credentials `account` from the credentials file
+Deletes the account credentials `account` from the credentials file
 
 #### `parkAccount(account)`
-removes the `account` definition from the credentials file and stores it for later use
+Removes the `account` definition from the credentials file and stores it for later use
 in the chaim-parked accounts file
 
 #### `unparkAccount(account)`
-removes the `account` definition from the chaim-parked accounts file, adds it to the
+Removes the `account` definition from the chaim-parked accounts file, adds it to the
 credentials file and renews the credentials for it.
 
 #### `listParkAccounts()`
-displays a list of parked accounts
+Returns a list of parked account aliases.
+
+`["cdev","hprod",...]`

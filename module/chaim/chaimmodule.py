@@ -120,17 +120,15 @@ class Chaim(object):
         if section in self.ifn.titles():
             sect = self.ifn.getSectionItems(section)
             if "accountname" in sect:
-                account = sect["accountname"]
-                duration = sect["duration"]
-                role = sect["role"]
-                alias = section
+                self.account = sect["accountname"]
+                self.duration = sect["duration"]
+                self.role = sect["role"]
+                self.accountalias = section
                 default = False
-                if "alias" in defsect:
-                    default = True if defsect["alias"] == section else False
                 if "region" in sect:
-                    setregion = sect["region"]
-                terrible = True if "aws_security_token" in sect else False
-                return self.requestKeys(account, role, duration, alias, setregion, default, terrible)
+                    self.region = sect["region"]
+                self.terrible = True if "aws_security_token" in sect else False
+                return self.requestKeys()
             else:
                 raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
         else:
@@ -164,14 +162,14 @@ class Chaim(object):
                 if "statusCode" in d:
                     sc = int(d["statusCode"])
                     if sc > 399:
-                        log.error("Error: {}: {}".format(sc, d["text"]), err=True)
+                        log.error("Error: {}: {}".format(sc, d["text"]), exc_info=True)
                     else:
                         ret = self.storeKeys(d["text"])
                         log.info("{} retrieval took {} seconds.".format(self.accountalias, taken))
             else:
-                log.error("d is not a dict", err=True)
+                log.error("d is not a dict", exc_info=True)
         else:
-            log.info("status: {} response: {}".format(r.status_code, r.text), err=True)
+            log.error("status: {} response: {}".format(r.status_code, r.text), exc_info=True)
         return ret
 
     def storeKeys(self, text):
@@ -199,10 +197,33 @@ class Chaim(object):
                 log.info("Updated section {} with new keys".format(xd["sectionname"]))
                 ret = True
             else:
-                log.error("Failed to update section {}".format(xd["sectionname"]), err=True)
+                log.error("Failed to update section {}".format(xd["sectionname"]), exc_info=True)
         else:
-            log.error("xd is not a dict: {}: {}".format(type(xd), xd), err=True)
+            log.error("xd is not a dict: {}: {}".format(type(xd), xd), exc_info=True)
         return ret
+
+    def myAccountList(self):
+        """
+        returns a list of tuples
+          (account, expire timestamp, expire string, default account)
+        """
+        accts = []
+        defsect = self.getDefaultSection()
+        if 'alias' in defsect:
+            defname = defsect['alias']
+        elif 'section' in defsect:
+            defname = defsect["section"]
+        else:
+            defname = "undefined"
+        for section in self.ifn.titles():
+            if section != "default":
+                default = True if section == defname else False
+                tsectd = self.ifn.getSectionItems(section)
+                if "expires" in tsectd:
+                    expstr = utils.displayExpires(int(tsectd["expires"]), int(tsectd["duration"]))
+                    acct = (section, tsectd["expires"], expstr, default)
+                    accts.append(acct)
+        return accts
 
     def displayMyList(self):
         defsect = self.getDefaultSection()
@@ -272,6 +293,4 @@ class Chaim(object):
         for title in self.pfn.titles():
             slst.append(title)
         slst.sort()
-        for title in slst:
-            log.info(title)
-
+        return slst
