@@ -326,7 +326,9 @@ def displayMyList(ifn):
             tsectd = ifn.getSectionItems(section)
             if "expires" in tsectd:
                 expstr = cliutils.displayExpires(int(tsectd["expires"]), int(tsectd["duration"]))
-                click.echo("{} {} {}".format(section, expstr, defstr))
+                role = "" if "role" not in tsectd else tsectd["role"]
+                region = "" if "region" not in tsectd else tsectd["region"]
+                click.echo("{} ({}/{}) {} {}".format(section, role, region, expstr, defstr))
 
 
 def requestList(ifn):
