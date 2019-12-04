@@ -1,3 +1,7 @@
+04-12-19 v2.5.0 chaim-cli
+author: chris.allison@hivehome.com
+added display of role and region when listing current accounts managed by chaim-cli (cca)
+
 11-10-19 v2.4 pre-release
 author: chris.allison@hivehome.com
 Framework for user identify command

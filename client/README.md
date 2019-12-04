@@ -215,7 +215,7 @@ Your token will expire in 29 days, 21 hours, 18 minutes and 58 seconds.
 
 <a name='ccalist'></a>
 #### [list](#contents)
-Current list of accounts that are managed by cca and their expiry times.
+Current list of accounts that are managed by cca, the role and region and their expiry times.
 This also shows which is the default account, and the percentage of time left.
 
 <a name='ccalistall'></a>
