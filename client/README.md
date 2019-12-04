@@ -6,6 +6,8 @@ python module.
 
 <a name='version></a>
 ### Changelog
+v2.5.0 Display role and region when listing managed accounts
+
 v2.4.0 Allow receiving and passing the Slack Workspace Id in the chaim
 credentials requests.
 
