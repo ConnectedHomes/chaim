@@ -63,9 +63,9 @@ def getDefaultAccount(ifn):
 
 def getEndpoint(ifn):
     defsect = getDefaultSection(ifn)
-    endpoint = "https://{}.".format(defsect['api'])
-    endpoint += "execute-api.{}.".format(defsect['region'])
-    endpoint += "amazonaws.com/{}/".format(defsect['stage'])
+    endpoint = "https://{}.".format(defsect["api"])
+    endpoint += "execute-api.{}.".format(defsect["region"])
+    endpoint += "amazonaws.com/{}/".format(defsect["stage"])
     return endpoint
 
 
@@ -86,25 +86,35 @@ def renewSection(section, ifn):
                 if "region" in sect:
                     setregion = sect["region"]
                 terrible = True if "aws_security_token" in sect else False
-                return requestKeys(account, role, duration, alias, ifn, setregion, default, terrible)
+                return requestKeys(
+                    account, role, duration, alias, ifn, setregion, default, terrible
+                )
             else:
-                raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
+                raise UnmanagedAccount(
+                    "ignoring " + section + " as it is not managed by cca"
+                )
     except UnmanagedAccount as e:
         print(f"{e}")
     except Exception as e:
-        print(f"{Exception in renewSection: {e}")
+        print(f"Exception in renewSection: {e}")
     finally:
         return False
 
 
-def requestKeys(account, role, duration, accountalias, ifn, setregion, default=False, terrible=False):
+def requestKeys(
+    account, role, duration, accountalias, ifn, setregion, default=False, terrible=False
+):
     ret = False
     defsect = getDefaultSection(ifn)
     if account == "NOT SET":
         return ret
     if len(accountalias) == 0:
         accountalias = account
-    click.echo("account: {}, alias: {}, role: {}, duration: {}".format(account, accountalias, role, duration))
+    click.echo(
+        "account: {}, alias: {}, role: {}, duration: {}".format(
+            account, accountalias, role, duration
+        )
+    )
     params = {"text": "{},{},{}".format(account, role, duration)}
     params["user_name"] = defsect["username"]
     params["token"] = defsect["usertoken"]
@@ -127,8 +137,19 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
                 if sc > 399:
                     click.echo("Error: {}: {}".format(sc, d["text"]), err=True)
                 else:
-                    ret = storeKeys(d["text"], duration, role, accountalias, ifn, setregion, default, terrible)
-                    click.echo("{} retrieval took {} seconds.".format(accountalias,taken))
+                    ret = storeKeys(
+                        d["text"],
+                        duration,
+                        role,
+                        accountalias,
+                        ifn,
+                        setregion,
+                        default,
+                        terrible,
+                    )
+                    click.echo(
+                        "{} retrieval took {} seconds.".format(accountalias, taken)
+                    )
         else:
             click.echo("d is not a dict", err=True)
     else:
@@ -136,7 +157,16 @@ def requestKeys(account, role, duration, accountalias, ifn, setregion, default=F
     return ret
 
 
-def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=False, terrible=False):
+def storeKeys(
+    text,
+    duration,
+    role,
+    accountalias,
+    ifn,
+    setregion=False,
+    default=False,
+    terrible=False,
+):
     ret = False
     defsect = getDefaultSection(ifn)
     xd = json.loads(text.replace("'", '"'))
@@ -186,7 +216,9 @@ def storeKeys(text, duration, role, accountalias, ifn, setregion=False, default=
                 if ifn.updateSection("default", defsect, True):
                     click.echo("updated default account")
         else:
-            click.echo("Failed to update section {}".format(xd["sectionname"]), err=True)
+            click.echo(
+                "Failed to update section {}".format(xd["sectionname"]), err=True
+            )
     else:
         click.echo("xd is not a dict: {}: {}".format(type(xd), xd), err=True)
     return ret
@@ -261,7 +293,9 @@ def doUrl(account, ifn, browser=False, logout=False):
     if browser:
         try:
             subprocess.Popen([cmd, url])
-            click.echo("GUI session opened for account {}\nExpires: {}".format(acct, msg))
+            click.echo(
+                "GUI session opened for account {}\nExpires: {}".format(acct, msg)
+            )
         except OSError:
             click.echo(cmsg)
     elif logout:
@@ -271,7 +305,9 @@ def doUrl(account, ifn, browser=False, logout=False):
             click.echo("Loging out of current session (if any)")
             time.sleep(1)
             subprocess.Popen([cmd, url])
-            click.echo("GUI session opened for account {}\nExpires: {}".format(acct, msg))
+            click.echo(
+                "GUI session opened for account {}\nExpires: {}".format(acct, msg)
+            )
         except OSError:
             click.echo(cmsg)
     else:
@@ -279,7 +315,16 @@ def doUrl(account, ifn, browser=False, logout=False):
 
 
 def askInit(ifn):
-    reqkeys = ["api", "username", "usertoken", "tokenexpires", "stage", "region", "slackid", "workspaceid"]
+    reqkeys = [
+        "api",
+        "username",
+        "usertoken",
+        "tokenexpires",
+        "stage",
+        "region",
+        "slackid",
+        "workspaceid",
+    ]
     defsect = getDefaultSection(ifn)
     for key in reqkeys:
         if key in ["usertoken", "tokenexpires"]:
@@ -293,14 +338,16 @@ def askInit(ifn):
                 defsect[key] = input("{}: ".format(key))
     ifn.updateSection("default", defsect, True)
     estr = cliutils.displayHMS(int(defsect["tokenexpires"]) - int(time.time()), True)
-    click.echo("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
+    click.echo(
+        "cca has been re-initialised.\nYour token will expire in {}.".format(estr)
+    )
 
 
 def doInit(initstr, ifn):
     defsect = getDefaultSection(ifn)
     if len(initstr) > 0:
         istr = initstr[0]
-        bl = base64.urlsafe_b64decode(istr.encode('utf-8')).decode('utf-8').split("&")
+        bl = base64.urlsafe_b64decode(istr.encode("utf-8")).decode("utf-8").split("&")
         for param in bl:
             pl = param.split("=")
             if pl[0] == "expires":
@@ -308,8 +355,12 @@ def doInit(initstr, ifn):
             else:
                 defsect[pl[0]] = pl[1]
         ifn.updateSection("default", defsect, True)
-        estr = cliutils.displayHMS(int(defsect["tokenexpires"]) - int(time.time()), True)
-        click.echo("cca has been re-initialised.\nYour token will expire in {}.".format(estr))
+        estr = cliutils.displayHMS(
+            int(defsect["tokenexpires"]) - int(time.time()), True
+        )
+        click.echo(
+            "cca has been re-initialised.\nYour token will expire in {}.".format(estr)
+        )
     else:
         askInit(ifn)
 
@@ -318,10 +369,14 @@ def displayMyList(ifn):
     defsect = getDefaultSection(ifn)
     if "tokenexpires" in defsect:
         if int(defsect["tokenexpires"]) > 0:
-            click.echo("User Token {}".format(cliutils.displayExpires(int(defsect["tokenexpires"]))))
-    if 'alias' in defsect:
-        defname = defsect['alias']
-    elif 'section' in defsect:
+            click.echo(
+                "User Token {}".format(
+                    cliutils.displayExpires(int(defsect["tokenexpires"]))
+                )
+            )
+    if "alias" in defsect:
+        defname = defsect["alias"]
+    elif "section" in defsect:
         defname = defsect["section"]
     else:
         defname = "undefined"
@@ -330,10 +385,14 @@ def displayMyList(ifn):
             defstr = "(DEFAULT)" if section == defname else ""
             tsectd = ifn.getSectionItems(section)
             if "expires" in tsectd:
-                expstr = cliutils.displayExpires(int(tsectd["expires"]), int(tsectd["duration"]))
+                expstr = cliutils.displayExpires(
+                    int(tsectd["expires"]), int(tsectd["duration"])
+                )
                 role = "" if "role" not in tsectd else tsectd["role"]
                 region = "" if "region" not in tsectd else tsectd["region"]
-                click.echo("{} ({}/{}) {} {}".format(section, role, region, expstr, defstr))
+                click.echo(
+                    "{} ({}/{}) {} {}".format(section, role, region, expstr, defstr)
+                )
 
 
 def requestList(ifn):
@@ -346,7 +405,7 @@ def requestList(ifn):
     params["useragent"] = "cca " + ccaversion
     r = requests.post(endpoint, data=params)
     if 200 == r.status_code:
-        if r.text == 'null':
+        if r.text == "null":
             print("No response")
         else:
             jmm = r.json()
