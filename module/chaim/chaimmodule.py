@@ -38,9 +38,10 @@ from chaim.errors import errorNotify
 from chaim.errors import errorExit
 from chaim import __version__ as version
 
-ccalogging.setConsoleOut()
-ccalogging.setInfo()
+# ccalogging.setConsoleOut()
+# ccalogging.setInfo()
 log = ccalogging.log
+
 
 class UnmanagedAccount(Exception):
     pass
@@ -52,16 +53,16 @@ class NoUrl(Exception):
 
 class Chaim(object):
     def __init__(
-            self,
-            account,
-            role,
-            duration=1,
-            region="eu-west-1",
-            tempname="tempname",
-            terrible=False,
-            verbose=0,
-            logfile=None
-            ):
+        self,
+        account,
+        role,
+        duration=1,
+        region="eu-west-1",
+        tempname="tempname",
+        terrible=False,
+        verbose=0,
+        logfile=None,
+    ):
         if logfile is not None:
             ccalogging.setLogFile(logfile)
         ccalogging.setWarn()
@@ -110,9 +111,9 @@ class Chaim(object):
 
     def getEndpoint(self):
         defsect = self.getDefaultSection()
-        endpoint = "https://{}.".format(defsect['api'])
-        endpoint += "execute-api.{}.".format(defsect['region'])
-        endpoint += "amazonaws.com/{}/".format(defsect['stage'])
+        endpoint = "https://{}.".format(defsect["api"])
+        endpoint += "execute-api.{}.".format(defsect["region"])
+        endpoint += "amazonaws.com/{}/".format(defsect["stage"])
         return endpoint
 
     def renewSection(self, section):
@@ -136,7 +137,9 @@ class Chaim(object):
                     self.holdaccount = None
                 return self.requestKeys()
             else:
-                raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
+                raise UnmanagedAccount(
+                    "ignoring " + section + " as it is not managed by cca"
+                )
         else:
             return False
 
@@ -147,7 +150,11 @@ class Chaim(object):
             return ret
         if len(self.accountalias) == 0:
             self.accountalias = self.account
-        log.info("account: {}, alias: {}, role: {}, duration: {}".format(self.account, self.accountalias, self.role, self.duration))
+        log.info(
+            "account: {}, alias: {}, role: {}, duration: {}".format(
+                self.account, self.accountalias, self.role, self.duration
+            )
+        )
         params = {"text": "{},{},{}".format(self.account, self.role, self.duration)}
         params["user_name"] = defsect["username"]
         params["token"] = defsect["usertoken"]
@@ -171,11 +178,17 @@ class Chaim(object):
                         log.error("Error: {}: {}".format(sc, d["text"]), exc_info=True)
                     else:
                         ret = self.storeKeys(d["text"])
-                        log.info("{} retrieval took {} seconds.".format(self.accountalias, taken))
+                        log.info(
+                            "{} retrieval took {} seconds.".format(
+                                self.accountalias, taken
+                            )
+                        )
             else:
                 log.error("d is not a dict", exc_info=True)
         else:
-            log.error("status: {} response: {}".format(r.status_code, r.text), exc_info=True)
+            log.error(
+                "status: {} response: {}".format(r.status_code, r.text), exc_info=True
+            )
         return ret
 
     def storeKeys(self, text):
@@ -203,7 +216,10 @@ class Chaim(object):
                 log.info("Updated section {} with new keys".format(xd["sectionname"]))
                 ret = True
             else:
-                log.error("Failed to update section {}".format(xd["sectionname"]), exc_info=True)
+                log.error(
+                    "Failed to update section {}".format(xd["sectionname"]),
+                    exc_info=True,
+                )
         else:
             log.error("xd is not a dict: {}: {}".format(type(xd), xd), exc_info=True)
         return ret
@@ -215,9 +231,9 @@ class Chaim(object):
         """
         accts = []
         defsect = self.getDefaultSection()
-        if 'alias' in defsect:
-            defname = defsect['alias']
-        elif 'section' in defsect:
+        if "alias" in defsect:
+            defname = defsect["alias"]
+        elif "section" in defsect:
             defname = defsect["section"]
         else:
             defname = "undefined"
@@ -226,7 +242,9 @@ class Chaim(object):
                 default = True if section == defname else False
                 tsectd = self.ifn.getSectionItems(section)
                 if "expires" in tsectd:
-                    expstr = utils.displayExpires(int(tsectd["expires"]), int(tsectd["duration"]))
+                    expstr = utils.displayExpires(
+                        int(tsectd["expires"]), int(tsectd["duration"])
+                    )
                     acct = (section, tsectd["expires"], expstr, default)
                     accts.append(acct)
         return accts
@@ -235,10 +253,14 @@ class Chaim(object):
         defsect = self.getDefaultSection()
         if "tokenexpires" in defsect:
             if int(defsect["tokenexpires"]) > 0:
-                log.info("User Token {}".format(utils.displayExpires(int(defsect["tokenexpires"]))))
-        if 'alias' in defsect:
-            defname = defsect['alias']
-        elif 'section' in defsect:
+                log.info(
+                    "User Token {}".format(
+                        utils.displayExpires(int(defsect["tokenexpires"]))
+                    )
+                )
+        if "alias" in defsect:
+            defname = defsect["alias"]
+        elif "section" in defsect:
             defname = defsect["section"]
         else:
             defname = "undefined"
@@ -247,7 +269,9 @@ class Chaim(object):
                 defstr = "(DEFAULT)" if section == defname else ""
                 tsectd = self.ifn.getSectionItems(section)
                 if "expires" in tsectd:
-                    expstr = utils.displayExpires(int(tsectd["expires"]), int(tsectd["duration"]))
+                    expstr = utils.displayExpires(
+                        int(tsectd["expires"]), int(tsectd["duration"])
+                    )
                     log.info("{} {} {}".format(section, expstr, defstr))
 
     def requestList(self):
@@ -261,7 +285,7 @@ class Chaim(object):
         params["useragent"] = "cca " + version
         r = requests.post(endpoint, data=params)
         if 200 == r.status_code:
-            if r.text == 'null':
+            if r.text == "null":
                 log.info("No response")
             else:
                 jmm = r.json()
