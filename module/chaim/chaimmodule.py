@@ -60,13 +60,14 @@ class Chaim(object):
         region="eu-west-1",
         tempname="tempname",
         terrible=False,
-        verbose=0,
+        verbose=-1,
         logfile=None,
     ):
         if logfile is not None:
             ccalogging.setLogFile(logfile)
-        ccalogging.setWarn()
-        if verbose == 1:
+        if verbose == 0:
+            ccalogging.setWarn()
+        elif verbose == 1:
             ccalogging.setInfo()
         elif verbose > 1:
             ccalogging.setDebug()
