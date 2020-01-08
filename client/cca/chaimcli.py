@@ -71,24 +71,29 @@ def getEndpoint(ifn):
 
 def renewSection(section, ifn):
     """renews the config file section named 'section'"""
-    defsect = getDefaultSection(ifn)
-    if section in ifn.titles():
-        sect = ifn.getSectionItems(section)
-        if "accountname" in sect:
-            account = sect["accountname"]
-            duration = sect["duration"]
-            role = sect["role"]
-            alias = section
-            default = False
-            if "alias" in defsect:
-                default = True if defsect["alias"] == section else False
-            if "region" in sect:
-                setregion = sect["region"]
-            terrible = True if "aws_security_token" in sect else False
-            return requestKeys(account, role, duration, alias, ifn, setregion, default, terrible)
-        else:
-            raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
-    else:
+    try:
+        defsect = getDefaultSection(ifn)
+        if section in ifn.titles():
+            sect = ifn.getSectionItems(section)
+            if "accountname" in sect:
+                account = sect["accountname"]
+                duration = sect["duration"]
+                role = sect["role"]
+                alias = section
+                default = False
+                if "alias" in defsect:
+                    default = True if defsect["alias"] == section else False
+                if "region" in sect:
+                    setregion = sect["region"]
+                terrible = True if "aws_security_token" in sect else False
+                return requestKeys(account, role, duration, alias, ifn, setregion, default, terrible)
+            else:
+                raise UnmanagedAccount("ignoring " + section + " as it is not managed by cca")
+    except UnmanagedAccount as e:
+        print(f"{e}")
+    except Exception as e:
+        print(f"{Exception in renewSection: {e}")
+    finally:
         return False
 
 
