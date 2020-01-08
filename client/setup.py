@@ -24,7 +24,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='chaim-cli',
+    name="chaim-cli",
     version=v,
     author="Chris Allison",
     author_email="chris.allison@hivehome.com",
@@ -32,24 +32,14 @@ setup(
     description="Centrica Chaim AWS Accounts",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(exclude=['docs', 'tests*']),
-    install_requires=[
-        'click',
-        'requests',
-        'pyperclip',
-        'chardet',
-        'certifi',
-        ],
-    python_requires='>=3',
-    entry_points={
-        'console_scripts': [
-            'cca=cca.cca:cca',
-        ]
-    },
-    classifiers=(
-        'Development Status :: 4 - Beta',
+    packages=find_packages(exclude=["docs", "tests*"]),
+    install_requires=["click", "requests", "pyperclip", "chardet", "certifi",],
+    python_requires=">=3",
+    entry_points={"console_scripts": ["cca=cca.cca:cca",]},
+    classifiers=[
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
         "Operating System :: OS Independent",
-    ),
+    ],
 )
