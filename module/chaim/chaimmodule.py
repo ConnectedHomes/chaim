@@ -38,8 +38,6 @@ from chaim.errors import errorNotify
 from chaim.errors import errorExit
 from chaim import __version__ as version
 
-# ccalogging.setConsoleOut()
-# ccalogging.setInfo()
 log = ccalogging.log
 
 
@@ -63,13 +61,14 @@ class Chaim(object):
         verbose=-1,
         logfile=None,
     ):
+        self.verbose = verbose
         if logfile is not None:
             ccalogging.setLogFile(logfile)
-        if verbose == 0:
+        if self.verbose == 0:
             ccalogging.setWarn()
-        elif verbose == 1:
+        elif self.verbose == 1:
             ccalogging.setInfo()
-        elif verbose > 1:
+        elif self.verbose > 1:
             ccalogging.setDebug()
         self.root = os.path.expanduser("~/.aws")
         self.credsfn = self.root + "/credentials"
@@ -151,11 +150,12 @@ class Chaim(object):
             return ret
         if len(self.accountalias) == 0:
             self.accountalias = self.account
-        log.info(
-            "account: {}, alias: {}, role: {}, duration: {}".format(
-                self.account, self.accountalias, self.role, self.duration
+        if self.verbose > 0:
+            log.info(
+                "account: {}, alias: {}, role: {}, duration: {}".format(
+                    self.account, self.accountalias, self.role, self.duration
+                )
             )
-        )
         params = {"text": "{},{},{}".format(self.account, self.role, self.duration)}
         params["user_name"] = defsect["username"]
         params["token"] = defsect["usertoken"]
@@ -179,11 +179,12 @@ class Chaim(object):
                         log.error("Error: {}: {}".format(sc, d["text"]), exc_info=True)
                     else:
                         ret = self.storeKeys(d["text"])
-                        log.info(
-                            "{} retrieval took {} seconds.".format(
-                                self.accountalias, taken
+                        if self.verbose > 0:
+                            log.info(
+                                "{} retrieval took {} seconds.".format(
+                                    self.accountalias, taken
+                                )
                             )
-                        )
             else:
                 log.error("d is not a dict", exc_info=True)
         else:
@@ -214,7 +215,10 @@ class Chaim(object):
                 # log.debug("adding account: {}".format(accountalias))
                 self.ifn.add_section(self.accountalias)
             if self.ifn.updateSection(self.accountalias, dd, True):
-                log.info("Updated section {} with new keys".format(xd["sectionname"]))
+                if self.verbose > 0:
+                    log.info(
+                        "Updated section {} with new keys".format(xd["sectionname"])
+                    )
                 ret = True
             else:
                 log.error(
@@ -287,18 +291,19 @@ class Chaim(object):
         r = requests.post(endpoint, data=params)
         if 200 == r.status_code:
             if r.text == "null":
-                log.info("No response")
+                log.warning("No response")
             else:
                 jmm = r.json()
                 d = ast.literal_eval(jmm["text"])
                 jaccs = d.get("accountlist")
         else:
-            log.info("status: {} response: {}".format(r.status_code, r.text))
+            log.warning("status: {} response: {}".format(r.status_code, r.text))
         return jaccs
 
     def deleteAccount(self, account):
         if account in self.ifn.titles():
-            log.info("Deleting account {}.".format(account))
+            if self.verbose > 0:
+                log.info("Deleting account {}.".format(account))
             self.ifn.deleteSection(account)
 
     def parkAccount(self, account):
