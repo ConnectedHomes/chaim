@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "CognitoUserPoolId",
+    "ParameterValue": "sre-chaim"
+  },
+  {
+    "ParameterKey": "ChaimKMSKey",
+    "ParameterValue": "sre-chaim"
+  },
+  { 
+    "ParameterKey": "ChaimUser",
+    "ParameterValue": "sre.chaim"
+  }
+]
