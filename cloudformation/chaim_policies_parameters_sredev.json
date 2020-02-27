@@ -1,0 +1,30 @@
+[
+  {
+    "ParameterKey": "Owner",
+    "ParameterValue": "SRE"
+  },
+  {
+    "ParameterKey": "Product",
+    "ParameterValue": "Chaim"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "Dev"
+  },
+  {
+    "ParameterKey": "ChaimRole",
+    "ParameterValue": "ChaimMasterUser"
+  },
+  {
+    "ParameterKey": "CognitoUserPoolId",
+    "ParameterValue": "sre-chaim_test"
+  },
+  {
+    "ParameterKey": "ChaimKMSKey",
+    "ParameterValue": "sre-chaim_test"
+  },
+  { 
+    "ParameterKey": "ChaimUser",
+    "ParameterValue": "sre.chaim_test"
+  }
+]

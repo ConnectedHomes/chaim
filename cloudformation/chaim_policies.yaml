@@ -7,10 +7,37 @@
     ChaimUser:
       Type: String
       Description: The IAM Chaim User
+    ChaimRole:
+      Type: String
+      Description: Tag for Chaim User
     ChaimKMSKey:
       Type: String
       Description: The KMS Key for Chaim
+    Owner:
+      Type: String
+      Description: The owner of the product
+    Product:
+      Type: String
+      Description: The product this stack provides
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
   Resources:
+    ChaimMasterUser:
+      Type: AWS::IAM::User
+      Properties:
+        UserName: !Ref ChaimUser
+        ManagedPolicyArns:
+          - !Ref STSAssumeRole
+          - !Ref ChaimManageAccessKey
+        Tags:
+          - Key: Role
+            Value: !Ref ChaimRole
+          - Key: Name
+            Value: !Ref ChaimUser
+      DependsOn: 
+        - STSAssumeRole
+        - ChaimManageAccessKey
     ChaimCognitoManageUser:
       Type: AWS::IAM::ManagedPolicy
       Properties:
