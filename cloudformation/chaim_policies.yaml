@@ -16,15 +16,6 @@
     ChaimKMSKey:
       Type: String
       Description: The KMS Key for Chaim
-    Owner:
-      Type: String
-      Description: The owner of the product
-    Product:
-      Type: String
-      Description: The product this stack provides
-    Environment:
-      Type: String
-      Description: The environment the product will be built in
   Resources:
     ChaimMasterUser:
       Type: AWS::IAM::User

@@ -20,4 +20,4 @@ then
   exit 0
 fi
 #
-aws --profile ${AccountName} cloudformation create-stack --template-body file://chaim_policies.yaml --parameters file://chaim_policies_parameters_${AccountName}.json --stack-name ${StackName} --capabilities CAPABILITY_NAMED_IAM
+aws --profile ${AccountName} cloudformation create-stack --template-body file://chaim_install_master.yaml --parameters file://chaim_parameters_${AccountName}.json --stack-name ${StackName} --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND

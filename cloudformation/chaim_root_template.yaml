@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  CognitoUserPoolId:
+    Type: String
+    Description: The Cognito User Pool Id
+  ChaimUser:
+    Type: String
+    Description: The IAM Chaim User
+  ChaimUserRole:
+    Type: String
+    Description: Tag for Chaim User
+  ChaimRole:
+    Type: String
+    Description: Tag for Chaim Role
+  ChaimKMSKey:
+    Type: String
+    Description: The KMS Key for Chaim
+  Owner:
+    Type: String
+    Description: The owner of the product
+  Product:
+    Type: String
+    Description: The product this stack provides
+  Environment:
+    Type: String
+    Description: The environment the product will be built in
+Resources:
+  ChaimPolicies:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/bdd21b9d50c547545f4f8752ad3baf03.template
+      Parameters:
+        CognitoUserPoolId:
+          Ref: CognitoUserPoolId
+        ChaimUser:
+          Ref: ChaimUser
+        ChaimUserRole:
+          Ref: ChaimUserRole
+        ChaimRole:
+          Ref: ChaimRole
+        ChaimKMSKey:
+          Ref: ChaimKMSKey
