@@ -7,9 +7,12 @@
     ChaimUser:
       Type: String
       Description: The IAM Chaim User
-    ChaimRole:
+    ChaimUserRole:
       Type: String
       Description: Tag for Chaim User
+    ChaimRole:
+      Type: String
+      Description: Tag for Chaim Role
     ChaimKMSKey:
       Type: String
       Description: The KMS Key for Chaim
@@ -28,16 +31,43 @@
       Properties:
         UserName: !Ref ChaimUser
         ManagedPolicyArns:
-          - !Ref STSAssumeRole
           - !Ref ChaimManageAccessKey
+          - !Ref STSAssumeRole
         Tags:
-          - Key: Role
-            Value: !Ref ChaimRole
           - Key: Name
             Value: !Ref ChaimUser
+          - Key: Role
+            Value: !Ref ChaimUserRole
       DependsOn: 
-        - STSAssumeRole
         - ChaimManageAccessKey
+        - STSAssumeRole
+    ChaimLambdaRDSRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Description: "Chaim Access to IAM, Parameter Store, Cognito and RDS"
+        RoleName: !Ref ChaimRole
+        AssumeRolePolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - !Ref ChaimPublishToSNS
+          - !Ref CognitoGetUserStatus
+          - !Ref CognitoManageUserPool
+          - !Ref ParamStoreRead
+          - !Ref STSAssumeRole
+        Tags:
+          - Key: Name
+            Value: !Ref ChaimRole
+      DependsOn:
+        - ChaimPublishToSNS
+        - CognitoGetUserStatus
+        - CognitoManageUserPool
+        - ParamStoreRead
+        - STSAssumeRole
     ChaimCognitoManageUser:
       Type: AWS::IAM::ManagedPolicy
       Properties:

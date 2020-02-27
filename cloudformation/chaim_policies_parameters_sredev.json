@@ -12,7 +12,7 @@
     "ParameterValue": "Dev"
   },
   {
-    "ParameterKey": "ChaimRole",
+    "ParameterKey": "ChaimUserRole",
     "ParameterValue": "ChaimMasterUser"
   },
   {
@@ -26,5 +26,9 @@
   { 
     "ParameterKey": "ChaimUser",
     "ParameterValue": "sre.chaim_test"
+  },
+  { 
+    "ParameterKey": "ChaimRole",
+    "ParameterValue": "ChaimLambdaRDSRole"
   }
 ]
