@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "Owner",
+    "ParameterValue": "SRE"
+  },
+  {
+    "ParameterKey": "Product",
+    "ParameterValue": "Chaim"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "Dev"
+  }
+]

@@ -1,0 +1,27 @@
+---
+  AWSTemplateFormatVersion: 2010-09-09
+  Parameters:
+    Owner:
+      Type: String
+      Description: The owner of the product
+    Product:
+      Type: String
+      Description: The product this stack provides
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
+  Resources:
+    ChaimCognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties: 
+        Schema:
+          - Name: email
+            Required: true
+        UserPoolName: sre.chaim_test
+        UserPoolTags:
+          Owner: !Ref Owner
+          Product: !Ref Product
+          Environment: !Ref Environment
+  Outputs:
+    CognitoUserPoolId:
+      Value: !GetAtt ChaimCognitoUserPool.Arn

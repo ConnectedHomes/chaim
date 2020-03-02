@@ -1,9 +1,6 @@
 ---
   AWSTemplateFormatVersion: 2010-09-09
   Parameters: 
-    CognitoUserPoolId:
-      Type: String
-      Description: The Cognito User Pool Id
     ChaimUser:
       Type: String
       Description: The IAM Chaim User
@@ -26,13 +23,22 @@
       Type: String
       Description: The environment the product will be built in
   Resources:
+    ChaimCognito:
+      Type: AWS::CloudFormation::Stack
+      Properties:
+        TemplateURL: chaim_cognito.yaml
+        Parameters:
+          Owner: !Ref Owner
+          Product: !Ref Product
+          Environment: !Ref Environment        
     ChaimPolicies:
       Type: AWS::CloudFormation::Stack
       Properties:
         TemplateURL: chaim_policies.yaml
         Parameters:
-          CognitoUserPoolId: !Ref CognitoUserPoolId
+          CognitoUserPoolId: !GetAtt ChaimCognito.Outputs.CognitoUserPoolId
           ChaimUser: !Ref ChaimUser
           ChaimUserRole: !Ref ChaimUserRole
           ChaimRole: !Ref ChaimRole
           ChaimKMSKey: !Ref ChaimKMSKey
+      DependsOn: ChaimCognito
