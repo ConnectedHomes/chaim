@@ -3,19 +3,19 @@
   Parameters: 
     CognitoUserPoolId:
       Type: String
-      Description: The Cognito User Pool Id
+      Description: Chaim Cognito User Pool Id
     ChaimUser:
       Type: String
-      Description: The IAM Chaim User
+      Description: Chaim IAM User
     ChaimUserRole:
       Type: String
-      Description: Tag for Chaim User
+      Description: Chaim IAM User Role
     ChaimRole:
       Type: String
-      Description: Tag for Chaim Role
+      Description: Chaim Lambda RDS Role
     ChaimKMSKey:
       Type: String
-      Description: The KMS Key for Chaim
+      Description: Chaim KMS Key
   Resources:
     ChaimMasterUser:
       Type: AWS::IAM::User

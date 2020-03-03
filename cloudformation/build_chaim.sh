@@ -7,17 +7,17 @@ then
 fi
 #
 AccountName=$1
-StackName='ian-test-chaim'
+StackName='ian-test-chaim-module'
 MyDir=${0%/*}
-if [ ! -e ${MyDir}/chaim_policies.yaml ]
+if [ ! -e ${MyDir}/chaim_kms.yaml ]
 then
-  echo "chaim_policies.yaml is missing from this directory"
+  echo "chaim_kms.yaml is missing from this directory"
   exit 0
 fi
-if [ ! -e ${MyDir}/chaim_policies_parameters_${AccountName}.json ]
+if [ ! -e ${MyDir}/chaim_parameters_kms.json ]
 then
-  echo "chaim_policies_parameters_${AccountName}.json is missing from this directory"
+  echo "chaim_parameters_kms.json is missing from this directory"
   exit 0
 fi
 #
-aws --profile ${AccountName} cloudformation create-stack --template-body file://chaim_install_master.yaml --parameters file://chaim_parameters_${AccountName}.json --stack-name ${StackName} --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
+aws --profile ${AccountName} cloudformation create-stack --template-body file://chaim_kms.yaml --parameters file://chaim_parameters_kms.json --stack-name ${StackName} --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND

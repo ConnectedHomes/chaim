@@ -1,0 +1,78 @@
+---
+  AWSTemplateFormatVersion: 2010-09-09
+  Parameters:
+    ChaimRole:
+      Type: String
+      Description: Chaim Lambda RDS Role
+    Owner:
+      Type: String
+      Description: The owner of the product
+    Product:
+      Type: String
+      Description: The product this stack provides
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
+  Resources:
+    ChaimKMSKey:
+      Type: AWS::KMS::Key
+      Properties: 
+        Description: Encrypt secrets for the chaim application
+        EnableKeyRotation: true
+        KeyPolicy:
+          Version: '2012-10-17'
+          Id: ChaimKMSKey-1
+          Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS:
+                - !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: kms:*
+            Resource: '*'
+          - Sid: Allow use of the key
+            Effect: Allow
+            Principal:
+              AWS:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:role/${Role}"
+                  - { Role: !Ref ChaimRole }
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:DescribeKey
+            Resource: '*'
+          - Sid: Allow attachment of persistent resources
+            Effect: Allow
+            Principal:
+              AWS:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:role/${Role}"
+                  - { Role: !Ref ChaimRole }
+            Action:
+              - kms:CreateGrant
+              - kms:ListGrants
+              - kms:RevokeGrant
+            Resource: '*'
+            Condition:
+              Bool:
+                'kms:GrantIsForAWSResource': true
+        Tags:
+          - Key: Name
+            Value: ChaimKMSKey
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+    ChaimKMSAlias:
+      Type: AWS::KMS::Alias
+      Properties: 
+        AliasName: alias/ChaimKMSKey
+        TargetKeyId: !Ref ChaimKMSKey
+  Outputs:
+    ChaimKMSKeyId:
+      Value: !GetAtt ChaimKMSKey.Arn

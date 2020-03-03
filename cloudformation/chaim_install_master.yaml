@@ -31,10 +31,10 @@
           Owner: !Ref Owner
           Product: !Ref Product
           Environment: !Ref Environment        
-    ChaimPolicies:
+    ChaimIAM:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: chaim_policies.yaml
+        TemplateURL: chaim_iam.yaml
         Parameters:
           CognitoUserPoolId: !GetAtt ChaimCognito.Outputs.CognitoUserPoolId
           ChaimUser: !Ref ChaimUser
@@ -42,3 +42,13 @@
           ChaimRole: !Ref ChaimRole
           ChaimKMSKey: !Ref ChaimKMSKey
       DependsOn: ChaimCognito
+    ChaimKMS:
+      Type: AWS::CloudFormation::Stack
+      Properties:
+        TemplateURL: chaim_kms.yaml
+        Parameters:
+          ChaimRole: !Ref ChaimRole
+          Owner: !Ref Owner
+          Product: !Ref Product
+          Environment: !Ref Environment
+      DependsOn: ChaimIAM

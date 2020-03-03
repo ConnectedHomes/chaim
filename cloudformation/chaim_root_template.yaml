@@ -33,10 +33,10 @@ Resources:
           Ref: Product
         Environment:
           Ref: Environment
-  ChaimPolicies:
+  ChaimIAM:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/f537adb7c8b6a37e5b675dbcb6738460.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/790544640a047a598d92a60176f579b1.template
       Parameters:
         CognitoUserPoolId:
           Fn::GetAtt:
@@ -51,3 +51,17 @@ Resources:
         ChaimKMSKey:
           Ref: ChaimKMSKey
     DependsOn: ChaimCognito
+  ChaimKMS:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/4e0ca6b645a5fe6bfd77ffe7bc9be8a0.template
+      Parameters:
+        ChaimRole:
+          Ref: ChaimRole
+        Owner:
+          Ref: Owner
+        Product:
+          Ref: Product
+        Environment:
+          Ref: Environment
+    DependsOn: ChaimIAM
