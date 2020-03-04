@@ -6,12 +6,12 @@ Parameters:
   ChaimUserRole:
     Type: String
     Description: Tag for Chaim User
-  ChaimRole:
+  ChaimLambdaRDSRoleName:
     Type: String
-    Description: Tag for Chaim Role
-  ChaimKMSKey:
+    Description: Tag for Chaim Lambda RDS Role
+  ChaimLambdaKeymanRoleName:
     Type: String
-    Description: The KMS Key for Chaim
+    Description: Tag for Chaim Lambda Keyman Role
   Owner:
     Type: String
     Description: The owner of the product
@@ -25,7 +25,7 @@ Resources:
   ChaimCognito:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/b79d9bce2e781cccbd35cec5810fce31.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/dd95b35d4375cec7d07ce51842e5dbbc.template
       Parameters:
         Owner:
           Ref: Owner
@@ -36,32 +36,62 @@ Resources:
   ChaimIAM:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/790544640a047a598d92a60176f579b1.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/dedb76edde970203063bcdeb5a5f8759.template
       Parameters:
-        CognitoUserPoolId:
+        ChaimCognitoUserPool:
           Fn::GetAtt:
           - ChaimCognito
-          - Outputs.CognitoUserPoolId
+          - Outputs.ChaimCognitoUserPoolId
+        ChaimLambdaRDSRoleName:
+          Ref: ChaimLambdaRDSRoleName
+        ChaimLambdaKeymanRoleName:
+          Ref: ChaimLambdaKeymanRoleName
         ChaimUser:
           Ref: ChaimUser
         ChaimUserRole:
           Ref: ChaimUserRole
-        ChaimRole:
-          Ref: ChaimRole
-        ChaimKMSKey:
-          Ref: ChaimKMSKey
-    DependsOn: ChaimCognito
-  ChaimKMS:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/4e0ca6b645a5fe6bfd77ffe7bc9be8a0.template
-      Parameters:
-        ChaimRole:
-          Ref: ChaimRole
+        Environment:
+          Ref: Environment
         Owner:
           Ref: Owner
         Product:
           Ref: Product
+    DependsOn: ChaimCognito
+  ChaimKMS:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/c6205d7b9b4767b0e216c65f9cd1fc81.template
+      Parameters:
+        ChaimLambdaRDSRoleName:
+          Ref: ChaimLambdaRDSRoleName
         Environment:
           Ref: Environment
+        Owner:
+          Ref: Owner
+        Product:
+          Ref: Product
     DependsOn: ChaimIAM
+  ChaimIAM2:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/66dd84bb6a2b6154618a29a0f4f8198e.template
+      Parameters:
+        ChaimKMSKey:
+          Fn::GetAtt:
+          - ChaimKMS
+          - Outputs.ChaimKMSKeyId
+        ChaimLambdaRDSRole:
+          Fn::GetAtt:
+          - ChaimIAM
+          - Outputs.ChaimLambdaRDSRoleId
+        ChaimLambdaKeymanRole:
+          Fn::GetAtt:
+          - ChaimIAM
+          - Outputs.ChaimLambdaKeymanRoleId
+        Environment:
+          Ref: Environment
+        Owner:
+          Ref: Owner
+        Product:
+          Ref: Product
+    DependsOn: ChaimKMS

@@ -16,7 +16,7 @@
     "ParameterValue": "ChaimMasterUser"
   },
   {
-    "ParameterKey": "CognitoUserPoolId",
+    "ParameterKey": "ChaimCognitoUserPoolId",
     "ParameterValue": "sre-chaim_test"
   },
   {

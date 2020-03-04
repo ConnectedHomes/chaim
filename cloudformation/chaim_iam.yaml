@@ -1,21 +1,30 @@
 ---
   AWSTemplateFormatVersion: 2010-09-09
   Parameters: 
-    CognitoUserPoolId:
+    ChaimCognitoUserPool:
       Type: String
-      Description: Chaim Cognito User Pool Id
+      Description: Chaim Cognito User Pool
     ChaimUser:
       Type: String
       Description: Chaim IAM User
     ChaimUserRole:
       Type: String
       Description: Chaim IAM User Role
-    ChaimRole:
+    ChaimLambdaRDSRoleName:
       Type: String
       Description: Chaim Lambda RDS Role
-    ChaimKMSKey:
+    ChaimLambdaKeymanRoleName:
       Type: String
-      Description: Chaim KMS Key
+      Description: Chaim Lambda Keyman Role
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
+    Owner:
+      Type: String
+      Description: The owner of the product
+    Product:
+      Type: String
+      Description: The product this stack provides
   Resources:
     ChaimMasterUser:
       Type: AWS::IAM::User
@@ -23,42 +32,21 @@
         UserName: !Ref ChaimUser
         ManagedPolicyArns:
           - !Ref ChaimManageAccessKey
-          - !Ref STSAssumeRole
+          - !Ref ChaimSTSAssumeRole
         Tags:
           - Key: Name
             Value: !Ref ChaimUser
           - Key: Role
             Value: !Ref ChaimUserRole
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
       DependsOn: 
         - ChaimManageAccessKey
-        - STSAssumeRole
-    ChaimLambdaRDSRole:
-      Type: AWS::IAM::Role
-      Properties:
-        Description: "Chaim Access to IAM, Parameter Store, Cognito and RDS"
-        RoleName: !Ref ChaimRole
-        AssumeRolePolicyDocument:
-          Version: 2012-10-17
-          Statement:
-            Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-        ManagedPolicyArns:
-          - !Ref ChaimPublishToSNS
-          - !Ref CognitoGetUserStatus
-          - !Ref CognitoManageUserPool
-          - !Ref ParamStoreRead
-          - !Ref STSAssumeRole
-        Tags:
-          - Key: Name
-            Value: !Ref ChaimRole
-      DependsOn:
-        - ChaimPublishToSNS
-        - CognitoGetUserStatus
-        - CognitoManageUserPool
-        - ParamStoreRead
-        - STSAssumeRole
+        - ChaimSTSAssumeRole
     ChaimCognitoManageUser:
       Type: AWS::IAM::ManagedPolicy
       Properties:
@@ -76,7 +64,7 @@
               - cognito-idp:AdminGetUser
               - cognito-idp:ListUser
             Resource:
-                - !Ref CognitoUserPoolId
+                - !Ref ChaimCognitoUserPool
     ChaimManageAccessKey:
       Type: AWS::IAM::ManagedPolicy
       Properties:
@@ -97,32 +85,6 @@
               !Sub
                 - "arn:aws:iam::${AWS::AccountId}:user/${User}"
                 - { User: !Ref ChaimUser }
-    ChaimParameterstoreWrite:
-      Type: AWS::IAM::ManagedPolicy
-      Properties:
-        ManagedPolicyName: ChaimParameterstoreWrite
-        PolicyDocument:
-          Version: 2012-10-17
-          Statement:
-            Sid: ChaimParameterstoreWrite0
-            Effect: Allow
-            Action:
-              - ssm:PutParameter
-              - kms:Decrypt
-              - kms:Encrypt
-              - ssm:GetParametersByPath
-              - ssm:GetParameters
-              - ssm:GetParameter
-            Resource:
-              - !Sub
-                - "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${Key}"
-                - { Key: !Ref KeyId }
-              - !Sub
-                - "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/sre/chaim/*"
-            Sid: ChaimParameterstoreWrite1
-            Effect: Allow
-            Action: ssm:DescribeParameters
-            Resource: "*"
     ChaimPublishToSNS:
       Type: AWS::IAM::ManagedPolicy
       Properties:
@@ -140,28 +102,28 @@
               - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:sre-honeypass"
               - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:sre-honeyhub"
               - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:sre-hc-pw-reset"
-    CognitoGetUserStatus:
+    ChaimCognitoGetUserStatus:
       Type: AWS::IAM::ManagedPolicy
       Properties:
-        ManagedPolicyName: CognitoGetUserStatus
+        ManagedPolicyName: ChaimCognitoGetUserStatus
         PolicyDocument:
           Version: 2012-10-17
           Statement:
-            Sid: CognitoGetUserStatus0
+            Sid: ChaimCognitoGetUserStatus0
             Effect: Allow
             Action:
               - cognito-idp:AdminGetUser
               - cognito-idp:List*
             Resource:
-                - !Ref CognitoUserPoolId
-    CognitoManageUserPool:
+                - !Ref ChaimCognitoUserPool
+    ChaimCognitoManageUserPool:
       Type: AWS::IAM::ManagedPolicy
       Properties:
-        ManagedPolicyName: CognitoManageUserPool
+        ManagedPolicyName: ChaimCognitoManageUserPool
         PolicyDocument:
           Version: 2012-10-17
           Statement:
-            Sid: CognitoManageUserPool0
+            Sid: ChaimCognitoManageUserPool0
             Effect: Allow
             Action:
               - cognito-idp:ListUsersInGroup
@@ -175,39 +137,94 @@
               - cognito-idp:ListUserPoolClients
               - cognito-idp:ListUserImportJobs
             Resource:
-                - !Ref CognitoUserPoolId
-    ParamStoreRead:
+                - !Ref ChaimCognitoUserPool
+    ChaimSTSAssumeRole:
       Type: AWS::IAM::ManagedPolicy
       Properties:
-        ManagedPolicyName: ParamStoreRead
+        ManagedPolicyName: ChaimSTSAssumeRole
         PolicyDocument:
           Version: 2012-10-17
           Statement:
-            Sid: ParamStoreRead0
-            Effect: Allow
-            Action: kms:Decrypt
-            Resource: 
-              !Sub
-                - "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${Key}"
-                - { Key:  !Ref ChaimKMSKey }
-            Sid: ParamStoreRead1
-            Effect: Allow
-            Action:
-              - ssm:DescribeParameters",
-              - ssm:GetParametersByPath",
-              - ssm:GetParameters",
-              - ssm:GetParameter"
-            Resource: "*"
-    STSAssumeRole:
-      Type: AWS::IAM::ManagedPolicy
-      Properties:
-        ManagedPolicyName: STSAssumeRole
-        PolicyDocument:
-          Version: 2012-10-17
-          Statement:
-              Sid: STSAssumeRole0
+              Sid: ChaimSTSAssumeRole0
               Effect: Allow
               Action:
                 - sts:GetSessionToken
                 - sts:AssumeRole
               Resource: "*"
+    ChaimLambdaRDSRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Description: "Chaim Access to IAM, Parameter Store, Cognito and RDS"
+        RoleName: !Ref ChaimLambdaRDSRoleName
+        AssumeRolePolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - !Ref ChaimPublishToSNS
+          - !Ref ChaimCognitoGetUserStatus
+          - !Ref ChaimCognitoManageUserPool
+          - !Ref ChaimSTSAssumeRole
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        Tags:
+          - Key: Name
+            Value: !Ref ChaimLambdaRDSRoleName
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+      DependsOn:
+        - ChaimPublishToSNS
+        - ChaimCognitoGetUserStatus
+        - ChaimCognitoManageUserPool
+        - ChaimSTSAssumeRole
+    ChaimLambdaKeymanRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Description: "Chaim Access to IAM, Parameter Store, Cognito and RDS"
+        RoleName: !Ref ChaimLambdaKeymanRoleName
+        AssumeRolePolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - !Ref ChaimManageAccessKey
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        Tags:
+          - Key: Name
+            Value: !Ref ChaimLambdaKeymanRoleName
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+      DependsOn:
+        - ChaimManageAccessKey
+  Outputs:
+    ChaimCognitoManageUserId: 
+      Value: !Ref ChaimCognitoManageUser
+    ChaimManageAccessKeyId: 
+      Value: !Ref ChaimManageAccessKey
+    ChaimPublishToSNSId: 
+      Value: !Ref ChaimPublishToSNS
+    ChaimCognitoGetUserStatusId: 
+      Value: !Ref ChaimCognitoGetUserStatus
+    ChaimCognitoManageUserPoolId: 
+      Value: !Ref ChaimCognitoManageUserPool
+    ChaimSTSAssumeRoleId: 
+      Value: !Ref ChaimSTSAssumeRole
+    ChaimLambdaRDSRoleId:
+      Value: !GetAtt ChaimLambdaRDSRole.Arn
+    ChaimLambdaKeymanRoleId:
+      Value: !GetAtt ChaimLambdaKeymanRole.Arn
+    ChaimMasterUserId: 
+      Value: !GetAtt ChaimMasterUser.Arn

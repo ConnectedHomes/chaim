@@ -1,18 +1,18 @@
 ---
   AWSTemplateFormatVersion: 2010-09-09
   Parameters:
-    ChaimRole:
+    ChaimLambdaRDSRoleName:
       Type: String
       Description: Chaim Lambda RDS Role
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
     Owner:
       Type: String
       Description: The owner of the product
     Product:
       Type: String
       Description: The product this stack provides
-    Environment:
-      Type: String
-      Description: The environment the product will be built in
   Resources:
     ChaimKMSKey:
       Type: AWS::KMS::Key
@@ -36,7 +36,7 @@
               AWS:
                 !Sub
                   - "arn:aws:iam::${AWS::AccountId}:role/${Role}"
-                  - { Role: !Ref ChaimRole }
+                  - { Role: !Ref ChaimLambdaRDSRoleName }
             Action:
               - kms:Encrypt
               - kms:Decrypt
@@ -50,7 +50,7 @@
               AWS:
                 !Sub
                   - "arn:aws:iam::${AWS::AccountId}:role/${Role}"
-                  - { Role: !Ref ChaimRole }
+                  - { Role: !Ref ChaimLambdaRDSRoleName }
             Action:
               - kms:CreateGrant
               - kms:ListGrants

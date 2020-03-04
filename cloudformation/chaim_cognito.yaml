@@ -23,5 +23,5 @@
           Product: !Ref Product
           Environment: !Ref Environment
   Outputs:
-    CognitoUserPoolId:
+    ChaimCognitoUserPoolId:
       Value: !GetAtt ChaimCognitoUserPool.Arn

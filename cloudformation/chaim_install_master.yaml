@@ -7,12 +7,12 @@
     ChaimUserRole:
       Type: String
       Description: Tag for Chaim User
-    ChaimRole:
+    ChaimLambdaRDSRoleName:
       Type: String
-      Description: Tag for Chaim Role
-    ChaimKMSKey:
+      Description: Tag for Chaim Lambda RDS Role
+    ChaimLambdaKeymanRoleName:
       Type: String
-      Description: The KMS Key for Chaim
+      Description: Tag for Chaim Lambda Keyman Role
     Owner:
       Type: String
       Description: The owner of the product
@@ -36,19 +36,34 @@
       Properties:
         TemplateURL: chaim_iam.yaml
         Parameters:
-          CognitoUserPoolId: !GetAtt ChaimCognito.Outputs.CognitoUserPoolId
+          ChaimCognitoUserPool: !GetAtt ChaimCognito.Outputs.ChaimCognitoUserPoolId
+          ChaimLambdaRDSRoleName: !Ref ChaimLambdaRDSRoleName
+          ChaimLambdaKeymanRoleName: !Ref ChaimLambdaKeymanRoleName
           ChaimUser: !Ref ChaimUser
           ChaimUserRole: !Ref ChaimUserRole
-          ChaimRole: !Ref ChaimRole
-          ChaimKMSKey: !Ref ChaimKMSKey
+          Environment: !Ref Environment
+          Owner: !Ref Owner
+          Product: !Ref Product
       DependsOn: ChaimCognito
     ChaimKMS:
       Type: AWS::CloudFormation::Stack
       Properties:
         TemplateURL: chaim_kms.yaml
         Parameters:
-          ChaimRole: !Ref ChaimRole
+          ChaimLambdaRDSRoleName: !Ref ChaimLambdaRDSRoleName
+          Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product
-          Environment: !Ref Environment
       DependsOn: ChaimIAM
+    ChaimIAM2:
+      Type: AWS::CloudFormation::Stack
+      Properties:
+        TemplateURL: chaim_iam_2.yaml
+        Parameters:
+          ChaimKMSKey: !GetAtt ChaimKMS.Outputs.ChaimKMSKeyId
+          ChaimLambdaRDSRole: !GetAtt ChaimIAM.Outputs.ChaimLambdaRDSRoleId
+          ChaimLambdaKeymanRole: !GetAtt ChaimIAM.Outputs.ChaimLambdaKeymanRoleId
+          Environment: !Ref Environment
+          Owner: !Ref Owner
+          Product: !Ref Product
+      DependsOn: ChaimKMS
