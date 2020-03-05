@@ -1,6 +1,9 @@
 ---
   AWSTemplateFormatVersion: 2010-09-09
   Parameters:
+    ChaimUserPoolName:
+      Type: String
+      Description: Cognito User Pool Name
     Owner:
       Type: String
       Description: The owner of the product

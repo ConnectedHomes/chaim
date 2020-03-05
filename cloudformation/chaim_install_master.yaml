@@ -13,6 +13,9 @@
     ChaimLambdaKeymanRoleName:
       Type: String
       Description: Tag for Chaim Lambda Keyman Role
+    ChaimUserPoolName:
+      Type: String
+      Description: Cognito User Pool Name
     Owner:
       Type: String
       Description: The owner of the product
@@ -23,20 +26,21 @@
       Type: String
       Description: The environment the product will be built in
   Resources:
-    ChaimCognito:
+    ChaimCognito0:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: chaim_cognito.yaml
+        TemplateURL: chaim_cognito0.yaml
         Parameters:
+          ChaimUserPoolName: !Ref ChaimUserPoolName
           Owner: !Ref Owner
           Product: !Ref Product
           Environment: !Ref Environment        
-    ChaimIAM:
+    ChaimIAM0:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: chaim_iam.yaml
+        TemplateURL: chaim_iam0.yaml
         Parameters:
-          ChaimCognitoUserPool: !GetAtt ChaimCognito.Outputs.ChaimCognitoUserPoolId
+          ChaimCognitoUserPool: !GetAtt ChaimCognito0.Outputs.ChaimCognitoUserPoolId
           ChaimLambdaRDSRoleName: !Ref ChaimLambdaRDSRoleName
           ChaimLambdaKeymanRoleName: !Ref ChaimLambdaKeymanRoleName
           ChaimUser: !Ref ChaimUser
@@ -44,26 +48,26 @@
           Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product
-      DependsOn: ChaimCognito
-    ChaimKMS:
+      DependsOn: ChaimCognito0
+    ChaimKMS0:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: chaim_kms.yaml
+        TemplateURL: chaim_kms0.yaml
         Parameters:
           ChaimLambdaRDSRoleName: !Ref ChaimLambdaRDSRoleName
           Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product
-      DependsOn: ChaimIAM
-    ChaimIAM2:
+      DependsOn: ChaimIAM0
+    ChaimIAM1:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: chaim_iam_2.yaml
+        TemplateURL: chaim_iam1.yaml
         Parameters:
-          ChaimKMSKey: !GetAtt ChaimKMS.Outputs.ChaimKMSKeyId
-          ChaimLambdaRDSRole: !GetAtt ChaimIAM.Outputs.ChaimLambdaRDSRoleId
-          ChaimLambdaKeymanRole: !GetAtt ChaimIAM.Outputs.ChaimLambdaKeymanRoleId
+          ChaimKMSKey: !GetAtt ChaimKMS0.Outputs.ChaimKMSKeyId
+          ChaimLambdaRDSRoleName: !Ref ChaimLambdaRDSRoleName
+          ChaimLambdaKeymanRoleName: !Ref ChaimLambdaKeymanRoleName
           Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product
-      DependsOn: ChaimKMS
+      DependsOn: ChaimKMS0

@@ -1,0 +1,73 @@
+---
+  AWSTemplateFormatVersion: 2010-09-09
+  Parameters: 
+    ChaimKMSKey:
+      Type: String
+      Description: Chaim KMS Key
+    ChaimLambdaRDSRoleName:
+      Type: String
+      Description: Chaim Lambda RDS Role
+    ChaimLambdaKeymanRoleName:
+      Type: String
+      Description: Chaim Lambda Keyman Role
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
+    Owner:
+      Type: String
+      Description: The owner of the product
+    Product:
+      Type: String
+      Description: The product this stack provides
+  Resources:
+    ChaimParamStoreWrite:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        ManagedPolicyName: ChaimParamStoreWrite
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Sid: ChaimParamStoreWrite0
+              Effect: Allow
+              Action:
+                - ssm:PutParameter
+                - kms:Decrypt
+                - kms:Encrypt
+                - ssm:GetParametersByPath
+                - ssm:GetParameters
+                - ssm:GetParameter
+              Resource:
+                - !Ref ChaimKMSKey
+                - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/sre/chaim/*"
+            - Sid: ChaimParamStoreWrite1
+              Effect: Allow
+              Action: ssm:DescribeParameters
+              Resource: "*"
+        Roles:
+          - !Ref ChaimLambdaKeymanRoleName
+    ChaimParamStoreRead:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        ManagedPolicyName: ChaimParamStoreRead
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Sid: ChaimParamStoreRead0
+              Effect: Allow
+              Action: kms:Decrypt
+              Resource: !Ref ChaimKMSKey
+            - Sid: ChaimParamStoreRead1
+              Effect: Allow
+              Action:
+                - ssm:DescribeParameters
+                - ssm:GetParametersByPath
+                - ssm:GetParameters
+                - ssm:GetParameter
+              Resource: "*"
+        Roles:
+          - !Ref ChaimLambdaRDSRoleName
+  Outputs:
+    ChaimParamStoreReadId: 
+      Value: !Ref ChaimParamStoreRead
+    ChaimParamStoreWriteId: 
+      Value: !Ref ChaimParamStoreWrite
