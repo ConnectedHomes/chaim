@@ -1,9 +1,6 @@
 ---
   AWSTemplateFormatVersion: 2010-09-09
   Parameters:
-    ChaimLambdaRDSRoleName:
-      Type: String
-      Description: Chaim Lambda RDS Role
     Environment:
       Type: String
       Description: The environment the product will be built in
@@ -21,7 +18,7 @@
         EnableKeyRotation: true
         KeyPolicy:
           Version: '2012-10-17'
-          Id: ChaimKMSKey-1
+          Id: ChaimKMSKey0
           Statement:
           - Sid: Enable IAM User Permissions
             Effect: Allow
@@ -34,9 +31,7 @@
             Effect: Allow
             Principal:
               AWS:
-                !Sub
-                  - "arn:aws:iam::${AWS::AccountId}:role/${Role}"
-                  - { Role: !Ref ChaimLambdaRDSRoleName }
+                !Sub "arn:aws:iam::${AWS::AccountId}:role/ChaimLambdaRDSRole"
             Action:
               - kms:Encrypt
               - kms:Decrypt
@@ -48,9 +43,7 @@
             Effect: Allow
             Principal:
               AWS:
-                !Sub
-                  - "arn:aws:iam::${AWS::AccountId}:role/${Role}"
-                  - { Role: !Ref ChaimLambdaRDSRoleName }
+                !Sub "arn:aws:iam::${AWS::AccountId}:role/ChaimLambdaRDSRole"
             Action:
               - kms:CreateGrant
               - kms:ListGrants

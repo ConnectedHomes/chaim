@@ -7,15 +7,6 @@
     ChaimUser:
       Type: String
       Description: Chaim IAM User
-    ChaimUserRole:
-      Type: String
-      Description: Chaim IAM User Role
-    ChaimLambdaRDSRoleName:
-      Type: String
-      Description: Chaim Lambda RDS Role
-    ChaimLambdaKeymanRoleName:
-      Type: String
-      Description: Chaim Lambda Keyman Role
     Environment:
       Type: String
       Description: The environment the product will be built in
@@ -37,7 +28,7 @@
           - Key: Name
             Value: !Ref ChaimUser
           - Key: Role
-            Value: !Ref ChaimUserRole
+            Value: ChaimMasterUser
           - Key: Environment
             Value: !Ref Environment
           - Key: Owner
@@ -155,7 +146,7 @@
       Type: AWS::IAM::Role
       Properties:
         Description: "Chaim Access to IAM, Parameter Store, Cognito and RDS"
-        RoleName: !Ref ChaimLambdaRDSRoleName
+        RoleName: ChaimLambdaRDSRole
         AssumeRolePolicyDocument:
           Version: 2012-10-17
           Statement:
@@ -171,7 +162,7 @@
           - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         Tags:
           - Key: Name
-            Value: !Ref ChaimLambdaRDSRoleName
+            Value: ChaimLambdaRDSRole
           - Key: Environment
             Value: !Ref Environment
           - Key: Owner
@@ -187,7 +178,7 @@
       Type: AWS::IAM::Role
       Properties:
         Description: "Chaim Access to IAM, Parameter Store, Cognito and RDS"
-        RoleName: !Ref ChaimLambdaKeymanRoleName
+        RoleName: ChaimLambdaKeymanRole
         AssumeRolePolicyDocument:
           Version: 2012-10-17
           Statement:
@@ -200,7 +191,7 @@
           - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         Tags:
           - Key: Name
-            Value: !Ref ChaimLambdaKeymanRoleName
+            Value: ChaimLambdaKeymanRole
           - Key: Environment
             Value: !Ref Environment
           - Key: Owner

@@ -4,15 +4,6 @@
     ChaimUser:
       Type: String
       Description: The IAM Chaim User
-    ChaimUserRole:
-      Type: String
-      Description: Tag for Chaim User
-    ChaimLambdaRDSRoleName:
-      Type: String
-      Description: Tag for Chaim Lambda RDS Role
-    ChaimLambdaKeymanRoleName:
-      Type: String
-      Description: Tag for Chaim Lambda Keyman Role
     ChaimUserPoolName:
       Type: String
       Description: Cognito User Pool Name
@@ -41,10 +32,7 @@
         TemplateURL: chaim_iam0.yaml
         Parameters:
           ChaimCognitoUserPool: !GetAtt ChaimCognito0.Outputs.ChaimCognitoUserPoolId
-          ChaimLambdaRDSRoleName: !Ref ChaimLambdaRDSRoleName
-          ChaimLambdaKeymanRoleName: !Ref ChaimLambdaKeymanRoleName
           ChaimUser: !Ref ChaimUser
-          ChaimUserRole: !Ref ChaimUserRole
           Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product
@@ -54,7 +42,6 @@
       Properties:
         TemplateURL: chaim_kms0.yaml
         Parameters:
-          ChaimLambdaRDSRoleName: !Ref ChaimLambdaRDSRoleName
           Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product
@@ -65,8 +52,6 @@
         TemplateURL: chaim_iam1.yaml
         Parameters:
           ChaimKMSKey: !GetAtt ChaimKMS0.Outputs.ChaimKMSKeyId
-          ChaimLambdaRDSRoleName: !Ref ChaimLambdaRDSRoleName
-          ChaimLambdaKeymanRoleName: !Ref ChaimLambdaKeymanRoleName
           Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product

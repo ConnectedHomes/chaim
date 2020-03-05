@@ -3,15 +3,6 @@ Parameters:
   ChaimUser:
     Type: String
     Description: The IAM Chaim User
-  ChaimUserRole:
-    Type: String
-    Description: Tag for Chaim User
-  ChaimLambdaRDSRoleName:
-    Type: String
-    Description: Tag for Chaim Lambda RDS Role
-  ChaimLambdaKeymanRoleName:
-    Type: String
-    Description: Tag for Chaim Lambda Keyman Role
   ChaimUserPoolName:
     Type: String
     Description: Cognito User Pool Name
@@ -41,20 +32,14 @@ Resources:
   ChaimIAM0:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/dedb76edde970203063bcdeb5a5f8759.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/06c1c38a0fc0ce9a8043cc198cfb5433.template
       Parameters:
         ChaimCognitoUserPool:
           Fn::GetAtt:
           - ChaimCognito0
           - Outputs.ChaimCognitoUserPoolId
-        ChaimLambdaRDSRoleName:
-          Ref: ChaimLambdaRDSRoleName
-        ChaimLambdaKeymanRoleName:
-          Ref: ChaimLambdaKeymanRoleName
         ChaimUser:
           Ref: ChaimUser
-        ChaimUserRole:
-          Ref: ChaimUserRole
         Environment:
           Ref: Environment
         Owner:
@@ -65,10 +50,8 @@ Resources:
   ChaimKMS0:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/c6205d7b9b4767b0e216c65f9cd1fc81.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/b646364b19393a4ea2854d690eebf8d1.template
       Parameters:
-        ChaimLambdaRDSRoleName:
-          Ref: ChaimLambdaRDSRoleName
         Environment:
           Ref: Environment
         Owner:
@@ -79,16 +62,12 @@ Resources:
   ChaimIAM1:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/87b947caaf1d3b4981b817a584330870.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/b8f85de70ee9cb38e91a9d4d477f9bf5.template
       Parameters:
         ChaimKMSKey:
           Fn::GetAtt:
           - ChaimKMS0
           - Outputs.ChaimKMSKeyId
-        ChaimLambdaRDSRoleName:
-          Ref: ChaimLambdaRDSRoleName
-        ChaimLambdaKeymanRoleName:
-          Ref: ChaimLambdaKeymanRoleName
         Environment:
           Ref: Environment
         Owner:

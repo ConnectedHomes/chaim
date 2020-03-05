@@ -4,12 +4,6 @@
     ChaimKMSKey:
       Type: String
       Description: Chaim KMS Key
-    ChaimLambdaRDSRoleName:
-      Type: String
-      Description: Chaim Lambda RDS Role
-    ChaimLambdaKeymanRoleName:
-      Type: String
-      Description: Chaim Lambda Keyman Role
     Environment:
       Type: String
       Description: The environment the product will be built in
@@ -44,7 +38,7 @@
               Action: ssm:DescribeParameters
               Resource: "*"
         Roles:
-          - !Ref ChaimLambdaKeymanRoleName
+          - ChaimLambdaKeymanRole
     ChaimParamStoreRead:
       Type: AWS::IAM::ManagedPolicy
       Properties:
@@ -65,7 +59,7 @@
                 - ssm:GetParameter
               Resource: "*"
         Roles:
-          - !Ref ChaimLambdaRDSRoleName
+          - ChaimLambdaRDSRole
   Outputs:
     ChaimParamStoreReadId: 
       Value: !Ref ChaimParamStoreRead
