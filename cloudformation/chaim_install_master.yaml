@@ -56,3 +56,12 @@
           Owner: !Ref Owner
           Product: !Ref Product
       DependsOn: ChaimKMS0
+    ChaimSNS0:
+      Type: AWS::CloudFormation::Stack
+      Properties:
+        TemplateURL: chaim_sns0.yaml
+        Parameters:
+          Environment: !Ref Environment
+          Owner: !Ref Owner
+          Product: !Ref Product
+      DependsOn: ChaimIAM1

@@ -1,0 +1,34 @@
+---
+  AWSTemplateFormatVersion: 2010-09-09
+  Parameters:
+    Owner:
+      Type: String
+      Description: The owner of the product
+    Product:
+      Type: String
+      Description: The product this stack provides
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
+  Resources:
+    ChaimSNSTopic:
+      Type: AWS::SNS::Topic
+      Properties: 
+        TopicName: 
+          !Sub
+            - "ChaimSNSEntry${Environment}"
+            - { Environment: !Ref Environment }
+        Tags:
+          - Key: Name
+            Value: ChaimSNSTopic
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: SNSTopic
+  Outputs:
+    ChaimSNSTopicId:
+      Value: !Ref ChaimSNSTopic
