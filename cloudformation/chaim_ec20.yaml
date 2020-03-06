@@ -1,0 +1,49 @@
+---
+  AWSTemplateFormatVersion: 2010-09-09
+  Parameters:
+    ChaimCIDR0:
+      Type: String
+      Description: First octet of CIDR Block
+    ChaimCIDR1:
+      Type: String
+      Description: Second octet of CIDR Block
+    ChaimCIDR2:
+      Type: String
+      Description: Third octet of CIDR Block
+    ChaimCIDR3:
+      Type: String
+      Description: Fourth octet of CIDR Block
+    Owner:
+      Type: String
+      Description: The owner of the product
+    Product:
+      Type: String
+      Description: The product this stack provides
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
+  Resources:
+    ChaimVPC0:
+      Type: AWS::EC2::VPC
+      Properties: 
+        CidrBlock: 
+          !Sub
+            - "${CIDR0}.${CIDR1}.${CIDR2}.${CIDR3}/16"
+            - CIDR0: !Ref ChaimCIDR0
+              CIDR1: !Ref ChaimCIDR1
+              CIDR2: !Ref ChaimCIDR2
+              CIDR3: !Ref ChaimCIDR3
+        Tags:
+          - Key: Name
+            Value: ChaimDbNetwork
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimVPC
+  Outputs:
+    ChaimVPCId:
+      Value: !Ref ChaimVPC0
