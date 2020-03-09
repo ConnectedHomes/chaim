@@ -1,18 +1,12 @@
 ---
   AWSTemplateFormatVersion: 2010-09-09
   Parameters:
-    ChaimCIDR0:
+    ChaimCIDROctet0:
       Type: String
       Description: First octet of CIDR Block
-    ChaimCIDR1:
+    ChaimCIDROctet1:
       Type: String
       Description: Second octet of CIDR Block
-    ChaimCIDR2:
-      Type: String
-      Description: Third octet of CIDR Block
-    ChaimCIDR3:
-      Type: String
-      Description: Fourth octet of CIDR Block
     Owner:
       Type: String
       Description: The owner of the product
@@ -28,11 +22,9 @@
       Properties: 
         CidrBlock: 
           !Sub
-            - "${CIDR0}.${CIDR1}.${CIDR2}.${CIDR3}/16"
-            - CIDR0: !Ref ChaimCIDR0
-              CIDR1: !Ref ChaimCIDR1
-              CIDR2: !Ref ChaimCIDR2
-              CIDR3: !Ref ChaimCIDR3
+            - "${CIDR0}.${CIDR1}.0.0/16"
+            - CIDR0: !Ref ChaimCIDROctet0
+              CIDR1: !Ref ChaimCIDROctet1
         Tags:
           - Key: Name
             Value: ChaimDbNetwork
@@ -44,6 +36,212 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimVPC
+    ChaimSubnet0:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ChaimVPC0
+        AvailabilityZone:
+          !Sub "${AWS::Region}a"
+        CidrBlock:
+          !Sub
+            - "${CIDR0}.${CIDR1}.0.0/24"
+            - CIDR0: !Ref ChaimCIDROctet0
+              CIDR1: !Ref ChaimCIDROctet1
+        Tags:
+          - Key: Name
+            Value: ChaimSubnet0
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimSubnet
+      DependsOn: ChaimVPC0
+    ChaimSubnet1:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ChaimVPC0
+        AvailabilityZone:
+          !Sub "${AWS::Region}b"
+        CidrBlock:
+          !Sub
+            - "${CIDR0}.${CIDR1}.1.0/24"
+            - CIDR0: !Ref ChaimCIDROctet0
+              CIDR1: !Ref ChaimCIDROctet1
+        Tags:
+          - Key: Name
+            Value: ChaimSubnet1
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimSubnet
+      DependsOn: ChaimVPC0
+    ChaimSubnet2:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ChaimVPC0
+        AvailabilityZone:
+          !Sub "${AWS::Region}c"
+        CidrBlock:
+          !Sub
+            - "${CIDR0}.${CIDR1}.2.0/24"
+            - CIDR0: !Ref ChaimCIDROctet0
+              CIDR1: !Ref ChaimCIDROctet1
+        Tags:
+          - Key: Name
+            Value: ChaimSubnet2
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimSubnet
+      DependsOn: ChaimVPC0
+    ChaimEIP0:
+      Type: AWS::EC2::EIP
+      Properties:
+        Domain: VPC
+        Tags:
+          - Key: Name
+            Value: ChaimEIP0
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimEIP
+      DependsOn: ChaimVPC0
+    #ChaimNatGateway0:
+    #  Type: AWS::EC2::NatGateway
+    #  Properties:
+    #    AllocationId: !GetAtt ChaimEIP0.AllocationId
+    #    SubnetId: !Ref ChaimSubnet0
+    #    Tags:
+    #      - Key: Name
+    #        Value: ChaimNatGateway0
+    #      - Key: Owner
+    #        Value: !Ref Owner
+    #      - Key: Product
+    #        Value: !Ref Product
+    #      - Key: Environment
+    #        Value: !Ref Environment
+    #      - Key: Role
+    #        Value: ChaimNatGateway
+    #  DependsOn: ChaimEIP0
+    ChaimInternetGateway0:
+      Type: AWS::EC2::InternetGateway
+      Properties:
+        Tags:
+          - Key: Name
+            Value: ChaimInternetGateway0
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimInternetGateway
+      DependsOn: ChaimVPC0
+    ChaimVPCGatewayAttachment0:
+      Type: AWS::EC2::VPCGatewayAttachment
+      Properties:
+        VpcId: !Ref ChaimVPC0
+        InternetGatewayId: !Ref ChaimInternetGateway0
+      DependsOn: ChaimInternetGateway0
+    ChaimRouteTablePublic0:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref ChaimVPC0
+        Tags:
+          - Key: Name
+            Value: ChaimRouteTablePublic0
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimRouteTablePublic
+      DependsOn: ChaimVPC0
+    ChaimRouteTablePrivate0:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref ChaimVPC0
+        Tags:
+          - Key: Name
+            Value: ChaimRouteTablePrivate0
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimRouteTablePrivate
+      DependsOn: ChaimVPC0
+    ChaimRoutePublic0:
+      Type: AWS::EC2::Route
+      Properties:
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref ChaimInternetGateway0
+        RouteTableId: !Ref ChaimRouteTablePublic0
+      DependsOn: ChaimRouteTablePublic0
+    ChaimSubnetRouteTableAssociation0:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref ChaimRouteTablePublic0
+        SubnetId: !Ref ChaimSubnet0
+      DependsOn: 
+        - ChaimSubnet0
+        - ChaimRouteTablePublic0
+    ChaimSubnetRouteTableAssociation1:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref ChaimRouteTablePrivate0
+        SubnetId: !Ref ChaimSubnet1
+      DependsOn: 
+        - ChaimSubnet1
+        - ChaimRouteTablePrivate0
+    ChaimSubnetRouteTableAssociation2:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref ChaimRouteTablePrivate0
+        SubnetId: !Ref ChaimSubnet2
+      DependsOn: 
+        - ChaimSubnet2
+        - ChaimRouteTablePrivate0
   Outputs:
     ChaimVPCId:
       Value: !Ref ChaimVPC0
+    ChaimSubnetaId:
+      Value: !Ref ChaimSubnet0
+    ChaimSubnetbId:
+      Value: !Ref ChaimSubnet1
+    ChaimSubnetcId:
+      Value: !Ref ChaimSubnet2
+    ChaimEIPId:
+      Value: !GetAtt ChaimEIP0.AllocationId
+    #ChaimNatGatewayId:
+    #  Value: !Ref ChaimNatGateway0
+    ChaimInternetGatewayId:
+      Value: !Ref ChaimInternetGateway0
+    ChaimVPCGatewayAttachmentId:
+      Value: !Ref ChaimVPCGatewayAttachment0
+    ChaimRouteTablePublicId:
+      Value: !Ref ChaimRouteTablePublic0
+    ChaimRouteTablePrivateId:
+      Value: !Ref ChaimRouteTablePrivate0
+    ChaimRoutePublicId:
+      Value: !Ref ChaimRoutePublic0

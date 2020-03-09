@@ -6,18 +6,12 @@ Parameters:
   ChaimUserPoolName:
     Type: String
     Description: Cognito User Pool Name
-  ChaimCIDR0:
+  ChaimCIDROctet0:
     Type: String
     Description: First octet of CIDR Block
-  ChaimCIDR1:
+  ChaimCIDROctet1:
     Type: String
     Description: Second octet of CIDR Block
-  ChaimCIDR2:
-    Type: String
-    Description: Third octet of CIDR Block
-  ChaimCIDR3:
-    Type: String
-    Description: Fourth octet of CIDR Block
   Owner:
     Type: String
     Description: The owner of the product
@@ -102,16 +96,12 @@ Resources:
   ChaimEC20:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/b35e6699988765ba45b499c4a45332a2.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/79eb4e3116854b7f03f4a2adaaa2dd93.template
       Parameters:
-        ChaimCIDR0:
-          Ref: ChaimCIDR0
-        ChaimCIDR1:
-          Ref: ChaimCIDR1
-        ChaimCIDR2:
-          Ref: ChaimCIDR2
-        ChaimCIDR3:
-          Ref: ChaimCIDR3
+        ChaimCIDROctet0:
+          Ref: ChaimCIDROctet0
+        ChaimCIDROctet1:
+          Ref: ChaimCIDROctet1
         Environment:
           Ref: Environment
         Owner:
