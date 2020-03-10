@@ -202,7 +202,7 @@
       Type: AWS::EC2::Route
       Properties:
         DestinationCidrBlock: 0.0.0.0/0
-        GatewayId: !Ref ChaimNatGateway0
+        NatGatewayId: !Ref ChaimNatGateway0
         RouteTableId: !Ref ChaimRouteTablePrivate0
       DependsOn: ChaimRouteTablePrivate0
     ChaimSubnetRouteTableAssociation0:
@@ -229,6 +229,23 @@
       DependsOn: 
         - ChaimSubnet2
         - ChaimRouteTablePrivate0
+    ChaimDbAccessSG0:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: 'Security group for access to the chaim database'
+        GroupName: ChaimDbAccessSG0
+        VpcId: !Ref ChaimVPC0
+        Tags:
+          - Key: Name
+            Value: ChaimDbAccessSG0
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimDbAccessSG
   Outputs:
     ChaimVPCId:
       Value: !Ref ChaimVPC0
@@ -252,3 +269,7 @@
       Value: !Ref ChaimRouteTablePrivate0
     ChaimRoutePublicId:
       Value: !Ref ChaimRoutePublic0
+    ChaimRoutePrivateId:
+      Value: !Ref ChaimRoutePrivate0
+    ChaimDbAccessSGId:
+      Value: !GetAtt ChaimDbAccessSG0.GroupId

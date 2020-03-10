@@ -96,7 +96,7 @@ Resources:
   ChaimEC20:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/890302490b55fc279e006abb6f9d84c0.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/ad1cf90eecfd3aaa06ced8f571eacc57.template
       Parameters:
         ChaimCIDROctet0:
           Ref: ChaimCIDROctet0
