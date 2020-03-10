@@ -121,23 +121,23 @@
           - Key: Role
             Value: ChaimEIP
       DependsOn: ChaimVPC0
-    #ChaimNatGateway0:
-    #  Type: AWS::EC2::NatGateway
-    #  Properties:
-    #    AllocationId: !GetAtt ChaimEIP0.AllocationId
-    #    SubnetId: !Ref ChaimSubnet0
-    #    Tags:
-    #      - Key: Name
-    #        Value: ChaimNatGateway0
-    #      - Key: Owner
-    #        Value: !Ref Owner
-    #      - Key: Product
-    #        Value: !Ref Product
-    #      - Key: Environment
-    #        Value: !Ref Environment
-    #      - Key: Role
-    #        Value: ChaimNatGateway
-    #  DependsOn: ChaimEIP0
+    ChaimNatGateway0:
+      Type: AWS::EC2::NatGateway
+      Properties:
+        AllocationId: !GetAtt ChaimEIP0.AllocationId
+        SubnetId: !Ref ChaimSubnet0
+        Tags:
+          - Key: Name
+            Value: ChaimNatGateway0
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimNatGateway
+      DependsOn: ChaimEIP0
     ChaimInternetGateway0:
       Type: AWS::EC2::InternetGateway
       Properties:
@@ -198,6 +198,13 @@
         GatewayId: !Ref ChaimInternetGateway0
         RouteTableId: !Ref ChaimRouteTablePublic0
       DependsOn: ChaimRouteTablePublic0
+    ChaimRoutePrivate0:
+      Type: AWS::EC2::Route
+      Properties:
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref ChaimNatGateway0
+        RouteTableId: !Ref ChaimRouteTablePrivate0
+      DependsOn: ChaimRouteTablePrivate0
     ChaimSubnetRouteTableAssociation0:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:
@@ -233,8 +240,8 @@
       Value: !Ref ChaimSubnet2
     ChaimEIPId:
       Value: !GetAtt ChaimEIP0.AllocationId
-    #ChaimNatGatewayId:
-    #  Value: !Ref ChaimNatGateway0
+    ChaimNatGatewayId:
+      Value: !Ref ChaimNatGateway0
     ChaimInternetGatewayId:
       Value: !Ref ChaimInternetGateway0
     ChaimVPCGatewayAttachmentId:
