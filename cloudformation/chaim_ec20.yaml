@@ -17,7 +17,7 @@
       Type: String
       Description: The environment the product will be built in
   Resources:
-    ChaimVPC0:
+    ChaimVPC:
       Type: AWS::EC2::VPC
       Properties: 
         CidrBlock: 
@@ -39,7 +39,7 @@
     ChaimSubnet0:
       Type: AWS::EC2::Subnet
       Properties:
-        VpcId: !Ref ChaimVPC0
+        VpcId: !Ref ChaimVPC
         AvailabilityZone:
           !Sub "${AWS::Region}a"
         CidrBlock:
@@ -58,11 +58,11 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimSubnet
-      DependsOn: ChaimVPC0
+      DependsOn: ChaimVPC
     ChaimSubnet1:
       Type: AWS::EC2::Subnet
       Properties:
-        VpcId: !Ref ChaimVPC0
+        VpcId: !Ref ChaimVPC
         AvailabilityZone:
           !Sub "${AWS::Region}b"
         CidrBlock:
@@ -81,11 +81,11 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimSubnet
-      DependsOn: ChaimVPC0
+      DependsOn: ChaimVPC
     ChaimSubnet2:
       Type: AWS::EC2::Subnet
       Properties:
-        VpcId: !Ref ChaimVPC0
+        VpcId: !Ref ChaimVPC
         AvailabilityZone:
           !Sub "${AWS::Region}c"
         CidrBlock:
@@ -104,14 +104,14 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimSubnet
-      DependsOn: ChaimVPC0
-    ChaimEIP0:
+      DependsOn: ChaimVPC
+    ChaimEIP:
       Type: AWS::EC2::EIP
       Properties:
         Domain: VPC
         Tags:
           - Key: Name
-            Value: ChaimEIP0
+            Value: ChaimEIP
           - Key: Owner
             Value: !Ref Owner
           - Key: Product
@@ -120,15 +120,15 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimEIP
-      DependsOn: ChaimVPC0
-    ChaimNatGateway0:
+      DependsOn: ChaimVPC
+    ChaimNatGateway:
       Type: AWS::EC2::NatGateway
       Properties:
-        AllocationId: !GetAtt ChaimEIP0.AllocationId
+        AllocationId: !GetAtt ChaimEIP.AllocationId
         SubnetId: !Ref ChaimSubnet0
         Tags:
           - Key: Name
-            Value: ChaimNatGateway0
+            Value: ChaimNatGateway
           - Key: Owner
             Value: !Ref Owner
           - Key: Product
@@ -137,13 +137,13 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimNatGateway
-      DependsOn: ChaimEIP0
-    ChaimInternetGateway0:
+      DependsOn: ChaimEIP
+    ChaimInternetGateway:
       Type: AWS::EC2::InternetGateway
       Properties:
         Tags:
           - Key: Name
-            Value: ChaimInternetGateway0
+            Value: ChaimInternetGateway
           - Key: Owner
             Value: !Ref Owner
           - Key: Product
@@ -152,20 +152,20 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimInternetGateway
-      DependsOn: ChaimVPC0
-    ChaimVPCGatewayAttachment0:
+      DependsOn: ChaimVPC
+    ChaimVPCGatewayAttachment:
       Type: AWS::EC2::VPCGatewayAttachment
       Properties:
-        VpcId: !Ref ChaimVPC0
-        InternetGatewayId: !Ref ChaimInternetGateway0
-      DependsOn: ChaimInternetGateway0
-    ChaimRouteTablePublic0:
+        VpcId: !Ref ChaimVPC
+        InternetGatewayId: !Ref ChaimInternetGateway
+      DependsOn: ChaimInternetGateway
+    ChaimRouteTablePublic:
       Type: AWS::EC2::RouteTable
       Properties:
-        VpcId: !Ref ChaimVPC0
+        VpcId: !Ref ChaimVPC
         Tags:
           - Key: Name
-            Value: ChaimRouteTablePublic0
+            Value: ChaimRouteTablePublic
           - Key: Owner
             Value: !Ref Owner
           - Key: Product
@@ -174,14 +174,14 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimRouteTablePublic
-      DependsOn: ChaimVPC0
-    ChaimRouteTablePrivate0:
+      DependsOn: ChaimVPC
+    ChaimRouteTablePrivate:
       Type: AWS::EC2::RouteTable
       Properties:
-        VpcId: !Ref ChaimVPC0
+        VpcId: !Ref ChaimVPC
         Tags:
           - Key: Name
-            Value: ChaimRouteTablePrivate0
+            Value: ChaimRouteTablePrivate
           - Key: Owner
             Value: !Ref Owner
           - Key: Product
@@ -190,54 +190,54 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimRouteTablePrivate
-      DependsOn: ChaimVPC0
-    ChaimRoutePublic0:
+      DependsOn: ChaimVPC
+    ChaimRoutePublic:
       Type: AWS::EC2::Route
       Properties:
         DestinationCidrBlock: 0.0.0.0/0
-        GatewayId: !Ref ChaimInternetGateway0
-        RouteTableId: !Ref ChaimRouteTablePublic0
-      DependsOn: ChaimRouteTablePublic0
-    ChaimRoutePrivate0:
+        GatewayId: !Ref ChaimInternetGateway
+        RouteTableId: !Ref ChaimRouteTablePublic
+      DependsOn: ChaimRouteTablePublic
+    ChaimRoutePrivate:
       Type: AWS::EC2::Route
       Properties:
         DestinationCidrBlock: 0.0.0.0/0
-        NatGatewayId: !Ref ChaimNatGateway0
-        RouteTableId: !Ref ChaimRouteTablePrivate0
-      DependsOn: ChaimRouteTablePrivate0
+        NatGatewayId: !Ref ChaimNatGateway
+        RouteTableId: !Ref ChaimRouteTablePrivate
+      DependsOn: ChaimRouteTablePrivate
     ChaimSubnetRouteTableAssociation0:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:
-        RouteTableId: !Ref ChaimRouteTablePublic0
+        RouteTableId: !Ref ChaimRouteTablePublic
         SubnetId: !Ref ChaimSubnet0
       DependsOn: 
         - ChaimSubnet0
-        - ChaimRouteTablePublic0
+        - ChaimRouteTablePublic
     ChaimSubnetRouteTableAssociation1:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:
-        RouteTableId: !Ref ChaimRouteTablePrivate0
+        RouteTableId: !Ref ChaimRouteTablePrivate
         SubnetId: !Ref ChaimSubnet1
       DependsOn: 
         - ChaimSubnet1
-        - ChaimRouteTablePrivate0
+        - ChaimRouteTablePrivate
     ChaimSubnetRouteTableAssociation2:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:
-        RouteTableId: !Ref ChaimRouteTablePrivate0
+        RouteTableId: !Ref ChaimRouteTablePrivate
         SubnetId: !Ref ChaimSubnet2
       DependsOn: 
         - ChaimSubnet2
-        - ChaimRouteTablePrivate0
-    ChaimDbAccessSG0:
+        - ChaimRouteTablePrivate
+    ChaimDbAccessSG:
       Type: AWS::EC2::SecurityGroup
       Properties:
         GroupDescription: 'Security group for access to the chaim database'
-        GroupName: ChaimDbAccessSG0
-        VpcId: !Ref ChaimVPC0
+        GroupName: ChaimDbAccessSG
+        VpcId: !Ref ChaimVPC
         Tags:
           - Key: Name
-            Value: ChaimDbAccessSG0
+            Value: ChaimDbAccessSG
           - Key: Owner
             Value: !Ref Owner
           - Key: Product
@@ -248,7 +248,7 @@
             Value: ChaimDbAccessSG
   Outputs:
     ChaimVPCId:
-      Value: !Ref ChaimVPC0
+      Value: !Ref ChaimVPC
     ChaimSubnetaId:
       Value: !Ref ChaimSubnet0
     ChaimSubnetbId:
@@ -256,20 +256,20 @@
     ChaimSubnetcId:
       Value: !Ref ChaimSubnet2
     ChaimEIPId:
-      Value: !GetAtt ChaimEIP0.AllocationId
+      Value: !GetAtt ChaimEIP.AllocationId
     ChaimNatGatewayId:
-      Value: !Ref ChaimNatGateway0
+      Value: !Ref ChaimNatGateway
     ChaimInternetGatewayId:
-      Value: !Ref ChaimInternetGateway0
+      Value: !Ref ChaimInternetGateway
     ChaimVPCGatewayAttachmentId:
-      Value: !Ref ChaimVPCGatewayAttachment0
+      Value: !Ref ChaimVPCGatewayAttachment
     ChaimRouteTablePublicId:
-      Value: !Ref ChaimRouteTablePublic0
+      Value: !Ref ChaimRouteTablePublic
     ChaimRouteTablePrivateId:
-      Value: !Ref ChaimRouteTablePrivate0
+      Value: !Ref ChaimRouteTablePrivate
     ChaimRoutePublicId:
-      Value: !Ref ChaimRoutePublic0
+      Value: !Ref ChaimRoutePublic
     ChaimRoutePrivateId:
-      Value: !Ref ChaimRoutePrivate0
+      Value: !Ref ChaimRoutePrivate
     ChaimDbAccessSGId:
-      Value: !GetAtt ChaimDbAccessSG0.GroupId
+      Value: !GetAtt ChaimDbAccessSG.GroupId
