@@ -47,6 +47,7 @@
             - "${CIDR0}.${CIDR1}.0.0/24"
             - CIDR0: !Ref ChaimCIDROctet0
               CIDR1: !Ref ChaimCIDROctet1
+        MapPublicIpOnLaunch: True
         Tags:
           - Key: Name
             Value: ChaimSubnet0
