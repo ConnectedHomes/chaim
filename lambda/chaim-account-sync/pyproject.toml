@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "chaim-account-sync"
+version = "0.1.0"
+description = ""
+authors = ["ccdale <chris.allison@hivehome.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+ccaaws = "^0.4.4"
+
+[tool.poetry.dev-dependencies]
+boto3 = "^1.12.22"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

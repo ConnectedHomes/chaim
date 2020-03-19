@@ -1,0 +1,20 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ListParentAccts",
+            "Effect": "Allow",
+            "Action": "organizations:ListAccountsForParent",
+            "Resource": [
+                "arn:aws:organizations::324919260230:root/o-*/r-*",
+                "arn:aws:organizations::324919260230:ou/o-*/ou-*"
+            ]
+        },
+        {
+            "Sid": "ListAccounts",
+            "Effect": "Allow",
+            "Action": "organizations:ListAccounts",
+            "Resource": "*"
+        }
+    ]
+}
