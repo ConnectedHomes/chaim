@@ -51,9 +51,9 @@ Resources:
                 - PolicyName: chaimAccountSyncSendLambdaPolicy
                   PolicyDocument:
                     Statement:
-                    - Sid: PutMetrics
+                    - Sid: OrgAccts
                       Effect: Allow
-                      Action: cloudwatch:PutMetricData
+                      Action: organizations:ListAccounts
                       Resource: "*"
                     - Sid: PublishToSNS
                       Effect: Allow
