@@ -9,6 +9,11 @@ log = ccalogging.log
 
 class Organisations(BotoSession):
     def __init__(self, **kwargs):
+        ikwargs = {"noresource": True}
+        if kwargs is not None and type(kwargs) == dict:
+            kwargs["noresource"] = True
+        else:
+            kwargs = ikwargs
         super().__init__(**kwargs)
         self.newClient("organizations")
         self.errored = False
