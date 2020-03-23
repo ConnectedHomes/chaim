@@ -1,4 +1,5 @@
 import boto3
+import json
 
 import ccalogging
 
@@ -21,10 +22,12 @@ def send(event, context, local=False):
         log.info(f"Chaim Account Sync Send version: {__version__}")
         org = ORG.Organisations()
         accts = org.getAccounts()
-        acn = 0
-        icn = 0
-        iaccts = []
+        log.info(f"{len(accts)} accounts retrieved")
+        log.debug(f"Accounts: {accts}")
         if local:
+            acn = 0
+            icn = 0
+            iaccts = []
             for acct in accts:
                 if acct["Status"] == "ACTIVE":
                     acn += 1
