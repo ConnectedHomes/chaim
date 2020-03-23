@@ -11,7 +11,7 @@ log = ccalogging.log
 
 majorv = 1
 minorv = 0
-buildv = 0
+buildv = 1
 verstr = str(majorv) + "." + str(minorv) + "." + str(buildv)
 __version__ = verstr
 __version_info__ = [majorv, minorv, buildv]
