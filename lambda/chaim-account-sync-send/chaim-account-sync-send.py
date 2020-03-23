@@ -2,7 +2,7 @@ import organisations as ORG
 
 
 def send(event, context, local=False):
-    org = ORG.Organisations(noresource=True)
+    org = ORG.Organisations()
     accts = org.getAccounts()
     acn = 0
     icn = 0
