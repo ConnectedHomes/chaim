@@ -72,7 +72,7 @@ Resources:
             Handler: chaim-account-sync-send.send
             Code:
                 S3Bucket: !Sub centricasecurity-${AWS::AccountId}
-                S3Key: !Sub chaimAcctSyncSend-${LambdaVersion}.zip
+                S3Key: !Sub chaim-account-sync-send-${LambdaVersion}.zip
             Timeout: 120
             Environment:
                 Variables:
