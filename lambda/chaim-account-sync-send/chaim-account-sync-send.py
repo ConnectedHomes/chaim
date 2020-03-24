@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 
 import ccalogging
 
@@ -11,7 +12,7 @@ log = ccalogging.log
 
 majorv = 1
 minorv = 1
-buildv = 1
+buildv = 2
 verstr = str(majorv) + "." + str(minorv) + "." + str(buildv)
 __version__ = verstr
 __version_info__ = [majorv, minorv, buildv]
