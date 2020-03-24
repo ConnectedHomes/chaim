@@ -92,9 +92,9 @@ Resources:
     ScheduledRule:
         Type: AWS::Events::Rule
         Properties:
-            Description: Invokes the chaim account sync send Lambda daily at 05:26
-            ScheduleExpression: "cron(26 5 * * ? *)"
-            State: "DISABLED"
+            Description: Invokes the chaim account sync send Lambda daily at 06:26
+            ScheduleExpression: "cron(26 6 * * ? *)"
+            State: "ENABLED"
             Targets:
                 - Arn: !GetAtt chaimAcctSyncSend.Arn
                   Id: TargetFunc
