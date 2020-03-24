@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+    FuncName:
+        Description: The name of the lambda function
+        Type: String
+        Default: chaim-account-sync-send
+
+    LambdaVersion:
+        Description: The version number of the lambda code
+        Type: String
+
+    Notifier:
+        Description: The SNS topic ARN to notify
+        Type: String
+        Default: arn:aws:sns:eu-west-1:499223386158:sreChaimAcctSyncRecv
+
+    Owner:
+        Description: owner tag
+        Type: String
+        Default: sre
+
+    EnvEnv:
+        Description: environment tag
+        Type: String
+        Default: dev
+
+    Product:
+        Description: product tag
+        Type: String
+        Default: chaim
+
+Resources:
+    chaimAcctSyncSendRole:
+        Type: AWS::IAM::Role
+        Properties:
+            Description: Role for the Chaim Account Sync lambda function to run as
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                - Effect: Allow
+                  Principal:
+                    Service:
+                    - lambda.amazonaws.com
+                  Action:
+                  - sts:AssumeRole
+            ManagedPolicyArns:
+                -  arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+            Path: /
+            Policies:
+                - PolicyName: chaimAccountSyncSendLambdaPolicy
+                  PolicyDocument:
+                    Statement:
+                    - Sid: OrgAccts
+                      Effect: Allow
+                      Action: organizations:ListAccounts
+                      Resource: "*"
+                    - Sid: PublishToSNS
+                      Effect: Allow
+                      Action: sns:Publish
+                      Resource: "*"
+
+    chaimAcctSyncSend:
+        Type: AWS::Lambda::Function
+        Description: >
+            A lambda function to retrieve the list of accounts
+            from the organisation and send them on to the
+            chaim account via SNS
+        Properties:
+            Runtime: python3.8
+            Role: !GetAtt chaimAcctSyncSendRole.Arn
+            Handler: chaim-account-sync-send.send
+            Code:
+                S3Bucket: !Sub centricasecurity-${AWS::AccountId}
+                S3Key: !Sub chaim-account-sync-send-${LambdaVersion}.zip
+            Timeout: 120
+            Environment:
+                Variables:
+                    SNSTOPIC: !Ref Notifier
+            Tags:
+                - Key: owner
+                  Value: !Ref Owner
+                - Key: environment
+                  Value: !Ref EnvEnv
+                - Key: product
+                  Value: !Ref Product
+                - Key: role
+                  Value: lambda-function
+                - Key: version
+                  Value: !Ref LambdaVersion
+
+    ScheduledRule:
+        Type: AWS::Events::Rule
+        Properties:
+            Description: Invokes the chaim account sync send Lambda daily at 06:26
+            ScheduleExpression: "cron(26 6 * * ? *)"
+            State: "ENABLED"
+            Targets:
+                - Arn: !GetAtt chaimAcctSyncSend.Arn
+                  Id: TargetFunc
+    SchedulePermission:
+        Type: AWS::Lambda::Permission
+        Properties:
+            FunctionName: !Ref chaimAcctSyncSend
+            Action: lambda:InvokeFunction
+            Principal: events.amazonaws.com
+            SourceArn: !GetAtt ScheduledRule.Arn
