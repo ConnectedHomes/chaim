@@ -109,3 +109,19 @@ Resources:
         Product:
           Ref: Product
     DependsOn: ChaimSNS0
+  ChaimRDS0:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/3ea3070e37df7000d46c4ea90fefabb8.template
+      Parameters:
+        ChaimKMSKey:
+          Fn::GetAtt:
+          - ChaimKMS0
+          - Outputs.ChaimKMSKeyId
+        Environment:
+          Ref: Environment
+        Owner:
+          Ref: Owner
+        Product:
+          Ref: Product
+    DependsOn: ChaimEC20

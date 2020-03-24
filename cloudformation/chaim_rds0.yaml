@@ -1,0 +1,71 @@
+---
+  AWSTemplateFormatVersion: 2010-09-09
+  Parameters:
+    ChaimKMSKey:
+      Type: String
+      Description: Chaim KMS Key
+    Owner:
+      Type: String
+      Description: The owner of the product
+    Product:
+      Type: String
+      Description: The product this stack provides
+    Environment:
+      Type: String
+      Description: The environment the product will be built in
+  Resources:
+    ChaimSecretsManagerDbPw:
+      Type: AWS::SecretsManager::Secret
+      Properties: 
+        Description: "Chaim RDS DB Master Password"
+        KmsKeyId: !Ref ChaimKMSKey
+        GenerateSecretString:
+          SecretStringTemplate: '{"username": "ChaimDBMasterUser"}'
+          GenerateStringKey: 'password'
+          ExcludeCharacters: '"/\@'
+        Tags:
+          - Key: Name
+            Value: ChaimDbMasterPw
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+    ChaimRDSDb:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        AllocatedStorage: 20
+        DBInstanceIdentifier: ChaimRDSDb
+        DBName: ChaimDB
+        DBInstanceClass: db.t3.micro
+        Engine: MariaDB
+        MasterUserName:
+          !Sub
+            - "{{resolve:secretsmanager:${Username}:SecretString:username}}"
+            - { Username: !Ref ChaimSecretsManagerDbPw }
+        MasterUserPassword:
+          !Sub
+            - "{{resolve:secretsmanager:${Password}:SecretString:password}}"
+            - { Password: !Ref ChaimSecretsManagerDbPw }
+        BackupRetentionPeriod: 0
+    ChaimSecretRDSInstanceAttachment:
+      Type: AWS::SecretsManager::SecretTargetAttachment
+      Properties:
+        SecretId: !Ref ChaimSecretsManagerDbPw
+        TargetId: !Ref ChaimRDSDb
+        TargetType: AWS::RDS::DBInstance
+      DependsOn: 
+        - ChaimSecretsManagerDbPw
+        - ChaimRDSDb
+  Outputs:
+    ChaimSecretsManagerDbPwId:
+      Value: !Ref ChaimSecretsManagerDbPw
+    ChaimRDSDbId:
+      Value: !Ref ChaimRDSDb
+    ChaimRDSDbEndpointId:
+      Value: !GetAtt ChaimRDSDb.Endpoint.Address
+    ChaimRDSDbPortId:
+      Value: !GetAtt ChaimRDSDb.Endpoint.Port
+    ChaimSecretRDSInstanceAttachmentId:
+      Value: !Ref ChaimSecretRDSInstanceAttachment

@@ -81,5 +81,14 @@
           Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product
-      DependsOn:
-        ChaimSNS0
+      DependsOn: ChaimSNS0
+    ChaimRDS0:
+      Type: AWS::CloudFormation::Stack
+      Properties:
+        TemplateURL: chaim_rds0.yaml
+        Parameters:
+          ChaimKMSKey: !GetAtt ChaimKMS0.Outputs.ChaimKMSKeyId
+          Environment: !Ref Environment
+          Owner: !Ref Owner
+          Product: !Ref Product
+      DependsOn: ChaimEC20
