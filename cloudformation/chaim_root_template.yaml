@@ -12,6 +12,9 @@ Parameters:
   ChaimCIDROctet1:
     Type: String
     Description: Second octet of CIDR Block
+  ChaimDbMasterUsername:
+    Type: String
+    Description: Chaim RDS DB Master Username
   Owner:
     Type: String
     Description: The owner of the product
@@ -96,7 +99,7 @@ Resources:
   ChaimEC20:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/e240ba831a4d1006f55bcd13b682ecba.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/6579e34c9c5e37a07c788b67fff3a7ab.template
       Parameters:
         ChaimCIDROctet0:
           Ref: ChaimCIDROctet0
@@ -112,12 +115,26 @@ Resources:
   ChaimRDS0:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/3ea3070e37df7000d46c4ea90fefabb8.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/ee35ff1d189746dcb833825d81c7caee.template
       Parameters:
         ChaimKMSKey:
           Fn::GetAtt:
           - ChaimKMS0
           - Outputs.ChaimKMSKeyId
+        ChaimDbSG:
+          Fn::GetAtt:
+          - ChaimEC20
+          - Outputs.ChaimDbSGId
+        ChaimSubnet1:
+          Fn::GetAtt:
+          - ChaimEC20
+          - Outputs.ChaimSubnet1Id
+        ChaimSubnet2:
+          Fn::GetAtt:
+          - ChaimEC20
+          - Outputs.ChaimSubnet2Id
+        ChaimDbMasterUsername:
+          Ref: ChaimDbMasterUsername
         Environment:
           Ref: Environment
         Owner:

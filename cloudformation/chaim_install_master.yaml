@@ -13,6 +13,9 @@
     ChaimCIDROctet1:
       Type: String
       Description: Second octet of CIDR Block
+    ChaimDbMasterUsername:
+      Type: String
+      Description: Chaim RDS DB Master Username
     Owner:
       Type: String
       Description: The owner of the product
@@ -88,6 +91,10 @@
         TemplateURL: chaim_rds0.yaml
         Parameters:
           ChaimKMSKey: !GetAtt ChaimKMS0.Outputs.ChaimKMSKeyId
+          ChaimDbSG: !GetAtt ChaimEC20.Outputs.ChaimDbSGId
+          ChaimSubnet1: !GetAtt ChaimEC20.Outputs.ChaimSubnet1Id
+          ChaimSubnet2: !GetAtt ChaimEC20.Outputs.ChaimSubnet2Id
+          ChaimDbMasterUsername: !Ref ChaimDbMasterUsername
           Environment: !Ref Environment
           Owner: !Ref Owner
           Product: !Ref Product

@@ -247,14 +247,37 @@
             Value: !Ref Environment
           - Key: Role
             Value: ChaimDbAccessSG
+    ChaimDbSG:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: 'Security group for the chaim database'
+        GroupName: ChaimDbSG
+        VpcId: !Ref ChaimVPC
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 3306
+            ToPort: 3306
+            SourceSecurityGroupId: !GetAtt ChaimDbAccessSG.GroupId
+            Description: "Access from ChaimDbAccessSG"
+        Tags:
+          - Key: Name
+            Value: ChaimDbSG
+          - Key: Owner
+            Value: !Ref Owner
+          - Key: Product
+            Value: !Ref Product
+          - Key: Environment
+            Value: !Ref Environment
+          - Key: Role
+            Value: ChaimDbSG
   Outputs:
     ChaimVPCId:
       Value: !Ref ChaimVPC
-    ChaimSubnetaId:
+    ChaimSubnet0Id:
       Value: !Ref ChaimSubnet0
-    ChaimSubnetbId:
+    ChaimSubnet1Id:
       Value: !Ref ChaimSubnet1
-    ChaimSubnetcId:
+    ChaimSubnet2Id:
       Value: !Ref ChaimSubnet2
     ChaimEIPId:
       Value: !GetAtt ChaimEIP.AllocationId
@@ -274,3 +297,5 @@
       Value: !Ref ChaimRoutePrivate
     ChaimDbAccessSGId:
       Value: !GetAtt ChaimDbAccessSG.GroupId
+    ChaimDbSGId:
+      Value: !GetAtt ChaimDbSG.GroupId
