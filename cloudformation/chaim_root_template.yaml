@@ -115,7 +115,7 @@ Resources:
   ChaimRDS0:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/ee35ff1d189746dcb833825d81c7caee.template
+      TemplateURL: https://s3.eu-west-1.amazonaws.com/chaimcloudformationtemplates/e2e15549adbb5f175f64635fe2bab7db.template
       Parameters:
         ChaimKMSKey:
           Fn::GetAtt:

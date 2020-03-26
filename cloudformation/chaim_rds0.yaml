@@ -80,6 +80,7 @@
         DeletionProtection: True
         Engine: MariaDB
         EngineVersion: 10.3.13
+        KmsKeyId: !Ref ChaimKMSKey
         MasterUsername: 
           !Sub
             - "{{resolve:secretsmanager:${Username}:SecretString:username}}"
