@@ -42,9 +42,10 @@ class InvalidEmailAddress(Exception):
     pass
 
 
-class Permissions():
-    def __init__(self, secretpath="", testdb=False, quick=False,
-                 stagepath="", missing=False):
+class Permissions:
+    def __init__(
+        self, secretpath="", testdb=False, quick=False, stagepath="", missing=False
+    ):
         log.debug("Permissions Entry")
         self.missing = missing
         self.spath = secretpath
@@ -54,8 +55,16 @@ class Permissions():
         #          "dbropass", "dbrwuser", "dbrwpass", "poolid", "slacktoken"]
         # plist = ["snstopicarn", "slackapitoken", "dbhost", "dbrouser", "dbdb",
         #          "dbropass", "dbrwuser", "dbrwpass", "poolid"]
-        plist = ["snstopicarn", "dbhost", "dbrouser", "dbdb",
-                 "dbropass", "dbrwuser", "dbrwpass", "poolid"]
+        plist = [
+            "snstopicarn",
+            "dbhost",
+            "dbrouser",
+            "dbdb",
+            "dbropass",
+            "dbrwuser",
+            "dbrwpass",
+            "poolid",
+        ]
         self.params = self.ps.getParams(plist, environment=self.env)
         if len(self.params) is 0:
             raise IncorrectCredentials("failed to retrieve my parameters")
@@ -108,33 +117,45 @@ class Permissions():
         try:
             if self.sid is not None:
                 sql = "select a.name from awsusers a, slackmap b where a.id = b.userid "
-                sql += "and b.workspaceid='{}' and b.slackid='{}'".format(workspaceid, slackid)
+                sql += "and b.workspaceid='{}' and b.slackid='{}'".format(
+                    workspaceid, slackid
+                )
                 rows = self.sid.query(sql)
                 if rows is not None and len(rows) > 0:
-                    log.debug("username from workspace/slackid query: {} returned: {}".format(sql, rows))
+                    log.debug(
+                        "username from workspace/slackid query: {} returned: {}".format(
+                            sql, rows
+                        )
+                    )
                     username = rows[0][0]
                 else:
-                    raise(DataNotFound("Failed to obtain username from workspace and slack ids"))
+                    raise (
+                        DataNotFound(
+                            "Failed to obtain username from workspace and slack ids"
+                        )
+                    )
             else:
                 raise DBNotConnected("no connection to Database")
         except Exception as e:
-            emsg = "Failed to obtain username from slackid {} and workspaceid {}".format(slackid, workspaceid)
+            emsg = "Failed to obtain username from slackid {} and workspaceid {}".format(
+                slackid, workspaceid
+            )
             emsg += "Exception: {}: {}".format(type(e).__name__, e)
             log.error(emsg)
             raise
         return username
 
-
     def userNameFromSlackId(self, slackid):
         """returns the chaim username for the slackid"""
         try:
-            username = self.singleField("awsusers","name","slackid","SlackID",slackid)
+            username = self.singleField(
+                "awsusers", "name", "slackid", "SlackID", slackid
+            )
         except DataNotFound as e:
             emsg = "failed to obtain username from slackid: {}".format(slackid)
             log.error(emsg)
             raise DataNotFound(emsg)
         return username
-
 
     def userActive(self, username):
         ret = None
@@ -170,7 +191,6 @@ class Permissions():
             log.debug("path: {}".format(path))
         return path
 
-
     def setSlackApiToken(self, workspaceid):
         pargs = (self.spath, workspaceid, self.env, "slackapitoken")
         path = self.buildPath(pargs)
@@ -178,7 +198,11 @@ class Permissions():
         self.slackapitoken = self.ps.getParam(path, True)
 
     def checkToken(self, token, username, workspaceid):
-        log.debug("token: {}, username: {}, workspaceid: {}".format(token, username, workspaceid))
+        log.debug(
+            "token: {}, username: {}, workspaceid: {}".format(
+                token, username, workspaceid
+            )
+        )
         ut = Utils()
         pargs = (self.spath, workspaceid, self.env, "slacktoken")
         path = self.buildPath(pargs)
@@ -196,20 +220,17 @@ class Permissions():
                 if expires > ut.getNow():
                     return True
                 else:
-                    raise(IncorrectCredentials("usertoken has expired"))
-        raise(IncorrectCredentials("Invalid token"))
+                    raise (IncorrectCredentials("usertoken has expired"))
+        raise (IncorrectCredentials("Invalid token"))
         return False
 
-    def singleField(self, table, field, wfield, dataname, data,
-                    notfoundOK=False):
+    def singleField(self, table, field, wfield, dataname, data, notfoundOK=False):
         log.debug("getting single field for {}".format(field))
         if self.sid is not None:
-            xdata = self.sid.singleField(table, field, "{}='{}'".format(wfield,
-                                                                        data))
+            xdata = self.sid.singleField(table, field, "{}='{}'".format(wfield, data))
             if xdata is None:
                 if notfoundOK:
-                    log.debug("{} {} not found, continuing".format(dataname,
-                                                                   data))
+                    log.debug("{} {} not found, continuing".format(dataname, data))
                     return xdata
                 msg = self.createDataNotFoundMessage(dataname, data)
                 log.error("single field not found: {}".format(field))
@@ -221,8 +242,7 @@ class Permissions():
             raise DBNotConnected("no connection to Database")
 
     def checkIDs(self, table, wfield, dataname, data, notfoundOK=False):
-        return self.singleField(table, "id", wfield, dataname,
-                                data, notfoundOK)
+        return self.singleField(table, "id", wfield, dataname, data, notfoundOK)
 
     def createDataNotFoundMessage(self, dataname, data):
         return "{} not found: {}".format(dataname, data)
@@ -233,7 +253,6 @@ class Permissions():
         else:
             raise DBNotConnected("No connection to database")
 
-
     def userAllowed(self, username, account, role):
         log.debug("userAllowed test: {} {} {}".format(username, account, role))
         if self.sid is not None:
@@ -241,12 +260,16 @@ class Permissions():
             ut = Utils()
             if ut.isNumeric(account):
                 accountid = account
-                self.derivedaccountname = self.sid.singleField("awsaccounts", "name", "id='{}'".format(accountid))
+                self.derivedaccountname = self.sid.singleField(
+                    "awsaccounts", "name", "id='{}'".format(accountid)
+                )
             else:
                 accountid = self.checkIDs("awsaccounts", "name", "Account", account)
-                log.debug("userAllowed: username: {}, account:{}, role: {}, accountid is {}".format(username,
-                                                                                                    account, role,
-                                                                                                    accountid))
+                log.debug(
+                    "userAllowed: username: {}, account:{}, role: {}, accountid is {}".format(
+                        username, account, role, accountid
+                    )
+                )
                 if accountid is None:
                     return [False, None]
                 self.derivedaccountname = account
@@ -262,7 +285,8 @@ class Permissions():
                 return [True, accountid]
             else:
                 msg = "Permission not granted to {} in {} for {}".format(
-                    username, account, role)
+                    username, account, role
+                )
                 raise DataNotFound(msg)
         else:
             raise DBNotConnected("No connection to Database")
@@ -273,12 +297,13 @@ class Permissions():
                 userid = self.checkIDs("awsusers", "name", "User", username)
                 sql = "INSERT INTO keymap "
                 sql += "(userid, accountid, accesskey, expires) VALUES "
-                sql += "({}, '{}', '{}', {})".format(userid, accountid,
-                                                     accesskey, expires)
+                sql += "({}, '{}', '{}', {})".format(
+                    userid, accountid, accesskey, expires
+                )
                 log.debug("key query: {}".format(sql))
                 self.rwsid.insertQuery(sql)
             else:
-                raise(DBNotConnected("no r/w connection to DB"))
+                raise (DBNotConnected("no r/w connection to DB"))
         except Exception as e:
             log.error("error executing keymap insert query")
             raise DataNotFound(e)
@@ -314,8 +339,7 @@ class Permissions():
         ret = False
         try:
             if self.rwsid is not None:
-                userid = self.checkIDs("awsusers", "name", "User",
-                                       username, True)
+                userid = self.checkIDs("awsusers", "name", "User", username, True)
                 if userid is None:
                     sql = "INSERT INTO awsusers SET "
                     sql += "name='{}', ".format(username)
@@ -330,7 +354,7 @@ class Permissions():
                 if affectedrows == 1:
                     ret = True
             else:
-                raise(DBNotConnected("no r/w connection to DB"))
+                raise (DBNotConnected("no r/w connection to DB"))
             return ret
         except Exception as e:
             log.error("error executing usertoken insert query")
@@ -339,7 +363,9 @@ class Permissions():
     def readUserToken(self, username):
         token = expires = None
         try:
-            sql = "select token, tokenexpires from awsusers where name='{}'".format(username)
+            sql = "select token, tokenexpires from awsusers where name='{}'".format(
+                username
+            )
             rows = self.sid.query(sql)
             if len(rows) > 0:
                 token = rows[0][0]
@@ -366,9 +392,13 @@ class Permissions():
         scid = self.sid.sqlInt(chaimid)
         ssid = self.sid.sqlStr(slackid)
         swid = self.sid.sqlStr(workspaceid)
-        sql = "select * from slackmap where userid={} and slackid={} and workspaceid={}".format(scid, ssid, swid)
+        sql = "select * from slackmap where userid={} and slackid={} and workspaceid={}".format(
+            scid, ssid, swid
+        )
         if self.sid is None:
-            raise DBNotConnected("no connection to db to check slack map for {}".format(chaimid))
+            raise DBNotConnected(
+                "no connection to db to check slack map for {}".format(chaimid)
+            )
         res = self.sid.query(sql)
         log.debug("check map query returned: {}".format(res))
         if len(res) > 0:
@@ -398,7 +428,9 @@ class Permissions():
             chaimuserid = self.checkIDs("awsusers", "name", "User", slackname, True)
             if chaimuserid is not None:
                 if self.checkSlackMap(chaimuserid, slackid, workspaceid):
-                    raise ChaimUserExists("Chaim user already exists: {}".format(slackname))
+                    raise ChaimUserExists(
+                        "Chaim user already exists: {}".format(slackname)
+                    )
                 else:
                     cid = chaimuserid
             else:
@@ -412,9 +444,12 @@ class Permissions():
                         return True
             return False
         except Exception as e:
-            log.warning("Failed to create new user {}, Exception {}: {}".format(slackname, type(e).__name__, e))
+            log.warning(
+                "Failed to create new user {}, Exception {}: {}".format(
+                    slackname, type(e).__name__, e
+                )
+            )
             raise
-
 
     def createUser(self, username):
         sql = "insert into awsusers set name='{}'".format(username)
@@ -488,11 +523,16 @@ class Permissions():
             log.debug("sql returns {}".format(rows))
             allusers = rows[0][0]
             log.debug("allusers {}".format(allusers))
-            sql = "select count(lastcli) as cn from awsusers where lastcli > " + str(then)
+            sql = "select count(lastcli) as cn from awsusers where lastcli > " + str(
+                then
+            )
             rows = self.sid.query(sql)
             log.debug("sql returns {}".format(rows))
             lastcli = rows[0][0]
-            sql = "select count(lastslack) as cn from awsusers where lastslack > " + str(then)
+            sql = (
+                "select count(lastslack) as cn from awsusers where lastslack > "
+                + str(then)
+            )
             rows = self.sid.query(sql)
             lastslack = rows[0][0]
             sql = "select count(lastcli) as cn from awsusers"
@@ -511,3 +551,17 @@ class Permissions():
             return msg
         else:
             return "DB not connected"
+
+    def listuserperms(self, user):
+        try:
+            sql = "select a.id as aid, a.name as aname, u.name as uname, r.name as rname, r.id as rid from"
+            sql += " useracctrolemap x, awsusers u, awsaccounts a, awsroles r"
+            sql += " where u.name='{}'".format(user)
+            sql += " and u.id=x.userid and a.id=x.accountid and r.id=x.roleid"
+            sql += " order by a.name,r.id"
+            return self.sid.query(sql)
+        except Exception as e:
+            msg = "A pms.listuserperms error occurred: {}: {}".format(
+                type(e).__name__, e
+            )
+            log.error(msg)
