@@ -554,7 +554,7 @@ class Permissions:
 
     def listuserperms(self, user):
         try:
-            sql = "select a.id as aid, a.name as aname, u.name as uname, r.name as rname, r.id as rid from"
+            sql = "select a.id as aid, a.name as aname, u.name as uname, r.name as rname, r.id as rid, r.alias as alias from"
             sql += " useracctrolemap x, awsusers u, awsaccounts a, awsroles r"
             sql += " where u.name='{}'".format(user)
             sql += " and u.id=x.userid and a.id=x.accountid and r.id=x.roleid"
