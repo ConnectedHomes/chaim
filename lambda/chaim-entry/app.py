@@ -31,10 +31,12 @@ import chalicelib.glue as glue
 log = glue.log
 
 
-app = Chalice(app_name='chaim-entry')
+app = Chalice(app_name="chaim-entry")
 
 
-@app.route('/slackreq', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+@app.route(
+    "/slackreq", methods=["POST"], content_types=["application/x-www-form-urlencoded"]
+)
 def slackreq():
     """
     This is the entry point for Slack
@@ -78,13 +80,21 @@ def doStart(reqbody, context, env, version):
             kdict = {"accountlist": pms.accountList()}
         else:
             rdict = cp.requestDict()
-            rdict["username"] = pms.userNameFromSlackIds(rdict["teamid"], rdict["slackid"])
+            rdict["username"] = pms.userNameFromSlackIds(
+                rdict["teamid"], rdict["slackid"]
+            )
             msg = "incoming CLI request: user agent"
-            msg += " unknown!" if rdict["useragent"] is None else " {}".format(rdict["useragent"])
+            msg += (
+                " unknown!"
+                if rdict["useragent"] is None
+                else " {}".format(rdict["useragent"])
+            )
             log.info(msg)
             if "role" in rdict:
                 if rdict["role"] is None:
-                    raise DataNotFound("Role not recognised: {}".format(rdict["rolealias"]))
+                    raise DataNotFound(
+                        "Role not recognised: {}".format(rdict["rolealias"])
+                    )
             log.debug("incoming cli request: {}".format(rdict))
             kdict, rdict = chaim.buildCredentials(pms, rdict, noUrl=False)
             if kdict is None:
@@ -100,7 +110,7 @@ def doStart(reqbody, context, env, version):
         return [emsg, None]
 
 
-@app.route('/', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+@app.route("/", methods=["POST"], content_types=["application/x-www-form-urlencoded"])
 def start():
     """
     The entry point for the CLI
@@ -128,9 +138,13 @@ def doStartGui(rbody, context, env, version):
         verstr = "chaim-cligui-{}".format(env) + " " + version
         log.debug("{} doStartGui entered: {}".format(verstr, rbody))
         parsed = parse_qs(rbody)
-        creds = {"Credentials": {"AccessKeyId": parsed.get("accesskey")[0],
-                                 "SecretAccessKey": parsed.get("secret")[0],
-                                 "SessionToken": parsed.get("session")[0]}}
+        creds = {
+            "Credentials": {
+                "AccessKeyId": parsed.get("accesskey")[0],
+                "SecretAccessKey": parsed.get("secret")[0],
+                "SessionToken": parsed.get("session")[0],
+            }
+        }
         log.debug("creds {}".format(creds))
         ar = AssumedRole(creds)
         duration = parsed.get("duration")[0]
@@ -159,7 +173,9 @@ def doStartGui(rbody, context, env, version):
         return [emsg, None]
 
 
-@app.route('/gui', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+@app.route(
+    "/gui", methods=["POST"], content_types=["application/x-www-form-urlencoded"]
+)
 def startgui():
     """
     The entry point for the CLI to obtain a gui url
@@ -172,7 +188,9 @@ def startgui():
         rbody = chaim.begin(app.current_request.raw_body.decode(), **config)
         with open("version", "r") as vfn:
             version = vfn.read()
-        emsg, msg = doStartGui(rbody, app.lambda_context, config["environment"], version)
+        emsg, msg = doStartGui(
+            rbody, app.lambda_context, config["environment"], version
+        )
         return chaim.output(emsg, msg)
     except Exception as e:
         emsg = "cligui start: {}: {}".format(type(e).__name__, e)
@@ -180,7 +198,9 @@ def startgui():
         return chaim.output(emsg)
 
 
-@app.route('/keyinit', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+@app.route(
+    "/keyinit", methods=["POST"], content_types=["application/x-www-form-urlencoded"]
+)
 def keyinit():
     """
     the entry point to request a user key (from slack /initchaim)
@@ -205,7 +225,9 @@ def keyinit():
         return chaim.output(msg)
 
 
-@app.route('/identify', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+@app.route(
+    "/identify", methods=["POST"], content_types=["application/x-www-form-urlencoded"]
+)
 def identify():
     """
     the entry point to display the users identity from slack
@@ -238,7 +260,12 @@ def identify():
         log.error(msg)
         return chaim.output(msg)
 
-@app.route('/newchaimuser', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
+
+@app.route(
+    "/newchaimuser",
+    methods=["POST"],
+    content_types=["application/x-www-form-urlencoded"],
+)
 def newchaimuser():
     """
     the entry point to create a new chaim user
@@ -261,5 +288,35 @@ def newchaimuser():
         return chaim.output(None, "{}\n\nPlease wait".format(verstr))
     except Exception as e:
         msg = "An identify error occurred: {}: {}".format(type(e).__name__, e)
+        log.error(msg)
+        return chaim.output(msg)
+
+
+@app.route(
+    "/listuserperms",
+    methods=["POST"],
+    content_types=["application/x-www-form-urlencoded"],
+)
+def listuserperms():
+    """
+    the entry point to list user perms
+    """
+    try:
+        log.debug("listuserperms entry")
+        with open("version", "r") as vfn:
+            version = vfn.read()
+        config = {}
+        ep = EnvParam()
+        config["environment"] = ep.getParam("environment")
+        config["useragent"] = "slack"
+        config["apiid"] = app.current_request.context["apiId"]
+        log.debug("listuserperms: config: {}".format(config))
+        params = chaim.paramsToDict(app.current_request.raw_body.decode())
+        secretpath = ep.getParam("SECRETPATH")
+        pms = Permissions(secretpath, stagepath=config["environment"] + "/")
+        perms = pms.listuserperms(params["user_name"])
+        log.info(perms)
+    except Exception as e:
+        msg = "A listuserperms error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
         return chaim.output(msg)
