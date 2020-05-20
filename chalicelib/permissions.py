@@ -66,7 +66,7 @@ class Permissions:
             "poolid",
         ]
         self.params = self.ps.getParams(plist, environment=self.env)
-        if len(self.params) is 0:
+        if len(self.params) == 0:
             raise IncorrectCredentials("failed to retrieve my parameters")
         self.topicarn = self.params["snstopicarn"]
         self.slackapitoken = None
