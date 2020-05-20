@@ -330,3 +330,21 @@ class Chaim(object):
             slst.append(title)
         slst.sort()
         return slst
+
+    def listUserPerms(self):
+        uperms = {}
+        endpoint = self.getEndpoint() + "listuserperms"
+        defsect = self.getDefaultSection()
+        params["user_name"] = defsect["username"]
+        params["token"] = defsect["usertoken"]
+        params["response_url"] = "ignoreme"
+        params["useragent"] = "cca " + version
+        r = requests.post(endpoint, data=params)
+        if 200 == r.status_code:
+            if r.text == "null":
+                log.warning("No response")
+            else:
+                uperms = r.json()
+        else:
+            log.warning("status: {} response: {}".format(r.status_code, r.text))
+        return uperms
