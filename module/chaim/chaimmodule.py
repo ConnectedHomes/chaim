@@ -335,6 +335,7 @@ class Chaim(object):
         uperms = {}
         endpoint = self.getEndpoint() + "listuserperms"
         defsect = self.getDefaultSection()
+        params = {}
         params["user_name"] = defsect["username"]
         params["token"] = defsect["usertoken"]
         params["response_url"] = "ignoreme"
