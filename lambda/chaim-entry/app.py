@@ -26,6 +26,7 @@ from chalicelib.permissions import Permissions
 from chalicelib.wflambda import wfwrapper
 import chalicelib.chaim as chaim
 import chalicelib.glue as glue
+import json
 
 
 log = glue.log
@@ -315,7 +316,14 @@ def listuserperms():
         secretpath = ep.getParam("SECRETPATH")
         pms = Permissions(secretpath, stagepath=config["environment"] + "/")
         perms = pms.listuserperms(params["user_name"])
-        log.info(perms)
+        operms = {}
+        for perm in perms:
+            acct = perm[1]
+            if acct not in operms:
+                operms[acct] = []
+            operms[acct].append(perm[3])
+        log.info(operms)
+        return chaim.output(None, json.dumps(operms))
     except Exception as e:
         msg = "A listuserperms error occurred: {}: {}".format(type(e).__name__, e)
         log.error(msg)
