@@ -252,7 +252,13 @@ class Chaim(object):
                     expstr = utils.displayExpires(
                         int(tsectd["expires"]), int(tsectd["duration"])
                     )
-                    acct = (section, tsectd["expires"], expstr, default)
+                    acct = (
+                        section,
+                        tsectd["expires"],
+                        expstr,
+                        default,
+                        section["accountname"],
+                    )
                     accts.append(acct)
         return accts
 
