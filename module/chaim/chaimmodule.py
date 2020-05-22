@@ -122,7 +122,7 @@ class Chaim(object):
         if section in self.ifn.titles():
             sect = self.ifn.getSectionItems(section)
             if "accountname" in sect:
-                if self.account != account:
+                if self.account != sect["accountname"]:
                     self.holdaccount = self.account
                 self.account = sect["accountname"]
                 self.duration = sect["duration"]
@@ -160,7 +160,7 @@ class Chaim(object):
         params["user_name"] = defsect["username"]
         params["token"] = defsect["usertoken"]
         params["response_url"] = "ignoreme"
-        params["useragent"] = "cca " + version
+        params["useragent"] = "chaimm " + version
         if "slackid" in defsect:
             params["user_id"] = defsect["slackid"]
         if "workspaceid" in defsect:
