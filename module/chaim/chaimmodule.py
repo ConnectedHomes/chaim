@@ -60,6 +60,7 @@ class Chaim(object):
         terrible=False,
         verbose=-1,
         logfile=None,
+        persistent=False,
     ):
         self.verbose = verbose
         if logfile is not None:
@@ -82,6 +83,7 @@ class Chaim(object):
         self.accountalias = tempname
         self.terrible = terrible
         self.holdaccount = None
+        self.persistent = persistent
 
     def __enter__(self):
         return self.requestKeys()
@@ -301,7 +303,7 @@ class Chaim(object):
         return jaccs
 
     def deleteAccount(self, account):
-        if account in self.ifn.titles():
+        if account in self.ifn.titles() and not self.persistent:
             if self.verbose > 0:
                 log.info("Deleting account {}.".format(account))
             self.ifn.deleteSection(account)
