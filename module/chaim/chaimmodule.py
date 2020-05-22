@@ -257,7 +257,7 @@ class Chaim(object):
                         tsectd["expires"],
                         expstr,
                         default,
-                        section["accountname"],
+                        tsectd["accountname"],
                     )
                     accts.append(acct)
         return accts
