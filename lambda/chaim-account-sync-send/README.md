@@ -26,6 +26,6 @@ the lambda function.
 
 ```
 $ cfn -P awsbilling -I -n chaim-account-sync-send -p chaim -a "Connected Homes" \
--m LambdaVersion=1.0.0,EnvEnv=prod,Notifier=arn:aws:sns:eu-west-1:499223386158:sreChaimAcctSyncRecv \
+-m LambdaVersion=1.0.0,EnvEnv=prod,Notifier=arn:aws:sns:eu-west-1:499223386158:chaimacctountsrecieve \
 -t cloudformation/chaim-account-sync-send-CF.yaml
 ```
