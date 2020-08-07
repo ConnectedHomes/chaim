@@ -11,7 +11,7 @@ ccalogging.setInfo()
 log = ccalogging.log
 
 majorv = 1
-minorv = 1
+minorv = 2
 buildv = 2
 verstr = str(majorv) + "." + str(minorv) + "." + str(buildv)
 __version__ = verstr
@@ -22,7 +22,7 @@ def makeAcct(oacct):
     keys = ["Id", "Name"]
     acct = {}
     for key in keys:
-        acct[key] = oacct[key]
+        acct[key.lower()] = oacct[key]
     return acct
 
 
