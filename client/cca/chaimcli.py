@@ -271,10 +271,13 @@ def doUrl(account, ifn, browser=False, logout=False):
     if account is None:
         click.echo("account name required or no default account set.")
         return
+    click.echo(f"{account=}")
     acct = account[0]
+    click.echo(f"{acct=}")
     if not ifn.sectionExists(acct):
         click.echo("account {} not recognised.".format(acct))
         return
+    click.echo(f"renewing section {acct}")
     renewSection(acct, ifn)
     sect = ifn.getSectionItems(acct)
     url = None
